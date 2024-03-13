@@ -10,4 +10,8 @@ Give me an ⭐️ in the Github repository if you like the content.
 
 <script src="https://tryhackme.com/badge/943872"></script>
 
+<p align="center">
+          <img src="https://github.com/gitblanc/gitblanc/blob/output/github-contribution-grid-snake-dark.svg" alt="snake:D"/>
+</p>
+
 ![banner](banner.jpg)
