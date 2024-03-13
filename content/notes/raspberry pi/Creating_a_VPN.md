@@ -45,4 +45,4 @@ This vpn is going to be setup with a Zero 2w model without using a monitor and w
 
 *You've finished*
 
-![[Pasted image 20240313234209.png]]
+![](Pasted%20image%2020240314001623.png)
