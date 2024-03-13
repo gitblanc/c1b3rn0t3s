@@ -1,18 +1,10 @@
-# Quartz v4
+This is [gitblanc's](https://github.com/gitblanc/) personal cybersecurity notes documentation webpage. Take into account that all the information contained here is for cyber-education and non-profit too. Thus, I'm not responsible for what is done with this information.
 
-> “[One] who works with the door open gets all kinds of interruptions, but [they] also occasionally gets clues as to what the world is and what might be important.” — Richard Hamming
+Keep in mind that if you have a web antivirus some of the notes might not be displayed or could be blocked due to this notes contain real viruses (but just for educational purposes and inoffensive).
 
-Quartz is a set of tools that helps you publish your [digital garden](https://jzhao.xyz/posts/networked-thought) and notes as a website for free.
-Quartz v4 features a from-the-ground rewrite focusing on end-user extensibility and ease-of-use.
+Give me an ⭐️ if you like the content.
 
-🔗 Read the documentation and get started: https://quartz.jzhao.xyz/
+<img src="https://tryhackme-badges.s3.amazonaws.com/gitblanc.png" alt="TryHackMe">
 
-[Join the Discord Community](https://discord.gg/cRFFHYye7t)
 
-## Sponsors
-
-<p align="center">
-  <a href="https://github.com/sponsors/jackyzha0">
-    <img src="https://cdn.jsdelivr.net/gh/jackyzha0/jackyzha0/sponsorkit/sponsors.svg" />
-  </a>
-</p>
+![banner](/content/banner.jpg)
