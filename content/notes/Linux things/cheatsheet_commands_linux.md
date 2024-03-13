@@ -4,49 +4,49 @@ title: Some Linux cheatsheet  commands 👾
 
 - Get all the info of your operating system
 
-```
+```shell
 hostnamectl
 ```
 
 - Get the content of a .sh:
 
-```
+```shell
 file file.sh
 ```
 
 - Get the PATH:
 
-```
+```shell
 echo $PATH
 ```
 
 - Get the bash functions available:
 
-```
+```shell
 declare -F
 ```
 
 - To count the results:
 
-```
+```shell
 declare -f | wc -l
 ```
 
 - List a function definition:
 
-```
+```shell
 type quote
 ```
 
 - Use a funtion:
 
-```
+```shell
 quote bob
 ```
 
 - If you don't have Internet, try this:
 
-```
+```shell
 sudo ifconfig eth0 up
 sudo dhclient eth0
 ```
@@ -57,58 +57,58 @@ sudo dhclient eth0
 
     To find SUID binaries, we can run the following command:
 
-```
+```shell
 find / -user root -perm /4000 2>/dev/null
 ```
 
 - How to find any file:
 
-```
+```shell
 find / type f -iname filename.txt 2> /dev/null
 ```
 
 - Get the size of a file:
 
-```
+```shell
 du -sh file.txt
 ```
 
 - BASH math -> https://phoenixnap.com/kb/bash-math
 - `ERROR: Unable to negotiate with X.X.X.X port 22: no matching host key type found. Their offer: ssh-rsa,ssh-dss`
 
-```
+```shell
 ssh -oHostKeyAlgorithms=+ssh-dss username@x.x.x.x
 ```
 
 - To encrypt an external or internal hard drive or USB:
 
-```
+```shell
 sudo apt-get install cryptsetup
 sudo apt-get install gnome-disk-utility
 ```
 
 - Compare the size of two remote files using ssh:
 
-```
+```shell
 ls -l file.txt | awk '{ print $x }' #x is the option you want
 ```
 
 - How to remove a package on linux:
 
-```
+```shell
 sudo apt-get remove package
 ```
 
 - How to upload files remotely via sftp:
 
-```
+```shell
 sshpass -p passwd sftp -oHostKeyAlgorithms=+ssh-dss  username@host
 put -r directory_from directory_to
 ```
 
 - Check your open ports:
 
-```
+```shell
 netstat -putona
 netstat -nlptn
 ```
