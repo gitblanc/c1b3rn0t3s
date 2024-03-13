@@ -70,6 +70,6 @@ Host *
 
 - [RSA Calculator](https://www.cs.drexel.edu/~popyack/Courses/CSP/Fa17/notes/10.1_Cryptography/RSA_Express_EncryptDecrypt_v2.html)
 
-![](./img/Pasted%20image%2020240220233429.png)
+![](Pasted%20image%2020240220233429.png)
 
-![](./img/Pasted%20image%2020240220233613.png)
+![](Pasted%20image%2020240220233613.png)

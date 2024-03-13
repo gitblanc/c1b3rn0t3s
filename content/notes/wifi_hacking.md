@@ -65,7 +65,7 @@ Injection mode helps, as you can use it to deauth a client in order to force a r
 
 If you get a capture like this one:
 
-![](./img/Pasted%20image%2020240205191431.png)
+![](Pasted%20image%2020240205191431.png)
 
 do the following:
 

