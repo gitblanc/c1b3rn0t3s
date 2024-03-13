@@ -4,6 +4,6 @@ title: Welcome to c1b3r n0t3s!
 
 This is [gitblanc's](https://github.com/gitblanc/) personal cybersecurity notes documentation webpage. Take into account that all the information contained here is for cyber-education and non-profit too. Thus, I'm not responsible for what is done with this information.
 
-<img src="https://tryhackme-badges.s3.amazonaws.com/gitblanc.png" alt="TryHackMe">
+<script src="https://tryhackme.com/badge/943872"></script>
 
 ![banner](banner.jpg)
