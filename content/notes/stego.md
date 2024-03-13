@@ -26,7 +26,7 @@ file whatever.file # to know what is it
 - Inspect audio files (like `.wav` files) with [Sonic Visualizer](https://www.sonicvisualiser.org/)
   - Click on `Layer > Add Spectrogram`
 
-![](./img/Pasted%20image%2020240306215008.png)
+![](../img/Pasted%20image%2020240306215008.png)
 
 - Now set the scale to dB^2 and the colour to White on Black
 
