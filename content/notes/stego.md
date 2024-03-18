@@ -42,6 +42,7 @@ file whatever.file # to know what is it
 
 ```shell
 printf '\x89\x50\x4E\x47' | dd of=IMAGE.png bs=4 conv=notrunc
+printf '\xff\xd8\xff\xe0' | dd of=IMAGE.jpg bs=4 conv=notrunc
 ```
 
 - If you have two strings in different formats, try this python script:
@@ -67,3 +68,12 @@ mv stegsolve.jar bin/
 - You might also need to search for a web in [WaybackMachine](https://archive.org/web/)
 
 - Open `.pcap` files with wireshark and analyze them
+
+- If you find a morse code on a `.wav`, try the tool [morsecode decoder](https://morsecode.world/international/decoder/audio-decoder-adaptive.html?source=post_page-----b508bbad0243--------------------------------)
+
+- If you find an image and running `exiftool image.jpg` you find some zip:
+
+![](Pasted%20image%2020240318225913.png)
+
+- Do `mv image.jp image.zip`
+- Then `unzip image.zip`

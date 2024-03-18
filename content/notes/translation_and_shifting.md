@@ -13,6 +13,7 @@ Here are some of the most CTF common formats to encode flags with examples:
 - **Morse**: `- . .-.. . -.-. --- -- -- ..- -. .. -.-. .- - .. --- -.. -. -.-. --- -.. .. -. --.` -> `TELECOMMUNICATION  ENCODING `
 - **Decimal**: `85 110 112 97 99 107 32 116 104 105 115 32 66 67 68` -> `Unpack this BCD`
 - **Vigenere Cipher**: [decoder1](https://www.dcode.fr/vigenere-cipher), [decoder2](https://cryptii.com/pipes/vigenere-cipher), [decoder3](https://www.guballa.de/vigenere-solver)
+	- Beaufort Variant: `Tizmg_nv_zxxvhh_gl_gsv_nzk_kovzhv`
 - **More Cipher** (rare Caesar): [quipqiup](https://quipqiup.com/) (Like `Lwuv oguukpi ctqwpf.`)
 - If you see something like: `581695969015253365094191591547859387620042736036246486373595515576333693`, try the following script:
 
@@ -21,3 +22,6 @@ n = 581695969015253365094191591547859387620042736036246486373595515576333693
 h = hex(n)[2:]
 print(bytearray.fromhex(h).decode())
 ```
+
+- If you don't know the cipher, try here pasting the message: [dcode](https://www.dcode.fr/)
+
