@@ -154,3 +154,9 @@ scp -i id_rsa USER@IP_HOST:/PATH/TO/THE/FILE /DESTINATION/PATH
 ```shell
 curl "url_to_the_file" -o output.file
 ```
+
+- Add a host to the known hosts:
+
+```shell
+sudo echo "10.10.59.31 subdomain.adana.thm" | sudo tee -a /etc/hosts
+```
