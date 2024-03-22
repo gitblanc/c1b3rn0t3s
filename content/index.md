@@ -6,6 +6,8 @@ This is [gitblanc's](https://github.com/gitblanc/) personal cybersecurity notes 
 
 Keep in mind that if you have a web antivirus some of the notes might not be displayed or could be blocked due to this notes contain real viruses (but just for educational purposes and inoffensive).
 
+I'll also upload some writeups of machines that I consider brainfuck for me.
+
 Give me an ⭐️ in the Github repository if you like the content.
 
 <script src="https://tryhackme.com/badge/943872"></script>
