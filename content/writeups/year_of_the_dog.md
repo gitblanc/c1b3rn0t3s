@@ -37,7 +37,7 @@ We check the website:
 
 ![](Pasted%20image%2020240322201519.png)
 
-Viewing the source code, we nothing useful is found. Then, inspecting the cookies of the page we found the following one:
+Viewing the source code, nothing useful is found. Then, inspecting the cookies of the page we found the following one:
 
 ![](Pasted%20image%2020240322201630.png)
 
@@ -47,7 +47,7 @@ Now we try to perform a sqli attack, by adding to the value a `'`. We get an err
 
 Now we try to perform a **union based** sqli by adding `' union select 1, @@version-- -` to the value:
 
-![[Pasted image 20240322201916.png]]
+![](Pasted%20image%2020240322201916.png)
 
 As we can see, the OS is displayed, so we could try to dump the database tables with `' union select 1, table_name FROM information_schema.tables-- -`:
 
