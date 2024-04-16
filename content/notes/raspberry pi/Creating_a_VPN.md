@@ -3,6 +3,8 @@ title: Creating a VPN ✳️
 ---
 ## Raspbery Pi Zero 2w
 
+![](Pasted%20image%2020240314001623.png)
+
 This vpn is going to be setup with a Zero 2w model without using a monitor and with OpenVPN configuration. [PiVpn software](https://www.pivpn.io/) will be used
 
 - Open the [raspberry pi imager](https://www.raspberrypi.com/software/)
@@ -43,6 +45,4 @@ This vpn is going to be setup with a Zero 2w model without using a monitor and w
 - Import the `CLIENT.ovpn` file you previously generated
 - Connect to it with the password you assigned
 
-*You've finished*
-
-![](Pasted%20image%2020240314001623.png)
+==*You've finished*==

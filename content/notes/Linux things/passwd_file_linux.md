@@ -2,7 +2,7 @@
 title: Understand passwd file in Linux 🧠
 ---
 
-# ==How to understand the /etc/passwd file in Linux==
+## How to understand the /etc/passwd file in Linux
 
 The _/etc/passwd_ file stores vital information (described below) about users such as username, home directory, etc.
 

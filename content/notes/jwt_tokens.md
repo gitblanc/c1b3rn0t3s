@@ -6,13 +6,13 @@ title: JWT tokens 🐧
 
 A JSON Web Token consists of a header, payload, and signature in base64url encoding, separated by dots, as follows:
 
-```
+```json
 HEADER.PAYLOAD.SIGNATURE
 ```
 
 Let’s take apart the following real token:
 
-```
+```json
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 eyJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyX25hbWUiOiJqb2huLmRvZSIsImlzX2FkbWluIjpmYWxzZX0.
 fSppjHFaqlNcpK1Q8VudRD84YIuhqFfA67XkLam0_aY
@@ -20,7 +20,7 @@ fSppjHFaqlNcpK1Q8VudRD84YIuhqFfA67XkLam0_aY
 
 The header contains metadata about the token, such as the algorithm used for the signature and the type of the token (which is simply JWT). For this example, the header before encoding is:
 
-```
+```json
 {
   "alg": "HS256",
   "typ": "JWT"
@@ -29,7 +29,7 @@ The header contains metadata about the token, such as the algorithm used for the
 
 The payload contains information (claims) about the entity (user) that is going to be verified by the application. Our sample token includes the following claims:
 
-```
+```json
 {
   "name": "John Doe",
   "user_name": "john.doe",
@@ -39,7 +39,7 @@ The payload contains information (claims) about the entity (user) that is going 
 
 Finally, to generate the signature, we have to apply base64url encoding to the header, dot, and payload, and then sign the whole thing using a secret (for symmetric encryption) or a private key (for asymmetric encryption), depending on the algorithm specified in the header. We’ve put `HS256` in the header, which is a symmetric algorithm, so the encoding and signing operation would be:
 
-```
+```json
 HMACSHA256(
   base64UrlEncode(header) + "." +
   base64UrlEncode(payload),
@@ -48,7 +48,7 @@ HMACSHA256(
 
 This gives us the following signature, which is then appended (after a dot) to the base64url-encoded header and payload:
 
-```
+```json
 fSppjHFaqlNcpK1Q8VudRD84YIuhqFfA67XkLam0_aY
 ```
 
@@ -67,7 +67,7 @@ Sometimes developers might mix up these methods. In that case, the signature is 
 
 For example, let’s say we have the following valid token that is never actually verified:
 
-```
+```json
 {
   "alg": "HS256",
   "typ": "JWT"
@@ -81,7 +81,7 @@ For example, let’s say we have the following valid token that is never actuall
 
 An attacker could send the following token with an arbitrary signature to obtain escalated privileges:
 
-```
+```json
 {
   "alg": "HS256",
   "typ": "JWT"
@@ -104,7 +104,7 @@ The JWT standard accepts many different types of algorithms to generate a signat
 
 The `None` algorithm specifies that the token is not signed. If this algorithm is permitted, we can bypass signature checking by changing an existing algorithm to `None` and stripping the signature. Let’s start with our expected token:
 
-```
+```json
 {
   "alg": "HS256",
   "typ": "JWT"
@@ -118,7 +118,7 @@ The `None` algorithm specifies that the token is not signed. If this algorithm
 
 Encoded and signed, the token will look like this (signature in bold):
 
-```
+```json
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 eyJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyX25hbWUiOiJqb2huLmRvZSIsImlzX2FkbWluIjpmYWxzZX0.
 fSppjHFaqlNcpK1Q8VudRD84YIuhqFfA67XkLam0_aY
@@ -126,7 +126,7 @@ fSppjHFaqlNcpK1Q8VudRD84YIuhqFfA67XkLam0_aY
 
 If `None` is permitted as the algorithm value, an attacker can simply use it to replace the valid algorithm and then get rid of the signature:
 
-```
+```json
 {
   "alg": "None",
   "typ": "JWT"
@@ -140,7 +140,7 @@ If `None` is permitted as the algorithm value, an attacker can simply use it t
 
 Though now unsigned, the modified token will be accepted by the application:
 
-```
+```json
 eyJhbGciOiJOb25lIiwidHlwIjoiSldUIn0.
 eyJuYW1lIjoiSm9obiBEb2UiLCJ1c2VyX25hbWUiOiJqb2huLmRvZSIsImlzX2FkbWluIjp0cnVlfQ.
 ```
@@ -189,7 +189,7 @@ The JWT header can contain the Key Id parameter `kid`. It is often used to retr
 
 To see this in action, let’s start with the following valid token:
 
-```
+```json
 {
   "alg": "HS256",
   "typ": "JWT",
@@ -204,7 +204,7 @@ To see this in action, let’s start with the following valid token:
 
 If the `kid` parameter is vulnerable to command injection, the following modification might lead to remote code execution:
 
-```
+```json
 {
   "alg": "HS256",
   "typ": "JWT",
@@ -223,7 +223,7 @@ If an application uses the `kid` parameter to retrieve the key from the filesy
 
 Continuing with the previous JWT example, an attacker might try to insert `/dev/null` as the key source to force the application to use an empty key:
 
-```
+```json
 {
   "alg": "HS256",
   "typ": "JWT",
@@ -244,13 +244,13 @@ If an application uses the `kid` parameter to retrieve the key from a database
 
 Again using the same example token, let’s say the application uses the following vulnerable SQL query to get its JWT key via the `kid` parameter:
 
-```
+```sql
 SELECT key FROM keys WHERE key='key1'
 ```
 
 An attacker can then inject a `UNION SELECT` statement into the `kid` parameter to control the key value:
 
-```
+```json
 {
   "alg": "HS256",
   "typ": "JWT",
@@ -265,7 +265,7 @@ An attacker can then inject a `UNION SELECT` statement into the `kid` parame
 
 If SQL injection succeeds, the application will use the following query to retrieve the signature key:
 
-```
+```sql
 SELECT key FROM keys WHERE key='xxxx' UNION SELECT 'aaa'
 ```
 
@@ -279,7 +279,7 @@ In the JWT header, developers can also use the `jku` parameter to specify the�
 
 To illustrate, let’s take the following JWT that uses the `jku` parameter to specify the public key:
 
-```
+```json
 {
   "alg": "RS256",
   "typ": "JWT",
@@ -294,7 +294,7 @@ To illustrate, let’s take the following JWT that uses the `jku` parameter to
 
 The specified `key.json` file might look something like:
 
-```
+```json
 {
   "kty": "RSA",
   "n": "-4KIwb83vQMH0YrzE44HppWvyNYmyuznuZPKWFt3e0xmdi-WcgiQZ1TC...RMxYC9lr4ZDp-M0",

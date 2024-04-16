@@ -3,7 +3,7 @@ title: Wordpress 🍔
 ---
 
 - You can try to modify the current theme by changing the code with a reverse shell like **PentestMonkey** one
-  - Check [Reverse shells 👾](Reverse%20shells%20👾.md)
+  - Check [Reverse shells 👾](reverse_shells.md)
 
 - Identify the Wordpress CMS version using the tool **wpscan**: `wpscan --url "http://whatever.com"`
 
