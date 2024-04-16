@@ -13,8 +13,8 @@ interface Options {
 
 const defaultOptions: Options = {
   theme: {
-    light: "houston",
-    dark: "houston",
+    light: "one-dark-pro",
+    dark: "one-dark-pro",
   },
   keepBackground: false,
 }
