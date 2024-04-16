@@ -13,8 +13,8 @@ interface Options {
 
 const defaultOptions: Options = {
   theme: {
-    light: "github-light",
-    dark: "duotone-sea",
+    light: "houston",
+    dark: "houston",
   },
   keepBackground: false,
 }
