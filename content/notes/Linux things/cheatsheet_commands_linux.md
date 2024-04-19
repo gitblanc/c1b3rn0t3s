@@ -150,10 +150,13 @@ scp -i id_rsa USER@IP_HOST:/PATH/TO/THE/FILE /DESTINATION/PATH
 ```
 
 - If the linux machine doesn't have `wget`, we can try:
+	- Using  [Netcat 😼](Netcat.md)
+	- Or the following:
 
 ```shell
 curl "url_to_the_file" -o output.file
 ```
+
 
 - Add a host to the known hosts:
 
@@ -189,4 +192,10 @@ UPDATE user SET is_admin=1 WHERE lower_name="<username>";
 
 ```shell
 scp /tmp/gitea.db USER@MACHINE-IP:/gitea/gitea/gitea.db
+```
+
+- Analyze services and running processes:
+
+```shell
+systemctl list-units --type=service --state=running
 ```
