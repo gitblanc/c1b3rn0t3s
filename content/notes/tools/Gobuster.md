@@ -31,3 +31,15 @@ gobuster dir -u https://brickbybrick.thm -w /usr/share/wordlists/dirb/big.txt -x
 
 gobuster dir -u https://brickbybrick.thm -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -k
 ```
+
+## Directories
+
+```shell
+gobuster dir -u http://vulnnet.thm/ -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -t 25 -q -x php,aspx,txt,asp
+```
+
+## Subdomains
+
+```shell
+gobuster vhost -u http://vulnnet.com -w /usr/share/wordlists/SecLists/Discovery/DNS/subdomains-top1million-20000.txt -t 60 -q
+```
