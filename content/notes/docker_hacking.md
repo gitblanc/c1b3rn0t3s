@@ -75,4 +75,4 @@ Nmap done: 1 IP address (1 host up) scanned in 39.69 seconds
 
 - The port 5986 is for Microsoft's [Open Management Infraestructure (OMI)](https://github.com/microsoft/omi) service for remote configuration management of *nix VMs in Azure. Our host must be a simulation of an Azure Linux VM.
 - There is a [CVE for an unauthenticated RCE](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-38647), and a [public exploit](https://github.com/AlteredSecurity/CVE-2021-38647) for OMI we can test.
-	- You can check the exploitation in this notes in [CVE-2021-38647](Exploits/CVE-2021-38647.md)
+	- You can check the exploitation in this notes in [CVE-2021-38647](/notes/Exploits/CVE-2021-38647.md)
