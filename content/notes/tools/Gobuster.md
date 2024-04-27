@@ -9,6 +9,10 @@ gobuster dir -u http://10.10.70.124/ -w /usr/share/wordlists/dirbuster/directory
 gobuster dir -u http://10.10.110.8/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 60 -x txt,py,sh,php
 
 gobuster dir -u http://10.10.110.8/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 60
+
+# 3 letter formats
+gobuster dir -u http://10.10.70.124/ -w /usr/share/wordlists/dirb/common.txt -x php,txt,bak,old,tar,zip -t 60
+
 ````
 
 ## Blocking a status code specifically

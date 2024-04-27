@@ -1,7 +1,7 @@
 ---
 title: Hydra 🐍
 ---
-## Hydra by ftp
+## Brute force ftp
 
 ````shell
 hydra -l user -P passwords.txt ftp://<target-ip>

@@ -77,3 +77,7 @@ mv stegsolve.jar bin/
 
 - Do `mv image.jp image.zip`
 - Then `unzip image.zip`
+
+- Use [Mnemonic](https://github.com/MustafaTanguner/Mnemonic) to decode secrets hidden in images
+	- I put the source code with corrections in [Mnemonic](/notes/Scripts/Mnemonic.md)
+
