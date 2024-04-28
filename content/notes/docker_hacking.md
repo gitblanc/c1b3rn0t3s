@@ -1,7 +1,11 @@
 ---
 title: Docker hacking 🐳
 ---
+## Understand how docker works
 
+Go to the [Intro to Docker 🐳](/notes/Info/intro_to_docker.md) note.
+
+## .dockerenv
 - If we find a `.dockerenv` file in the root directory, we are running inside a docker container
 
 ![](Pasted%20image%2020240215214817.png)
