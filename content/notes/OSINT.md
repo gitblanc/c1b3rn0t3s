@@ -131,3 +131,78 @@ Here's a good [writeup](https://nixintel.info/osint-tools/using-ffmpeg-to-grab-
 
 - I took a note in [FFmpeg 🚍](FFmpeg.md)
 
+## WebOSINT
+
+### When a website doesn't exist
+
+- One way to collect information about a website without directly visiting it is to simply do a search for it
+	- Avoid entering the site by putting the direction in quote marks like `"site.com"`
+
+### Whois registration
+
+- Just because nothing shows up when you visit a site doesn't mean that someone doesn't own the domain.
+	- In fact, if there is a landing page or a spammy one, then you can be sure that someone does own it. But maybe it is not owned by the same person of the time period we are interested in
+
+- Confirm current registration status with a **whois lookup**
+	- One website to do it is [Namecheap - whois lookup](https://www.namecheap.com/domains/whois/)
+
+	![](Pasted%20image%2020240429195641.png)
+
+	- We are looking for any data we might be able to use as pivoprivatet points, like email addresses, physical addresses or phone numbers
+		- Take into account that some domains keep this info *private*
+
+### Ghosts of websites past
+
+You've got two pages:
+- [Archive.org](https://archive.org/)
+- [the Internet Wayback Machine](https://web.archive.org/)
+
+There is also a web extension that will automatically pull up an option to search for a site on the Wayback Machine when it fails to load in the web browser
+- [for Chrome](https://chromewebstore.google.com/detail/wayback-machine/fpnmgdkabkmnadcjpehmlllkndpkmiak?hl=en-US)
+
+### Digging into DNS
+
+- For looking up registration information on a target website visit [ViewDNS.info](https://viewdns.info/)
+	- With this web you can find out info that is not enough clear such as wether the website is hosted on a shared or dedicated IP address
+
+> You can perform for example an IP history search:
+
+![](Pasted%20image%2020240429202100.png)
+
+### Taking a peek under the hood of a website
+
+First, do you have any gut feelings about this site? What is your overall impression? Does it _feel_ like a legitimate source of information?
+
+Why?
+
+You might consider some of the following points:
+
+- Language - What grade level is the writing? Does it seem to be written by a native English speaker?
+- UX - Is it user friendly? Is the design modern?
+- What pages does the site have?
+
+I can tell you that this website conforms well to antiquated search engine optimization (SEO) best practices. You can read more about [SEO best practices on ahrefs](https://ahrefs.com/blog/seo-best-practices/) if you like before you continue.
+
+#### Technical Research
+
+Often, clues about a website and its creator/owner may be unintentionally left behind in the source code of the website. Pretty much every web browser will have a method of doing this. It is well worth taking the time to become acquainted with how this works in your browser of choice. For Chrome on MacOS, you'll go to the top menu bar and choose View > Developer > View Source.
+
+**_Note: This also works on sites you visit within Archive.org's Wayback Machine._**
+
+Once the source code of the page loads, it's time to look around. You don't have to understand HTML, CSS, or Javascript to read notes that the developers left behind for themselves. In HTML, comments begin with the characters `<!--. Here's an example of what a forgotten comment might look like in practice:
+
+`<!--Don't forget to email Bob Loblaw when the site goes live at bob@fakeemail.com-->`
+
+As easy as that may be to read, if it was buried inside a gigantic page full of code it could still be easy to miss. That's where ctrl-F comes in. Here are some good things to search for with ctrl-f:
+
+| Search Term | Explanation                          | More information                                                                                                                       |
+| ----------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `<!--`      | Comments                             | See above                                                                                                                              |
+| @           | email addresses                      | [Pivoting from an Email address](https://nixintel.info/osint/12-osint-resources-for-e-mail-addresses/)                                 |
+| ca-pub      | Google Publisher ID                  | [Google's Description](https://support.google.com/adsense/answer/105516?hl=en)                                                         |
+| ua-         | Google AdSense ID                    | [Bellingcat Tutorial](https://www.bellingcat.com/resources/how-tos/2015/07/23/unveiling-hidden-connections-with-google-analytics-ids/) |
+| .jpg        | Also try other image file extensions | Likely to reveal more directory structure                                                                                              |
+
+Finding any of the above data gives you a potential pivot point. The Bellingcat article linked above goes into more detail on how exactly to do it but you don't have to overcomplicate things!
+
+You can always just take any of the above information and plug it back into your favorite search engine and you may just strike gold!
