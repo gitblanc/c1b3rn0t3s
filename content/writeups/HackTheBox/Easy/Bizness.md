@@ -157,6 +157,8 @@ hashcat -a 0 -m 120 b8fd3f41a541a435857a8f3e751cc3a91c174362:d /usr/share/wordli
 b8fd3f41a541a435857a8f3e751cc3a91c174362:d:monkeybizness
 ```
 
+## Root flag
+
 Now I logged as root and got the flag:
 
 ```shell
