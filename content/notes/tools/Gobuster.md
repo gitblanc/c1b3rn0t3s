@@ -1,6 +1,7 @@
 ---
 title: Gobuster 🐦
 ---
+*Alternative to [dirsearch 📁](dirsearch.md)*
 ## Basic commands
 
 ````shell
