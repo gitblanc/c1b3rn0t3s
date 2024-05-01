@@ -1,6 +1,10 @@
 ---
 title: LFI 🎃
 ---
+## Nice articcles to read
+
+- [invicti.com](https://www.invicti.com/blog/web-security/local-file-inclusion-vulnerability/)
+- [outpost24: lfi to RCE](https://outpost24.com/blog/from-local-file-inclusion-to-remote-code-execution-part-2/)
 
 ## Classic ones
 
@@ -122,3 +126,37 @@ If a web shell filters your input, try to encode it into `base64`
 ```
 
 - Change the `"file:///etc/passwd"` for the one you want
+
+## Lfi to RCE
+
+If you can read some files by some kind of escape, we can bruteforce the `/proc/self/` directory in Apache.
+
+This directory holds information about different processes. Each process is distinguished by its PID as shown below:
+
+![](Pasted%20image%2020240501160143.png)
+
+Every process can access its available information by requesting the `/proc/self` directory.
+
+As Apache is requesting this file (via the LFI vulnerability) and since the file is located inside Apache’s proc directory, we can use `/proc/self` instead of searching for Apache’s PID. In a brief recap we could say that `/proc/self/environ` is – roughly- equal to `/proc/<apache_pid>/environ`.
+
+The contents of this directory are [symbolic links](https://www.nixtutor.com/freebsd/understanding-symbolic-links/) pointing to the actual file of the process’ open file handlers:
+
+![](Pasted%20image%2020240501160310.png)
+
+It goes without saying that during the attack we do not know which symbolic link points to which file. The file we will be interested in is the Apache [access log](https://httpd.apache.org/docs/2.4/logs.html#accesslog). We choose this file as it’s dynamic and can be changed based on our input.
+
+To identify the file, we will use Burp Intruder.
+
+> First, we set up the position of our payload.
+
+![](Pasted%20image%2020240501160409.png)
+
+> As File Descriptors are identified by a numeric id, we choose the proper payload. `Payloads > Payload type: Numbers`
+
+![](Pasted%20image%2020240501160501.png)
+
+> A successfull attack should look like:
+
+![](Pasted%20image%2020240501161147.png)
+
+Now we would perform a **Log Poisoning** attack.
