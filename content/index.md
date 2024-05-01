@@ -11,6 +11,7 @@ I'll also upload some writeups of machines that I consider brainfuck for me.
 Give me an ⭐️ in the Github repository if you like the content.
 
 <script src="https://tryhackme.com/badge/943872"></script>
+<script src="https://app.hackthebox.com/profile/1842544"></script>
 
 
 ![banner](banner.jpg)
