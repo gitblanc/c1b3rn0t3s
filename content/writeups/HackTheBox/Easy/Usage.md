@@ -79,7 +79,7 @@ _token=VKIqVeHHgY3azyNB5HmGBngdHk5IPZgiB5srIcBU&email=example@example.test
 ```
 
 and decided to use SQLMap to automate the process:
-- Visit [SQLMap 🪲](/notes/Tools/Sqlmap.md) note for more commands
+- Visit [SQLMap 🪲](/notes/tools/Sqlmap.md) note for more commands
 - As I know that AND worked, I used BUT technique
 
 ```shell
