@@ -206,3 +206,38 @@ As easy as that may be to read, if it was buried inside a gigantic page full of 
 Finding any of the above data gives you a potential pivot point. The Bellingcat article linked above goes into more detail on how exactly to do it but you don't have to overcomplicate things!
 
 You can always just take any of the above information and plug it back into your favorite search engine and you may just strike gold!
+
+## SOCMINT
+
+*Social Media Intelligence/Investigation*
+
+- Download [Spiderfoot](https://github.com/smicallef/spiderfoot)
+
+```shell
+# Option 1
+ git clone https://github.com/smicallef/spiderfoot.git
+ cd spiderfoot
+ pip3 install -r requirements.txt
+ python3 ./sf.py -l 127.0.0.1:5001
+ 
+# Option 2 -> Docker container
+git clone https://github.com/smicallef/spiderfoot.git
+cd spiderfoot
+docker images # for checking
+docker run -p 5009:5001 -d spiderfoot # mapping the port
+python3 ./sfcli.py -s http://0.0.0.0:5009 # Connect via cli
+# Put http://0.0.0.0:5009 in your browser to see it via GUI
+```
+
+![](Pasted%20image%2020240510172127.png)
+
+- Click on **New Scan**. In the **Scan Target** field, type in "*NAME_OF_PERSON*" or "*NICKNAME*"; then, under `By Use Case`, ensure that you checked the `All` option. Finally, press **run**.
+
+> It's important to add the `"`. If not it won't work
+
+- If you can't find anything related to Twitter, go to Settings --> Account Finder and set the highlighted option to `False`.
+
+![](Pasted%20image%2020240510173359.png)
+
+- You can access the old reddit platform ion Wayback Machine with `http://old.reddit.com`
+
