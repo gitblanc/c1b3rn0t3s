@@ -59,6 +59,8 @@ sudo dhclient eth0
 
 ```shell
 find / -user root -perm /4000 2>/dev/null
+#or
+find / -type f -user root -perm -u=s 2>/dev/null
 ```
 
 - How to find any file:
@@ -198,4 +200,16 @@ scp /tmp/gitea.db USER@MACHINE-IP:/gitea/gitea/gitea.db
 
 ```shell
 systemctl list-units --type=service --state=running
+```
+
+- Get to know which kind of file it is:
+
+```shell
+file /path/to/file
+```
+
+- Find `user.txt` flag:
+
+```shell
+find / -type f -name user.txt 2>/dev/null
 ```

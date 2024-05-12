@@ -79,7 +79,11 @@ export TERM=xterm
 # Press -> Ctrl + Z
 stty raw -echo; fg
 
-/bin/bash -i #if there is no python installed
+#if there is no python installed
+/bin/bash -i
+
+#if you are on a meterpreter
+SHELL=/bin/bash script -q /dev/null
 ```
 
 ---

