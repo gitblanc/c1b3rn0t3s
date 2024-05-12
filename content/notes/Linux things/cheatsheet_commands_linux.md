@@ -213,3 +213,13 @@ file /path/to/file
 ```shell
 find / -type f -name user.txt 2>/dev/null
 ```
+
+- Mount a remote directory to our machine:
+
+```shell
+mkdir /mnt/NAME
+mount HOST:/DIR /mnt/NAME
+ls -la /mnt/NAME # to check
+```
+
+![](Pasted%20image%2020240512165418.png)

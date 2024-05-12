@@ -1,10 +1,15 @@
 ---
 title: SMB 🐿
 ---
+- You must see the contents of [SAMBA shares 🗂️](/notes/samba.md)
+
+## SMB ports
+
+![](Pasted%20image%2020240512162818.png)
 ## List shares and disks
 
 - List SMB shares with `smbclient -L //IP_HOST`
-- Connect to a Disk by using `smbclient //IP_HOST//DISK`
+- Connect to a Disk by using `smbclient //IP_HOST/DISK`
 	-  This will connect you without credentials
 
 ## Connect with credentials
