@@ -1,7 +1,7 @@
 ---
 title: Bug Bounty Methodology 🍥
 ---
-- Credits to [gotr00t?](https://www.youtube.com/watch?v=TykKSvKYPz0)
+- Credits to [gotr00t?](https://www.youtube.com/watch?v=TykKSvKYPz0) && [gotr00t?](https://www.youtube.com/watch?v=WJt8Y5UVVRo)
 
 ## Hacking programs
 
@@ -10,6 +10,8 @@ title: Bug Bounty Methodology 🍥
 
 ### Tools
 
+- Wordlists
+	- [SecLists](https://github.com/danielmiessler/SecLists)
 - [Spyhunt](https://github.com/gotr00t0day/spyhunt.git)
 - [httpX](https://github.com/projectdiscovery/httpx)
 - [feroxbuster](https://github.com/epi052/feroxbuster)
@@ -40,14 +42,33 @@ python3 spyhunt.py -p subdomains.txt
 
 ```shell
 cat subdomains.txt | httpx -sc -td -ip
-# search for the 200 Status code
+# search for the 200,302 Status code
 ```
 
 ### Start fuzzing subdomains that you find interesting
 
+- Basics:
+
 ```shell
+dirsearch -u https://DOMAIN -w /usr/share/wordlists/SecLists/Discovery/Web-Content/big.txt -x 404,403,500,429,301,302
+
 feroxbuster -u https://DOMAIN -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-medium-directories.txt -C 404,403,429,400,401,405,302
+
+feroxbuster -u https://DOMAIN -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories.txt -C 404,403,429,400,401,405,302
+
+gobuster dir -u https://DOMAIN -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-medium-directories.txt -b 403,404 -n
 ```
+
+- For api endpoints:
+
+```shell
+dirsearch -u https://DOMAIN -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common-api-endpoints-mazen160.txt -x 404,403,500,429,301,302
+
+dirsearch -u https://DOMAIN -w /usr/share/wordlists/SecLists/Discovery/Web-Content/api/api-endpoints.txt -x 404,403,500,429,301,302
+```
+
+- More info in [dirsearch 📁](notes/tools/dirsearch.md)
+- More info in [Gobuster 🐦](/notes/tools/Gobuster.md)
 
 ### Using Nmap to find additional open ports on the system
 
@@ -85,3 +106,9 @@ For manual check: more info in [OSINT 👻](/notes/OSINT.md)
 
 ==Now you are able to check for basic vulnerabilities like information disclosure, any type of injections and more :D==
 
+## Gather information with BurpSuite or ZAP
+
+> Search for anything interesting capturing requests
+
+- More info on [BurpSuite 📙](/notes/tools/BurpSuite.md)
+- More info on [ZAP 🦈](/notes/tools/OWASP_ZAP.md)
