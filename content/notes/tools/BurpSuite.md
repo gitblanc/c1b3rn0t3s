@@ -22,3 +22,8 @@ title: BurpSuite 📙
 ![](Pasted%20image%2020240512150638.png)
 
 You will now only catch the traffic you have on your scope :D
+
+## PortSwigger web labs
+
+==MUST DO==: Pretty nice and accurate labs in [PortSwigger](https://portswigger.net/web-security/all-labs)
+
