@@ -1,5 +1,5 @@
 ---
-title: Sql Injection 🩸
+title: Sql Injection Theory 🩸
 ---
 - *All the theory here was extracted from [PortSwigger Academy](https://portswigger.net/web-security/learning-paths/sql-injection/sql-injection-what-is-sql-injection/sql-injection/what-is-sql-injection-sqli)* 
 
