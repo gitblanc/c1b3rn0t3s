@@ -160,3 +160,17 @@ To identify the file, we will use Burp Intruder.
 ![](Pasted%20image%2020240501161147.png)
 
 Now we would perform a **Log Poisoning** attack.
+
+## Path traversal
+
+- Nice tool to use (automatic tool): [PathTraversal](https://github.com/gotr00t0day/PathTraversal)
+
+Example:
+
+```shell
+https://invented-domain.com/image?filename=image.png
+# You can perform
+https://invented-domain.com/image?filename=....//....//....//etc/passwd
+```
+
+Otherwise, if you want to do it manual you can use BurpSuite and try some combinations.
