@@ -110,6 +110,8 @@ If a web shell filters your input, try to encode it into `base64`
 
 ## XML file inclusion (XXE)
 
+- Detailed info about XXE in [Portswiger.net](https://portswigger.net/web-security/xxe)
+
 - If a web accepts XML, it could be vulnerable to XXE.
 - You can try to upload a code like this to inspect the system:
 
