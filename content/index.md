@@ -12,5 +12,8 @@ Give me an ⭐️ in the Github repository if you like the content.
 
 <script src="https://tryhackme.com/badge/943872"></script>
 
+<script data-goatcounter="https://gitblanc.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
 
 ![banner](banner.jpg)
