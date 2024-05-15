@@ -235,10 +235,10 @@ Then, the first part of the first query need to be voided with something like `
 You can concatenate together multiple strings to make a single string.
 
 
-| Oracle     | `'foo'\|'bar'`                                                                    |
+| Oracle     | `'foo'\|\|'bar'`                                                                  |
 | ---------- | --------------------------------------------------------------------------------- |
 | Microsoft  | `'foo'+'bar'`                                                                     |
-| PostgreSQL | `'foo'\|'bar'`                                                                    |
+| PostgreSQL | `'foo'\|\|'bar'`                                                                  |
 | MySQL      | `'foo' 'bar'` [Note the space between the two strings]  <br>`CONCAT('foo','bar')` |
 
 ### Substring
