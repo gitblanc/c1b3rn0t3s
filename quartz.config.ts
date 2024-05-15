@@ -11,9 +11,7 @@ const config: QuartzConfig = {
     pageTitle: "💢c1b3r n0t3s",
     enableSPA: true,
     enablePopovers: true,
-    analytics: {
-      provider: "plausible",
-    },
+    analytics: { provider: 'goatcounter', websiteId: 'gitblanc' },
     locale: "en-US",
     baseUrl: "gitblanc.github.io/c1b3rn0t3s/",
     ignorePatterns: ["private", "templates", ".obsidian"],
