@@ -148,7 +148,10 @@ python3 -m zipfile -e CVE-2021-3156-main.zip .
 - Transfer a file from remote host to yours using **scp**:
 
 ```shell
+#by private key
 scp -i id_rsa USER@IP_HOST:/PATH/TO/THE/FILE /DESTINATION/PATH
+#by port
+scp -P PORT USER@IP_HOST:/PATH/TO/THE/FILE /DESTINATION/PATH
 ```
 
 - If the linux machine doesn't have `wget`, we can try:
