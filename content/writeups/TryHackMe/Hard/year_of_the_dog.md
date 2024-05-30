@@ -1,5 +1,10 @@
 ---
 title: Year of the dog 🐶
+tags:
+  - Linux
+  - Tunnelling
+  - Web
+  - CVE
 ---
 ![](Pasted%20image%2020240322221324.png)
 
