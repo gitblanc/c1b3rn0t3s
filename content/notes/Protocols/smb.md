@@ -19,3 +19,9 @@ title: SMB 🐿
 ```shell
 impacket-psexec 'bob:!P@$$W0rD!123Bill@10.10.166.94'
 ```
+
+- Also:
+
+```shell
+smbclient -U <USER> //IP_HOST/DISK
+```
