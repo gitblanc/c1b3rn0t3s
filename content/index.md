@@ -12,6 +12,8 @@ Give me an ⭐️ in the Github repository if you like the content.
 
 <script src="https://tryhackme.com/badge/943872"></script>
 
+<a href="https://www.buymeacoffee.com/gitblanc"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a sandwich&emoji=🥪&slug=gitblanc&button_colour=FF5F5F&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00" /></a>
+
 <script data-goatcounter="https://gitblanc.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
