@@ -1,8 +1,23 @@
 ---
 title: Linux file permissions 🐵
 ---
-
 ![](Pasted%20image%2020240301141710.png)
+
+## Interesting command
+
+- With this command you can see the Octal format of the permissions:
+
+```shell
+stat -c "%a %U:%G %n" .suid_bash 
+
+6755 root:root .suid_bash
+```
+
+- Then you can search for its meaning
+
+## Interesting website
+
+- [Chmod Calculator](https://chmod-calculator.com/)
 
 ## SUID, SGID and Sticky Bits
 
