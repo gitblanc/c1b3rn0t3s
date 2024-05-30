@@ -1,0 +1,64 @@
+# Dirsearch started Thu May 30 22:04:48 2024 as: /usr/lib/python3/dist-packages/dirsearch/dirsearch.py -u http://10.10.133.125/
+
+403   213B   http://10.10.133.125/.ht_wsr.txt
+403   216B   http://10.10.133.125/.htaccess.bak1
+403   216B   http://10.10.133.125/.htaccess.orig
+403   216B   http://10.10.133.125/.htaccess.save
+403   218B   http://10.10.133.125/.htaccess.sample
+403   216B   http://10.10.133.125/.htaccess_orig
+403   217B   http://10.10.133.125/.htaccess_extra
+403   214B   http://10.10.133.125/.htaccessBAK
+403   214B   http://10.10.133.125/.htaccess_sc
+403   214B   http://10.10.133.125/.htaccessOLD
+403   215B   http://10.10.133.125/.htaccessOLD2
+403   206B   http://10.10.133.125/.htm
+403   207B   http://10.10.133.125/.html
+403   212B   http://10.10.133.125/.htpasswds
+403   216B   http://10.10.133.125/.htpasswd_test
+403   213B   http://10.10.133.125/.httr-oauth
+403   211B   http://10.10.133.125/.user.ini
+301   243B   http://10.10.133.125/administrator    -> REDIRECTS TO: http://10.10.133.125/administrator/
+200    31B   http://10.10.133.125/administrator/cache/
+200     2KB  http://10.10.133.125/administrator/includes/
+301   248B   http://10.10.133.125/administrator/logs    -> REDIRECTS TO: http://10.10.133.125/administrator/logs/
+200    31B   http://10.10.133.125/administrator/logs/
+200     5KB  http://10.10.133.125/administrator/
+200     5KB  http://10.10.133.125/administrator/index.php
+301   233B   http://10.10.133.125/bin    -> REDIRECTS TO: http://10.10.133.125/bin/
+200    31B   http://10.10.133.125/bin/
+301   235B   http://10.10.133.125/cache    -> REDIRECTS TO: http://10.10.133.125/cache/
+200    31B   http://10.10.133.125/cache/
+403   210B   http://10.10.133.125/cgi-bin/
+200    31B   http://10.10.133.125/cli/
+200    31B   http://10.10.133.125/components/
+301   240B   http://10.10.133.125/components    -> REDIRECTS TO: http://10.10.133.125/components/
+200     0B   http://10.10.133.125/configuration.php
+200     3KB  http://10.10.133.125/htaccess.txt
+301   236B   http://10.10.133.125/images    -> REDIRECTS TO: http://10.10.133.125/images/
+200    31B   http://10.10.133.125/images/
+301   238B   http://10.10.133.125/includes    -> REDIRECTS TO: http://10.10.133.125/includes/
+200    31B   http://10.10.133.125/includes/
+200     9KB  http://10.10.133.125/index.php
+404     3KB  http://10.10.133.125/index.php/login/
+301   238B   http://10.10.133.125/language    -> REDIRECTS TO: http://10.10.133.125/language/
+200    31B   http://10.10.133.125/layouts/
+301   239B   http://10.10.133.125/libraries    -> REDIRECTS TO: http://10.10.133.125/libraries/
+200    31B   http://10.10.133.125/libraries/
+200    18KB  http://10.10.133.125/LICENSE.txt
+301   235B   http://10.10.133.125/media    -> REDIRECTS TO: http://10.10.133.125/media/
+200    31B   http://10.10.133.125/media/
+301   237B   http://10.10.133.125/modules    -> REDIRECTS TO: http://10.10.133.125/modules/
+200    31B   http://10.10.133.125/modules/
+301   237B   http://10.10.133.125/plugins    -> REDIRECTS TO: http://10.10.133.125/plugins/
+200    31B   http://10.10.133.125/plugins/
+200     4KB  http://10.10.133.125/README.txt
+200   836B   http://10.10.133.125/robots.txt
+200    31B   http://10.10.133.125/templates/
+200     0B   http://10.10.133.125/templates/beez3/
+200     0B   http://10.10.133.125/templates/system/
+301   239B   http://10.10.133.125/templates    -> REDIRECTS TO: http://10.10.133.125/templates/
+200    31B   http://10.10.133.125/templates/index.html
+200     0B   http://10.10.133.125/templates/protostar/
+200    31B   http://10.10.133.125/tmp/
+301   233B   http://10.10.133.125/tmp    -> REDIRECTS TO: http://10.10.133.125/tmp/
+200     2KB  http://10.10.133.125/web.config.txt

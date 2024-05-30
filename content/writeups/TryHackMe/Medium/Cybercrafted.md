@@ -71,7 +71,7 @@ So I searched for the `admin` subdomain (remember to add it to the `/etc/hosts`)
 ![](Pasted%20image%2020240527122518.png)
 
 I tried some common combinations but none worked, so it's time for more enumeration!:
-- More info in [dirsearch 📁](/notes/Tools/dirsearch.md)
+- More info in [dirsearch 📁](/notes/tools/dirsearch.md)
 
 ```shell
 dirsearch -u http://admin.cybercrafted.thm

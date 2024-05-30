@@ -1,5 +1,5 @@
 ---
-title: Joomla
+title: Joomla 🦁
 ---
 ## Check Version
 
