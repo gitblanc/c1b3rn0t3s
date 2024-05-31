@@ -5,6 +5,7 @@ tags:
   - Python-Scripting
   - LFI
   - Decrypting
+  - Crypto
 ---
 ![](Pasted%20image%2020240531202235.png)
 
@@ -141,7 +142,7 @@ unserialize(file_get_contents($file_name));<br />
 </html><br />
 ```
 
-I analyzed it in search of dome code vulnerability and I found that in `unserialize(file_get_contents($file_name));` the function `unserialize` let us to load any file on the Internet.
+I analyzed it in search of some code vulnerability and I found that in `unserialize(file_get_contents($file_name));` the function `unserialize` let us to load any file on the Internet.
 - I found [this documentation](https://notsosecure.com/remote-code-execution-php-unserialize) which explains more about this vulnerability
 
 So, to gain RCE, I created the file `shell.php`:
