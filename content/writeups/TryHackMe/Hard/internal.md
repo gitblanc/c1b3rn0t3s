@@ -18,7 +18,7 @@ tags:
 >- User.txt
 >- Root.txt  
 >
-Additionally, the client has provided the following scope allowances:
+>Additionally, the client has provided the following scope allowances:
 >
 >- Ensure that you modify your hosts file to reflect `internal.thm`
 >- Any tools or techniques are permitted in this engagement
