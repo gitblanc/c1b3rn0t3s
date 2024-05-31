@@ -213,7 +213,7 @@ Once I got in, i decided to perform a RCE detailed in my note [Jenkins 👨‍�
 
 > We've got RCE!
 
-So now, let's try to find the `root` password. I look inside the `/opt` as before:
+So now, let's try to find the `root` password. I looked inside the `/opt` as before:
 
 ```shell
 cd /opt

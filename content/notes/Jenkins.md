@@ -54,7 +54,7 @@ run
 Start-Process SHELL.exe
 ```
 
-## For Linux
+### For Linux
 
 Go to `Jenkins` >> `Manage Jenkins` and click on `Script Console`
 
