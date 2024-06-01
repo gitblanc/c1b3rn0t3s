@@ -7,6 +7,7 @@ Here are some of the most CTF common formats to encode flags with examples:
 - **Binary**: `01101100 01100101 01110100 01110011 00100000 01110100 01110010 01111001 00100000 01110011 01101111 01101101 01100101 00100000 01100010 01101001 01101110 01100001 01110010 01111001 00100000 01101111 01110101 01110100 00100001` -> `lets try some binary out!`
 - **Base32**: `MJQXGZJTGIQGS4ZAON2XAZLSEBRW63LNN5XCA2LOEBBVIRRHOM======` -> `base32 is super common in CTF's`
 - **Base64**: `RWFjaCBCYXNlNjQgZGlnaXQgcmVwcmVzZW50cyBleGFjdGx5IDYgYml0cyBvZiBkYXRhLg==` -> `Each Base64 digit represents exactly 6 bits of data.`
+- **Base91**: [dcode](https://www.dcode.fr/base-91-encoding)
 - **Hexadecimal**: `68 65 78 61 64 65 63 69 6d 61 6c 20 6f 72 20 62 61 73 65 31 36 3f` -> `hexadecimal or base16?`
 - **ROT13**: `Ebgngr zr 13 cynprf!` -> `Rotate me 13 places!`
 - **ROT47**: `*@F DA:? >6 C:89E C@F?5 323J C:89E C@F?5 Wcf E:>6DX` -> `you spin me right round baby right round (47 times)`
