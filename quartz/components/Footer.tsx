@@ -14,6 +14,15 @@ export default ((opts?: Options) => {
     return (
       <footer class={`${displayClass ?? ""}`}>
         <hr />
+        <h2 id="how-is-this-page">Comments</h2>
+        <script src="https://utteranc.es/client.js"
+        repo="c1b3rn0t3s"
+        issue-term="pathname"
+        label="Comments"
+        theme="github-dark"
+        crossorigin="anonymous"
+        async>
+</script>
         <p>
           {i18n(cfg.locale).components.footer.createdWith}{" "}
           <a href="https://quartz.jzhao.xyz/">Quartz v{version}</a> © {year}
