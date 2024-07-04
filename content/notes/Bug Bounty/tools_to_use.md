@@ -3,6 +3,8 @@ title: Tools I use for Pentesting 🌀
 ---
 ![](gitblanc.png)
 
+> *Credits to [arch3rPro](https://github.com/arch3rPro/PentestTools)*
+
 ## Information Gathering
 ### Domain name
 
@@ -34,6 +36,20 @@ title: Tools I use for Pentesting 🌀
 - [Pagodo](https://github.com/opsdisk/pagodo) - pagodo (Passive Google Dork) - Automate Google Hacking Database scraping and searching.
 - [Google-Dorks](https://github.com/Proviesec/google-dorks) - Useful Google Dorks for WebSecurity and Bug Bounty.
 
+### Github
+
+- [GitHacker](https://github.com/WangYihang/GitHacker) - A Git source leak exploit tool that restores the entire Git repository, including data from stash, for white-box auditing and analysis of developers' mind. 
+- [GitGraber](https://github.com/hisxo/gitGraber) - gitGraber is a tool developed in Python3 to monitor GitHub to search and find sensitive data in real time for different online services.
+- [GitMiner](https://github.com/UnkL4b/GitMiner) - Tool for advanced mining for content on Github.
+- [Gitrob](https://github.com/michenriksen/gitrob) - Reconnaissance tool for GitHub organizations.
+- [GitGot](https://github.com/BishopFox/GitGot) Semi-automated, feedback-driven tool to rapidly search through troves of public data on GitHub for sensitive secrets.
+- [GitDump](https://github.com/Ebryx/GitDump) - A pentesting tool that dumps the source code from .git even when the directory traversal is disabled
+
+### SVN
+
+- [svnExploit](https://github.com/admintony/svnExploit) - Support for SVN source code disclosure of full version and Dump it.
+- [SvnHack](https://github.com/callmefeifei/SvnHack) - SvnHack is a SVN folder disclosure exploit.
+
 ### Port Scan
 
 - [Nmap | Zenmap](https://nmap.org/) - Free and open source utility for network discovery and security auditing
@@ -50,6 +66,32 @@ title: Tools I use for Pentesting 🌀
 - [Yujianportscan](https://github.com/foryujian/yujianportscan) A Fast Port Scanner GUI Tools Build by VB.NET + IOCP
 - [Naabu](https://github.com/projectdiscovery/naabu) - A fast port scanner written in go with a focus on reliability and simplicity.
 - [Shodan.io](https://www.shodan.io/) - Shodan is the world's first search engine for Internet-connected devices.
+
+### OSINT
+
+- [theHarvester](https://github.com/laramies/theHarvester)- E-mails, subdomains and names Harvester - OSINT
+- [SpiderFoot](https://github.com/smicallef/spiderfoot) - SpiderFoot automates OSINT for threat intelligence and mapping your attack surface.
+- [Recon-ng](https://github.com/lanmaster53/recon-ng) - Open Source Intelligence gathering tool aimed at reducing the time spent harvesting information from open sources. 
+- [FOCA](https://github.com/ElevenPaths/FOCA) - Tool to find metadata and hidden information in the documents.
+- [Amass](https://github.com/OWASP/Amass) - In-depth Attack Surface Mapping and Asset Discovery
+- [Censys-subdomain-finder](https://github.com/christophetd/censys-subdomain-finder) - Perform subdomain enumeration using the certificate transparency logs from Censys.
+- [EmailHarvester](https://github.com/maldevel/EmailHarvester) - Email addresses harvester
+- [Finalrecon](https://github.com/thewhiteh4t/FinalRecon) - The Last Web Recon Tool You'll Need.
+- [LittleBrother](https://github.com/lulz3xploit/LittleBrother) - Information gathering (OSINT) on a person (EU)
+- [Octosuite](https://github.com/rly0nheart/octosuite) - Advanced Github OSINT Framework
+- [Kunyu](https://github.com/knownsec/Kunyu) - Kunyu, more efficient corporate asset collection
+- [Glass](https://github.com/s7ckTeam/Glass) - OSINT Framework with Fofa/ZoomEye/Shodan/360 API
+- [BBOT](https://github.com/blacklanternsecurity/bbot) - OSINT automation for hackers.
+- [octosuite](https://github.com/bellingcat/octosuite) - Advanced Github OSINT Framework
+- [GHunt](https://github.com/mxrch/GHunt) - Offensive Google framework.
+
+### Phishing
+
+- [gophish](https://github.com/gophish/gophish) - Open-Source Phishing Toolkit
+- [AdvPhishing](https://github.com/Ignitetch/AdvPhishing) - This is Advance Phishing Tool ! OTP PHISHING
+- [SocialFish](https://github.com/UndeadSec/SocialFish) - Educational Phishing Tool & Information Collector
+- [Zphisher](https://github.com/htr-tech/zphisher) - An automated phishing tool with 30+ templates. This Tool is made for educational purpose only ! Author will not be responsible for any misuse of this toolkit !
+- [Nexphisher](https://github.com/htr-tech/nexphisher) - Advanced Phishing tool for Linux & Termux
 
 ## Vulnerability Analysis
 
@@ -132,6 +174,21 @@ title: Tools I use for Pentesting 🌀
 - [Dirmap](https://github.com/H4ckForJob/dirmap) - An advanced web directory & file scanning tool that will be more powerful than DirBuster, Dirsearch, cansina, and Yu Jian.
 - [YJdirscan](https://github.com/foryujian/yjdirscan) - Yujian dirscan Gui Pro
 
+### Docker scanners
+
+- [Fuxi-Scanner](https://github.com/jeffzh3ng/Fuxi-Scanner) - open source network security vulnerability scanner, it comes with multiple functions. 
+- [Xunfeng](https://github.com/ysrc/xunfeng) - The patrol is a rapid emergency response and cruise scanning system for enterprise intranets. 
+- [WebMap](https://github.com/SabyasachiRana/WebMap) - Nmap Web Dashboard and Reporting.
+- [Pentest-Collaboration-Framework](https://gitlab.com/invuls/pentest-projects/pcf) - Opensource, cross-platform and portable toolkit for automating routine processes when carrying out various works for testing!
+
+## Database Assesment
+
+- [Enumdb](https://github.com/m8sec/enumdb) - Relational database brute force and post exploitation tool for MySQL and MSSQL
+- [MDUT](https://github.com/SafeGroceryStore/MDUT) - Multiple Database Utilization Tools
+- [Sylas](https://github.com/Ryze-T/Sylas) - Multiple Database Exploitation Tools
+- [ODAT](https://github.com/quentinhardy/odat) - Oracle Database Attacking Tool
+- [MSDAT](https://github.com/quentinhardy/msdat) - Microsoft SQL Database Attacking Tool
+
 ## Password attacks
 
 - [Hydra](https://github.com/vanhauser-thc/thc-hydra) - Hydra is a parallelized login cracker which supports numerous protocols to attack
@@ -146,10 +203,26 @@ title: Tools I use for Pentesting 🌀
 ### Wordlists
 
 - [wordlists](https://github.com/trickest/wordlists/) - Real-world infosec wordlists, updated regularly
+- [SecLists](https://github.com/danielmiessler/SecLists) - It's a collection of multiple types of lists used during security assessments, collected in one place. List types include usernames, passwords, URLs, sensitive data patterns, fuzzing payloads, web shells, and many more.
 - [psudohash](https://github.com/t3l3machus/psudohash) - Password list generator that focuses on keywords mutated by commonly used password creation patterns
 - [wister](https://github.com/cycurity/wister) - A wordlist generator tool, that allows you to supply a set of words, giving you the possibility to craft multiple variations from the given words, creating a unique and ideal wordlist to use regarding a specific target.
 - [Rockyou](https://gitlab.com/kalilinux/packages/wordlists) - wordlists packaging for Kali Linux.
 - [Weakpass](https://weakpass.com/) - For any kind of bruteforce find wordlists.
+
+## Wireless Attacks
+
+### Wireless Tools
+
+- [Fern Wifi cracker](https://github.com/savio-code/fern-wifi-cracker) - Fern-Wifi-Cracker is designed to be used in testing and discovering flaws in ones own network with the aim of fixing the flaws detected
+- [EAPHammer](https://github.com/s0lst1c3/eaphammer) - EAPHammer is a toolkit for performing targeted evil twin attacks against WPA2-Enterprise networks.
+- [Wifite2](https://github.com/derv82/wifite2) - Wifite is designed to use all known methods for retrieving the password of a wireless access point.
+- [JackIt](https://github.com/insecurityofthings/jackit) - Implementation of Bastille's MouseJack exploit. Easy entry point through wireless keyboards and mices during redteam engagement.
+
+## Reverse engineering
+
+- [Ollydbg](http://www.ollydbg.de/) - OllyDbg is a 32-bit assembler level analysing debugger for Microsoft Windows
+- [IDA](https://hex-rays.com/ida-free/) - The free binary code analysis tool to kickstart your reverse engineering experience.
+- [Ghidra](https://ghidra-sre.org/) - A software reverse engineering (SRE) suite of tools developed by NSA's Research Directorate in support of the Cybersecurity mission
 
 ## Exploitation Tools
 
@@ -228,6 +301,13 @@ title: Tools I use for Pentesting 🌀
 - [MSFvenom-gui](https://github.com/ssooking/msfvenom-gui) - gui tool to create normal payload by msfvenom
 - [MYExploit](https://github.com/achuna33/MYExploit) - A GUI Tools for Scanning OA vulnerabilities
 
+## Sniffing & Spoofing
+
+- [WireShark](https://github.com/wireshark/wireshark) - Wireshark is a network traffic analyzer, or "sniffer", for Unix and Unix-like operating systems.
+- [Cain & abel](http://www.oxid.it/cain.html) - Cain & Abel is a password recovery tool for Microsoft Operating Systems.
+- [Responder](https://github.com/lgandx/Responder) - Responder is an LLMNR, NBT-NS and MDNS poisoner.
+- [bettercap](https://github.com/bettercap/bettercap) - ARP, DNS, NDP and DHCPv6 spoofers for MITM attacks on IPv4 and IPv6 based networks
+- [EvilFOCA](https://github.com/ElevenPaths/EvilFOCA) - Evil Foca is a tool for security pentesters and auditors whose purpose it is to test security in IPv4 and IPv6 data networks.
 ## Maintaining Access
 
 ### Shell
@@ -283,9 +363,51 @@ title: Tools I use for Pentesting 🌀
 - [Havoc](https://github.com/HavocFramework/Havoc) - Havoc is a modern and malleable post-exploitation command and control framework.
 - [Villain](https://github.com/t3l3machus/Villain) - Villain is a Windows & Linux backdoor generator and multi-session handler that allows users to connect with sibling servers (other machines running Villain) and share their backdoor sessions, handy for working as a team.
 
+## Bypass AV
+
+- [Shellcodeloader](https://github.com/knownsec/shellcodeloader) - ShellcodeLoader of windows can bypass AV.
+- [AV_Evasion_Tool](https://github.com/1y0n/AV_Evasion_Tool) - AntiVirus Shellcode generation tool.
+- [BypassAntiVirus](https://github.com/TideSec/BypassAntiVirus) - Remote control anti-kill series articles and supporting tools.
+- [MateuszEx](https://github.com/sairson/MateuszEx) - Bypass AV generation tool
+- [FourEye](https://github.com/lengjibo/FourEye) - AV Evasion Tool For Red Team Ops
+- [Phantom-Evasion](https://github.com/oddcod3/Phantom-Evasion) - Python antivirus evasion tool
+- [Terminator](https://github.com/ZeroMemoryEx/Terminator) - Terminating all EDR/XDR/AVs processes by abusing the zam64.sys driver
+- [foolavc](https://github.com/hvqzao/foolavc) - Obscures your executable for file checks and executes it in memory.
+
+## Code Audit
+
+- [Cloc](https://github.com/AlDanial/cloc) - cloc counts blank lines, comment lines, and physical lines of source code in many programming languages
+- [Cobra](https://github.com/WhaleShark-Team/cobra) - Source Code Security Audit
+- [Cobra-W](https://github.com/LoRexxar/Cobra-W) - Cobra for white hat
+- [Graudit](https://github.com/wireghoul/graudit) - Grep rough audit - source code auditing tool
+- [Rips](https://github.com/ripsscanner/rips) - A static source code analyser for vulnerabilities in PHP scripts
+- [Kunlun-M](https://github.com/LoRexxar/Kunlun-M) - KunLun-M is a static code analysis system that automates the detecting vulnerabilities and security issue.
+- [Semgrep](https://semgrep.dev/) - Semgrep is a fast, open-source, static analysis engine for finding bugs, detecting vulnerabilities in third-party dependencies, and enforcing code standards.
+
 ## Intranet penetration
 
 ### Service detection
 
 - [Netspy](https://github.com/shmilylty/netspy) - A tool to quickly detect the reachable network segments of the intranet.
 - [Cube](https://github.com/JKme/cube) - Intranet penetration testing tools, weak password blasting, information collection and vulnerability scanning.
+
+### Port forwarding & Proxies
+
+- [EarthWorm](https://github.com/rootkiter/EarthWorm) - Tool for tunnel
+- [Termite](https://github.com/rootkiter/Termite/) - Tool for tunnel (Version 2)
+- [Frp](https://github.com/fatedier/frp) - A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet
+- [Nps](https://github.com/ehang-io/nps/) - A lightweight, high-performance, powerful intranet penetration proxy server, with a powerful web management terminal.
+- [Goproxy](https://github.com/snail007/goproxy) - A high-performance, full-featured, cross platform proxy server
+- [ReGeorg](https://github.com/sensepost/reGeorg) - The successor to reDuh, pwn a bastion webserver and create SOCKS proxies through the DMZ. Pivot and pwn
+- [Neo-reGeorg](https://github.com/L-codes/Neo-reGeorg) - Neo-reGeorg is a project that seeks to aggressively refactor reGeorg
+- [Venom](https://github.com/Dliv3/Venom) - A Multi-hop Proxy for Penetration Testers
+- [Stowaway](https://github.com/ph4ntonn/Stowaway) - Stowaway -- Multi-hop Proxy Tool for pentesters
+- [rport](https://github.com/cloudradar-monitoring/rport) - Manage remote systems with ease.
+- [PortForward](https://github.com/knownsec/PortForward) - The port forwarding tool developed by Golang solves the problem that the internal and external networks cannot communicate in certain scenarios.
+- [Suo5](https://github.com/zema1/suo5) - A high-performance http proxy tunneling tool
+
+## Rootkit
+
+- [Beurk](https://github.com/unix-thrust/beurk) - BEURK Experimental Unix RootKit
+- [Bedevil](https://github.com/naworkcaj/bdvl) - LD_PRELOAD Linux rootkit (x86 & ARM)
+
