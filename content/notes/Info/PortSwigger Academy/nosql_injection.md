@@ -1,5 +1,5 @@
 ---
-title: NoSQL Injection 🍄
+title: NoSQL Injection Theory 🍄
 ---
 - *All the theory here was extracted from [PortSwigger Academy](https://portswigger.net/web-security/learning-paths/nosql-injection/nosql-syntax-injection/nosql-injection/i)* 
 
