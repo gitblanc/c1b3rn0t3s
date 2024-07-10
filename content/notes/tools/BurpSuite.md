@@ -27,3 +27,8 @@ You will now only catch the traffic you have on your scope :D
 
 ==MUST DO==: Pretty nice and accurate labs in [PortSwigger](https://portswigger.net/web-security/all-labs)
 
+## Useful extensions
+
+- [Content Type Converter](https://github.com/portswigger/content-type-converter) - Automatically convert the request method
+- [Hackvector](https://github.com/portswigger/hackvertor)- Hackvertor is a tag based conversion tool written in Java implemented as a Burp Suite extension. Tags are constructed as follows: <@base64><@/base64> the @ symbol is used as an identifier that it's a Hackvertor tag followed by the name of the tag in this case base64.
+
