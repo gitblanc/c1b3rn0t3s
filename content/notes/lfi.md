@@ -1,6 +1,8 @@
 ---
 title: LFI 🎃
 ---
+> You should check [Path traversal Theory 🌵](/notes/Info/PortSwigger%20Academy/path_traversal.md)
+
 ## Nice articcles to read
 
 - [invicti.com](https://www.invicti.com/blog/web-security/local-file-inclusion-vulnerability/)
