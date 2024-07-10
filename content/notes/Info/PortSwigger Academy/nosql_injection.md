@@ -127,6 +127,9 @@ this.category == 'fizzy'\u0000' && this.released == 1
 If MongoDB ignores all characters after the null character, this removes the requirement for the released field to be set to 1. As a result, all products in the `fizzy` category are displayed, including unreleased products.
 
 >[!Example]
+>The lab solution
+
+
 1. In Burp's browser, access the lab and click on a product category filter.
     
 2. In Burp, go to **Proxy > HTTP history**. Right-click the category filter request and select **Send to Repeater**.
