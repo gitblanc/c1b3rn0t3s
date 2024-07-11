@@ -1,5 +1,8 @@
 ---
 title: Online Password Attacks 🏯
+tags:
+  - TryHackMe
+  - Theory
 ---
 Online password attacks involve guessing passwords for networked services that use a username and password authentication scheme, including services such as HTTP, SSH, VNC, FTP, SNMP, POP3, etc. This section showcases using hydra which is a common tool used in attacking logins for various network services.  
 

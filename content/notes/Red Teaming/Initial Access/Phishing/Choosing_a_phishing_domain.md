@@ -1,5 +1,8 @@
 ---
 title: Choosing a phishing domain 🦥
+tags:
+  - TryHackMe
+  - Theory
 ---
 Choosing the right Phishing domain to launch your attack from is essential to ensure you have the psychological edge over your target. A red team engagement can use some of the below methods for choosing the perfect domain name.
 

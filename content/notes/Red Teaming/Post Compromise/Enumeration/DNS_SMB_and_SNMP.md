@@ -1,5 +1,8 @@
 ---
 title: DNS, SMB and SNMP 🍇
+tags:
+  - TryHackMe
+  - Theory
 ---
 As we cover enumeration, it is a good idea to touch on DNS, SMB, and SNMP.
 

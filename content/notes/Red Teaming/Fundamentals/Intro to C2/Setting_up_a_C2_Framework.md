@@ -1,5 +1,8 @@
 ---
 title: Setting up a C2 Framework 🕌
+tags:
+  - TryHackMe
+  - Theory
 ---
 ### Let's Setup a C2 Server
 

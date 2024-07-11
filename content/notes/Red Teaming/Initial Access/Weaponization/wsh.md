@@ -1,3 +1,9 @@
+---
+title: Windows Scripting Host (WSH) 🪤
+tags:
+  - TryHackMe
+  - Theory
+---
 Windows Scripting Host (WSH)
 
 Windows scripting host is a built-in Windows administration tool that runs batch files to automate and manage tasks within the operating system.

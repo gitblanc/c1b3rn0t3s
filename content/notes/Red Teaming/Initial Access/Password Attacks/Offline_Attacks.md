@@ -1,5 +1,8 @@
 ---
 title: Offline Attacks 🏎
+tags:
+  - TryHackMe
+  - Theory
 ---
 # Dictionary and Brute-Force Based
 

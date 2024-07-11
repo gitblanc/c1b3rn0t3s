@@ -6,6 +6,7 @@ tags:
   - LFI
   - Decrypting
   - Crypto
+  - TryHackMe
 ---
 ![](Pasted%20image%2020240531202235.png)
 

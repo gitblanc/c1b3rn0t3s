@@ -1,5 +1,8 @@
 ---
 title: Countermeasures 🧾
+tags:
+  - TryHackMe
+  - Theory
 ---
 The final step is applying countermeasures. The US Department of Defense (DoD) [Operations Security (OPSEC) Program Manual](https://www.esd.whs.mil/Portals/54/Documents/DD/issuances/dodm/520502m.pdf) states, _“Countermeasures are designed to prevent an adversary from detecting critical information, provide an alternative interpretation of critical information or indicators (deception), or deny the adversary’s collection system.”_
 

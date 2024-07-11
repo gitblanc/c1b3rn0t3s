@@ -1,5 +1,8 @@
 ---
 title: Purpose 🌶
+tags:
+  - TryHackMe
+  - Theory
 ---
 ![](Pasted%20image%2020240131210831.png)
 

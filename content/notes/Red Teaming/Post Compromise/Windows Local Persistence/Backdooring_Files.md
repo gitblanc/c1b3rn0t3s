@@ -1,5 +1,8 @@
 ---
 title: 2. Backdooring Files 🏐
+tags:
+  - TryHackMe
+  - Theory
 ---
 Another method of establishing persistence consists of tampering with some files we know the user interacts with regularly. By performing some modifications to such files, we can plant backdoors that will get executed whenever the user accesses them. Since we don't want to create any alerts that could blow our cover, the files we alter must keep working for the user as expected.
 

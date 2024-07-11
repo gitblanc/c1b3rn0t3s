@@ -1,3 +1,9 @@
+---
+title: Command and Control (C2 or C&C) 🧬
+tags:
+  - TryHackMe
+  - Theory
+---
 This note introduces the basic concept of Command and Control (C2) frameworks used in Red team operations.
 
 ![](Pasted%20image%2020240127180734.png)

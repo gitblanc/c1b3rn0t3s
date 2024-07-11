@@ -1,3 +1,9 @@
+---
+title: An HTML Application (HTA) 💉
+tags:
+  - TryHackMe
+  - Theory
+---
 ## An HTML Application (HTA)
 
 HTA stands for “HTML Application.” It allows you to create a downloadable file that takes all the information regarding how it is displayed and rendered. HTML Applications, also known as HTAs, which are dynamic HTML pages containing JScript and VBScript. The LOLBINS (Living-of-the-land Binaries) tool mshta is used to execute HTA files. It can be executed by itself or automatically from Internet Explorer. 

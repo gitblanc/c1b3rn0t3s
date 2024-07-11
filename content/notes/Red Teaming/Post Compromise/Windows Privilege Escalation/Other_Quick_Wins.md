@@ -1,5 +1,8 @@
 ---
 title: 3. Other Quick Wins 🚑
+tags:
+  - TryHackMe
+  - Theory
 ---
 Privilege escalation is not always a challenge. Some misconfigurations can allow you to obtain higher privileged user access and, in some cases, even administrator access. It would help if you considered these to belong more to the realm of CTF events rather than scenarios you will encounter during real penetration testing engagements. However, if none of the previously mentioned methods works, you can always go back to these.
 

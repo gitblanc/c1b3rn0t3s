@@ -1,5 +1,8 @@
 ---
 title: Other Red Team Applications of CTI 🔎
+tags:
+  - TryHackMe
+  - Theory
 ---
 CTI can also be used during engagement execution, emulating the adversary's behavioral characteristics, such as  
 

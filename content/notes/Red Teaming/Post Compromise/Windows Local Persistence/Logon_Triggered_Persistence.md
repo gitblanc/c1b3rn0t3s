@@ -1,5 +1,8 @@
 ---
 title: 5. Logon Triggered Persistence 🚇
+tags:
+  - TryHackMe
+  - Theory
 ---
 Some actions performed by a user might also be bound to executing specific payloads for persistence. Windows operating systems present several ways to link payloads with particular interactions. This task will look at ways to plant payloads that will get executed when a user logs into the system.
 

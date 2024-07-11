@@ -1,5 +1,8 @@
 ---
 title: Red team Engagements 🫀
+tags:
+  - TryHackMe
+  - Theory
 ---
 To keep up with the emerging threats, red team engagements were designed to shift the focus from regular penetration tests into a process that allows us to clearly see our defensive team's capabilities at **detecting** and **responding** to a real threat actor. They don't replace traditional penetration tests, but complement them by focusing on detection and response rather than prevention.  
 

@@ -1,3 +1,9 @@
+---
+title: Introduction to Weaponization 🧿
+tags:
+  - TryHackMe
+  - Theory
+---
 In this room, we will be discussing different techniques used for weaponization. 
 
 ![](Pasted%20image%2020240127112904.png)

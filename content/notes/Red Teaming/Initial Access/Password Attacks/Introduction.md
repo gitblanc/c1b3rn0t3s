@@ -1,5 +1,8 @@
 ---
 title: Introduction 🗽
+tags:
+  - TryHackMe
+  - Theory
 ---
 This note is an introduction to the types and techniques used in password attacks. We will discuss the ways to get and generate custom password lists. The following are some of the topics we will discuss:
 

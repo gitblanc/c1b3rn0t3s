@@ -4,6 +4,7 @@ tags:
   - Linux
   - CVE
   - Wildcard
+  - HackTheBox
 ---
 ![](Pasted%20image%2020240501234511.png)
 

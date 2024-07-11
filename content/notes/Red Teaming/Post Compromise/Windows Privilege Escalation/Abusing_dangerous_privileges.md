@@ -1,5 +1,8 @@
 ---
 title: 5. Abusing dangerous privileges 🎪
+tags:
+  - TryHackMe
+  - Theory
 ---
 ## Windows Privileges
 

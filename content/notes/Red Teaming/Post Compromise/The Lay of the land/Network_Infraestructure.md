@@ -1,5 +1,8 @@
 ---
 title: Network Infraestructure 🧠
+tags:
+  - TryHackMe
+  - Theory
 ---
 Once arriving onto an unknown network, our first goal is to identify where we are and what we can get to. During the red team engagement, we need to understand what target system we are dealing with, what service the machine provides, what kind of network we are in. Thus, the enumeration of the compromised machine after getting initial access is the key to answering these questions. This task will discuss the common types of networks we may face during the engagement.
 

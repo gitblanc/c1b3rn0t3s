@@ -1,5 +1,8 @@
 ---
 title: Operations Plan 💡
+tags:
+  - TryHackMe
+  - Theory
 ---
 The operations plan is a flexible document(s) that provides specific details of the engagement and actions occurring. The plan expands upon the current CONOPS and should include a majority of specific engagement information; the ROE can also be placed here depending on the depth and structure of the ROE.
 

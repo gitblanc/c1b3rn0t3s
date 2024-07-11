@@ -1,5 +1,8 @@
 ---
 title: Users and Groups Management 👥
+tags:
+  - TryHackMe
+  - Theory
 ---
 In this note, we will learn more about users and groups, especially within the Active Directory. Gathering information about the compromised machine is essential that could be used in the next stage. Account discovery is the first step once we have gained initial access to the compromised machine to understand what we have and what other accounts are in the system.
 

@@ -1,5 +1,8 @@
 ---
 title: Rules of Engagement 📘
+tags:
+  - TryHackMe
+  - Theory
 ---
 Rules of Engagement (RoE) are a legally binding outline of the client objectives and scope with further details of engagement expectations between both parties. This is the first "official" document in the engagement planning process and requires proper authorization between the client and the red team. This document often acts as the general contract between the two parties; an external contract or other NDAs (**N**on-**D**isclosure **A**greement) can also be used.
 

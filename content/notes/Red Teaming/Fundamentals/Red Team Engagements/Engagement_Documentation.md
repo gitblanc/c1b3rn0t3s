@@ -1,5 +1,8 @@
 ---
 title: Engagement Documentation 📒
+tags:
+  - TryHackMe
+  - Theory
 ---
 Engagement documentation is an extension of campaign planning where ideas and thoughts of campaign planning are officially documented. In this context, the term "document" can be deceiving as some plans do not require proper documentation and can be as simple as an email; this will be covered later in this task.
 

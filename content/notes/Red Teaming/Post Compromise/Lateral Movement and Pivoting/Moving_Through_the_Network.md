@@ -1,5 +1,8 @@
 ---
 title: 2. Moving Through the Network 🚢
+tags:
+  - TryHackMe
+  - Theory
 ---
 ## What is Lateral Movement?
 

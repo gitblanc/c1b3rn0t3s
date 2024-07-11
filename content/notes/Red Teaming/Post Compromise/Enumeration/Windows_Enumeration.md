@@ -1,5 +1,8 @@
 ---
 title: Windows Enumeration 🧊
+tags:
+  - TryHackMe
+  - Theory
 ---
 ![](Pasted%20image%2020240131214129.png)
 

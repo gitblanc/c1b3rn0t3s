@@ -1,5 +1,8 @@
 ---
 title: Introduction 🫐
+tags:
+  - TryHackMe
+  - Theory
 ---
 This room focuses on post-exploitation enumeration. In other words, we assume that we have successfully gained some form of access to a system. Moreover, we may have carried out privilege escalation; in other words, we might have administrator or root privileges on the target system. Some of the techniques and tools discussed in this room would still provide helpful output even with an unprivileged account, i.e., not root or administrator.
 

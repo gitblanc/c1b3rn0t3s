@@ -1,5 +1,8 @@
 ---
 title: TIBER-EU Framework 🔫
+tags:
+  - TryHackMe
+  - Theory
 ---
 **TIBER-EU** (**T**hreat **I**ntelligence-**b**ased **E**thical **R**ed Teaming) is a common framework developed by the European Central Bank that centers around the use of threat intelligence.
 

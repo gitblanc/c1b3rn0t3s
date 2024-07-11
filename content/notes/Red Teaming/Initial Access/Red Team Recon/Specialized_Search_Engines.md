@@ -1,5 +1,8 @@
 ---
 title: Specialized Search Engines 🦃
+tags:
+  - TryHackMe
+  - Theory
 ---
 ### WHOIS and DNS Related
 

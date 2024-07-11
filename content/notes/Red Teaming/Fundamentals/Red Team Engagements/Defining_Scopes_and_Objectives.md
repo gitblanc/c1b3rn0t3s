@@ -1,5 +1,8 @@
 ---
 title: Defining Scopes and Objectives 🎯
+tags:
+  - TryHackMe
+  - Theory
 ---
 Engagements can be very complex and bureaucratic. The key to a successful engagement is clearly defined client objectives or goals. Client objectives should be discussed between the client and red team to create a mutual understanding between both parties of what is expected and provided. Set objectives are the basis for the rest of the engagement documentation and planning.
 

@@ -1,5 +1,8 @@
 ---
 title: Mission Plan 🚀
+tags:
+  - TryHackMe
+  - Theory
 ---
 The mission plan is a cell-specific document that details the exact actions to be completed by operators. The document uses information from previous plans and assigns actions to them.
 

@@ -1,5 +1,8 @@
 ---
 title: 6. Abusing User Behaviour 🌠
+tags:
+  - TryHackMe
+  - Theory
 ---
 Under certain circumstances, an attacker can take advantage of actions performed by users to gain further access to machines in the network. While there are many ways this can happen, we will look at some of the most common ones.
 

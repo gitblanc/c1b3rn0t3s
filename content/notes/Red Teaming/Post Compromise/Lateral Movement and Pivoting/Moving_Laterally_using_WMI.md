@@ -1,5 +1,8 @@
 ---
 title: 4. Moving Laterally using WMI ⛽️
+tags:
+  - TryHackMe
+  - Theory
 ---
 We can also perform many techniques discussed in the previous task differently by using Windows Management Instrumentation (WMI). WMI is Windows implementation of Web-Based Enterprise Management (WBEM), an enterprise standard for accessing management information across devices. 
 

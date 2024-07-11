@@ -1,5 +1,8 @@
 ---
 title: Threat Analysis 🚸
+tags:
+  - TryHackMe
+  - Theory
 ---
 After we identify critical information, we need to analyse threats. _Threat analysis refers to identifying potential adversaries and their intentions and capabilities_. Adapted from the US Department of Defense [(DoD) Operations Security (OPSEC) Program Manual](https://www.esd.whs.mil/Portals/54/Documents/DD/issuances/dodm/520502m.pdf), threat analysis aims to answer the following questions:
 

@@ -1,5 +1,8 @@
 ---
 title: Phishing Infrastructure 🪻
+tags:
+  - TryHackMe
+  - Theory
 ---
 A certain amount of infrastructure will need to be put in place to launch a successful phishing campaign.
 

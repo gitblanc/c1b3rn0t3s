@@ -1,5 +1,8 @@
 ---
 title: 1. Tampering with Unprivileged Accounts 🥙
+tags:
+  - TryHackMe
+  - Theory
 ---
 Having an administrator's credential would be the easiest way to achieve persistence in a machine. However, to make it harder for the blue team to detect us, we can manipulate unprivileged users, which usually won't be monitored as much as administrators, and grant them administrative privileges somehow.
 

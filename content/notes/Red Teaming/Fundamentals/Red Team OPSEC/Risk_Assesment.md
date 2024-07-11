@@ -1,5 +1,8 @@
 ---
 title: Risk Assesment 🪃
+tags:
+  - TryHackMe
+  - Theory
 ---
 We finished analysing the vulnerabilities, and now we can proceed to the fourth step: conducting a risk assessment. [NIST](https://csrc.nist.gov/glossary/term/risk_assessment) defines a risk assessment as "The process of identifying risks to organizational operations (including mission, functions, image, reputation), organizational assets, individuals, other organizations, and the Nation, resulting from the operation of an information system." In OPSEC, risk assessment requires learning the possibility of an event taking place along with the expected cost of that event. Consequently, this involves assessing the adversary’s ability to exploit the vulnerabilities.
 

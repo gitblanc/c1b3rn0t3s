@@ -1,5 +1,8 @@
 ---
 title: 6. Abusing vulnerable software 🎭
+tags:
+  - TryHackMe
+  - Theory
 ---
 ## Unpatched Software
 

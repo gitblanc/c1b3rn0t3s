@@ -1,5 +1,8 @@
 ---
 title: Applications and services 💥
+tags:
+  - TryHackMe
+  - Theory
 ---
 This note will expand our knowledge needed to learn more about the system. We discussed account discovery and security products within the system in previous tasks. We will continue learning more about the system, including:
 

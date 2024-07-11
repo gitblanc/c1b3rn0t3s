@@ -1,5 +1,8 @@
 ---
 title: What is Threat Intelligence 🔦
+tags:
+  - TryHackMe
+  - Theory
 ---
 **Threat Intelligence (TI)** or **Cyber Threat Intelligence (CTI)** is the information, or TTPs (**T**actics, **T**echniques, and **P**rocedures), attributed to an adversary, commonly used by defenders to aid in detection measures. The red cell can leverage CTI from an offensive perspective to assist in adversary emulation.
 

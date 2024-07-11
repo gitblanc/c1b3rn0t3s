@@ -1,5 +1,8 @@
 ---
 title: Resource Plan 📑
+tags:
+  - TryHackMe
+  - Theory
 ---
 The resource plan is the second document of the engagement plan, detailing a brief overview of dates, knowledge required (optional), resource requirements. The plan extends the CONOPS and includes specific details, such as dates, knowledge required, etc.
 

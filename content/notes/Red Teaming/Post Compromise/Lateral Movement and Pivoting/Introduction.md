@@ -1,5 +1,8 @@
 ---
 title: 1. Introduction 🚜
+tags:
+  - TryHackMe
+  - Theory
 ---
 ![](Pasted%20image%2020240205104011.png)
 

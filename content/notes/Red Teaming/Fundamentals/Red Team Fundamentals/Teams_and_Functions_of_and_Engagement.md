@@ -1,5 +1,8 @@
 ---
 title: Teams and Functions of and Engagement 🧑‍⚖️
+tags:
+  - TryHackMe
+  - Theory
 ---
 There are several factors and people involved within a red team engagement. Everyone will have their mindset and methodology to approach the engagement personnel; however, each engagement can be broken into three teams or cells. Below is a brief table illustrating each of the teams and a brief explanation of their responsibilities.
 

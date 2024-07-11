@@ -1,5 +1,8 @@
 ---
 title: C2 Operations Basics 📲
+tags:
+  - TryHackMe
+  - Theory
 ---
 # Accessing and Managing your C2 Infrastructure
 

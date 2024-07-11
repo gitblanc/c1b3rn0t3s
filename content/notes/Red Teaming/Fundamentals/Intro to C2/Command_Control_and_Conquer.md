@@ -1,5 +1,8 @@
 ---
 title: Command, Control and Conquer 🎥
+tags:
+  - TryHackMe
+  - Theory
 ---
 ### Sample Exploit
 

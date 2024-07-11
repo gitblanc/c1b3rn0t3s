@@ -1,5 +1,8 @@
 ---
 title: Concept of Operations ⚙️
+tags:
+  - TryHackMe
+  - Theory
 ---
 The Concept of Operation (CONOPS) is a part of the engagement plan that details a high-level overview of the proceedings of an engagement; we can compare this to an executive summary of a penetration test report. The document will serve as a business/client reference and a reference for the red cell to build off of and extend to further campaign plans.
 

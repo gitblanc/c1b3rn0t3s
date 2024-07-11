@@ -1,5 +1,8 @@
 ---
 title: Recon-ng 🦥
+tags:
+  - TryHackMe
+  - Theory
 ---
 [Recon-ng](https://github.com/lanmaster53/recon-ng) is a framework that helps automate the OSINT work. It uses modules from various authors and provides a multitude of functionality. Some modules require keys to work; the key allows the module to query the related online API. In this task, we will demonstrate using Recon-ng in the terminal.
 

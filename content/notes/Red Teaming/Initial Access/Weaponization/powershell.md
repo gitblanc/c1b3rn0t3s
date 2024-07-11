@@ -1,3 +1,9 @@
+---
+title: Powershell (PSH) 🎁
+tags:
+  - TryHackMe
+  - Theory
+---
 ## PowerShell (PSH)
 
 PowerShell is an object-oriented programming language executed from the Dynamic Language Runtime (DLR) in .NET with some exceptions for legacy uses. Check out the TryHackMe room, [Hacking with PowerShell for more information about PowerShell](https://tryhackme.com/room/powershell).  

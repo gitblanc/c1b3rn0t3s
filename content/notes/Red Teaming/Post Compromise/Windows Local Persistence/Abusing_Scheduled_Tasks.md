@@ -1,5 +1,8 @@
 ---
 title: 4. Abusing Scheduled Tasks 🚑
+tags:
+  - TryHackMe
+  - Theory
 ---
 We can also use scheduled tasks to establish persistence if needed. There are several ways to schedule the execution of a payload in Windows systems. Let's look at some of them:
 

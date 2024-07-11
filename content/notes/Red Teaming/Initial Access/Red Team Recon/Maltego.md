@@ -1,5 +1,8 @@
 ---
 title: Maltego 🦔
+tags:
+  - TryHackMe
+  - Theory
 ---
 [Maltego](https://www.maltego.com/) is an application that blends mind-mapping with OSINT. In general, you would start with a domain name, company name, person’s name, email address, etc. Then you can let this piece of information go through various transforms.  
 

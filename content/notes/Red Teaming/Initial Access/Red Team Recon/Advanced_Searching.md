@@ -1,5 +1,8 @@
 ---
 title: Advanced Searching 🐢
+tags:
+  - TryHackMe
+  - Theory
 ---
 Being able to use a search engine efficiently is a crucial skill. The following table shows some popular search modifiers that work with many popular search engines.  
 

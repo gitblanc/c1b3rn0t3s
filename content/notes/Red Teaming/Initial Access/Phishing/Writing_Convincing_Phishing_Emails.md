@@ -1,5 +1,8 @@
 ---
 title: Writing Convincing Phishing Emails 🦫
+tags:
+  - TryHackMe
+  - Theory
 ---
 We have three things to work with regarding phishing emails: the sender's email address, the subject and the content.
 

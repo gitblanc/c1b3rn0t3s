@@ -1,5 +1,8 @@
 ---
 title: Password Profiling 🚔
+tags:
+  - TryHackMe
+  - Theory
 ---
 Having a good wordlist is critical to carrying out a successful password attack. It is important to know how you can generate username lists and password lists. In this section, we will discuss creating targeted username and password lists. We will also cover various topics, including default, weak, leaked passwords, and creating targeted wordlists.  
 

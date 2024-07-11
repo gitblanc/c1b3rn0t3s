@@ -1,5 +1,8 @@
 ---
 title: Intro to Phishing Attacks 🦜
+tags:
+  - TryHackMe
+  - Theory
 ---
 Before you learn what phishing is, you'll need to understand the term social engineering. Social engineering is the psychological manipulation of people into performing or divulging information by exploiting weaknesses in human nature. These "weaknesses" can be curiosity, jealously, greed and even kindness and the willingness to help someone. Phishing is a source of social engineering delivered through email to trick someone into either revealing personal information, credentials or even executing malicious code on their computer.  
 

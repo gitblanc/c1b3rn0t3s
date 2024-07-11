@@ -1,5 +1,8 @@
 ---
 title: Network Security Solutions 🧑🏻‍⚖️
+tags:
+  - TryHackMe
+  - Theory
 ---
 ## Network Security Solutions
 

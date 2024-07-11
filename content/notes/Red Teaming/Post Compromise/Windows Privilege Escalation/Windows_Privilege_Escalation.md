@@ -1,5 +1,8 @@
 ---
 title: 1. Windows Privilege Escalation 🤹
+tags:
+  - TryHackMe
+  - Theory
 ---
 Simply put, privilege escalation consists of using given access to a host with "user A" and leveraging it to gain access to "user B" by abusing a weakness in the target system. While we will usually want "user B" to have administrative rights, there might be situations where we'll need to escalate into other unprivileged accounts before actually getting administrative privileges.
 

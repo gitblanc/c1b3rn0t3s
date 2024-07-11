@@ -1,5 +1,8 @@
 ---
 title: 5. Use of Alternate Authentication Material 🗼
+tags:
+  - TryHackMe
+  - Theory
 ---
 By alternate authentication material, we refer to any piece of data that can be used to access a Windows account without actually knowing a user's password itself. This is possible because of how some authentication protocols used by Windows networks work. In this task, we will take a look at a couple of alternatives available to log as a user when either of the following authentication protocols is available on the network:
 

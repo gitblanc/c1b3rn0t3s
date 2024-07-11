@@ -1,5 +1,8 @@
 ---
 title: Password Attacking Techniques 🚗
+tags:
+  - TryHackMe
+  - Theory
 ---
 ![](Pasted%20image%2020240127184248.png)
 

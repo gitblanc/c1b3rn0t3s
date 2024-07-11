@@ -1,5 +1,8 @@
 ---
 title: Host Security Solutions 🌀
+tags:
+  - TryHackMe
+  - Theory
 ---
 Before performing further actions, we need to obtain general knowledge about the security solutions in place. Remember, it is important to enumerate antivirus and security detection methods on an endpoint in order to stay as undetected as possible and reduce the chance of getting caught.
 

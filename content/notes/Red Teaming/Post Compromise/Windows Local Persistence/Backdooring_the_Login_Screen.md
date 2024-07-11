@@ -1,5 +1,8 @@
 ---
 title: 6. Backdooring the Login Screen (RDP) 📡
+tags:
+  - TryHackMe
+  - Theory
 ---
 If we have physical access to the machine (or RDP in our case), you can backdoor the login screen to access a terminal without having valid credentials for a machine.
 

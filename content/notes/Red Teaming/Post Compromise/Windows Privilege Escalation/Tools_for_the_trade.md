@@ -1,5 +1,8 @@
 ---
 title: 7. Tools for the trade 🏎
+tags:
+  - TryHackMe
+  - Theory
 ---
 Several scripts exist to conduct system enumeration in ways similar to the ones seen in the previous task. These tools can shorten the enumeration process time and uncover different potential privilege escalation vectors. However, please remember that automated tools can sometimes miss privilege escalation.
 

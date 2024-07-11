@@ -1,5 +1,8 @@
 ---
 title: Applying Threat Intel to Red Team ❗️
+tags:
+  - TryHackMe
+  - Theory
 ---
 As previously mentioned, the red team will leverage CTI to aid in adversary emulation and support evidence of an adversary's behaviors.
 

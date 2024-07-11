@@ -1,5 +1,8 @@
 ---
 title: Practical Example 🧪
+tags:
+  - TryHackMe
+  - Theory
 ---
 In this task, we apply the five elements of the OPSEC process as we focus on different examples of critical information related to red team tasks. We will follow the following steps:
 

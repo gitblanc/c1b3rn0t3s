@@ -6,6 +6,7 @@ tags:
   - Telnet
   - Stego
   - CVE
+  - TryHackMe
 ---
 ![](Pasted%20image%2020240531223618.png)
 

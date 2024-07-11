@@ -1,5 +1,8 @@
 ---
 title: Command and Control Framework Structure 📐
+tags:
+  - TryHackMe
+  - Theory
 ---
 ### What is a Command and Control Framework
 

@@ -1,5 +1,8 @@
 ---
 title: Campaign Planning 🧮
+tags:
+  - TryHackMe
+  - Theory
 ---
 Prior to this task, we have primarily focused on engagement planning and documentation from the business perspective. Campaign planning uses the information acquired and planned from the client objectives and RoE and applies it to various plans and documents to identify how and what the red team will do.
 

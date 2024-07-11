@@ -1,5 +1,8 @@
 ---
 title: Engagement Structure 👨‍🔧
+tags:
+  - TryHackMe
+  - Theory
 ---
 A core function of the red team is adversary emulation. While not mandatory, it is commonly used to assess what a real adversary would do in an environment using their tools and methodologies. The red team can use various cyber kill chains to summarize and assess the steps and procedures of an engagement.
 

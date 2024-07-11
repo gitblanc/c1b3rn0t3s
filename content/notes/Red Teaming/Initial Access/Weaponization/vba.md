@@ -1,3 +1,9 @@
+---
+title: Visual Basic for Application (VBA) 🔮
+tags:
+  - TryHackMe
+  - Theory
+---
 ## Visual Basic for Application (VBA)
 
 VBA stands for Visual Basic for Applications, a programming language by Microsoft implemented for Microsoft applications such as Microsoft Word, Excel, PowerPoint, etc. VBA programming allows automating tasks of nearly every keyboard and mouse interaction between a user and Microsoft Office applications.   

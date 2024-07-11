@@ -1,5 +1,8 @@
 ---
 title: 8. More tools and techniques 🎠
+tags:
+  - TryHackMe
+  - Theory
 ---
 Should you be interested in more tools and techniques, the following resources are available:
 

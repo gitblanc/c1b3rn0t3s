@@ -1,5 +1,8 @@
 ---
 title: Linux Enumeration 🍳
+tags:
+  - TryHackMe
+  - Theory
 ---
 ![](Pasted%20image%2020240131211302.png)
 

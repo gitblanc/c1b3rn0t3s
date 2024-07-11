@@ -1,5 +1,8 @@
 ---
 title: 7. Port Forwarding 🚁
+tags:
+  - TryHackMe
+  - Theory
 ---
 Most of the lateral movement techniques we have presented require specific ports to be available for an attacker. In real-world networks, the administrators may have blocked some of these ports for security reasons or have implemented segmentation around the network, preventing you from reaching SMB, RDP, WinRM or RPC ports.
 

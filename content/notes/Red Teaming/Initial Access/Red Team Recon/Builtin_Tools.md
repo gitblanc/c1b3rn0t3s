@@ -1,5 +1,8 @@
 ---
 title: Built-in Tools 🐔
+tags:
+  - TryHackMe
+  - Theory
 ---
 This note focuses on:
 

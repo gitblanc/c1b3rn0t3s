@@ -1,5 +1,8 @@
 ---
 title: 2. Harvesting Passwords from Usual Spots 🎸
+tags:
+  - TryHackMe
+  - Theory
 ---
 he easiest way to gain access to another user is to gather credentials from a compromised machine. Such credentials could exist for many reasons, including a careless user leaving them around in plaintext files; or even stored by some software like browsers or email clients.
 

@@ -1,5 +1,8 @@
 ---
 title: Password Spray Attack 🎢
+tags:
+  - TryHackMe
+  - Theory
 ---
 This note will teach the fundamentals of a password spraying attack and the tools needed to perform various attack scenarios against common online services.
 

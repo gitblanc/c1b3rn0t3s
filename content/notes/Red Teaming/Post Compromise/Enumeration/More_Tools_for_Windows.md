@@ -1,5 +1,8 @@
 ---
 title: More Tools for Windows 🍌
+tags:
+  - TryHackMe
+  - Theory
 ---
 In this room, our focus has been on command-line built-in tools readily available on any modern MS Windows system. We didn’t cover Graphical User Interface (GUI) tools; moreover, we didn’t cover any programs requiring additional downloading and installation steps.
 

@@ -1,5 +1,8 @@
 ---
 title: 3. Abusing Services 🚝
+tags:
+  - TryHackMe
+  - Theory
 ---
 Windows services offer a great way to establish persistence since they can be configured to run in the background whenever the victim machine is started. If we can leverage any service to run something for us, we can regain control of the victim machine each time it is started.
 

@@ -1,5 +1,8 @@
 ---
 title: Using GoPhish 🪐
+tags:
+  - TryHackMe
+  - Theory
 ---
 This task will take you through setting up GoPhish, sending a phishing campaign and capturing user credentials from a spoof website.  
 

@@ -7,6 +7,7 @@ tags:
   - Linux
   - SQLi
   - Brute-Forcing
+  - TryHackMe
 ---
 ![](Pasted%20image%2020240527120906.png)
 

@@ -1,5 +1,8 @@
 ---
 title: Active Directory (AD) Environment 📀
+tags:
+  - TryHackMe
+  - Theory
 ---
 ## What is the Active Directory (AD) environment?
 

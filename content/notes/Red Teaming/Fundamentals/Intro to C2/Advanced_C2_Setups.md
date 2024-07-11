@@ -1,5 +1,8 @@
 ---
 title: Advanced C2 Setups 🌠
+tags:
+  - TryHackMe
+  - Theory
 ---
 ### There's Always Room for Improvement
 

@@ -1,5 +1,8 @@
 ---
 title: Using Microsoft Office in Phishing 🐾
+tags:
+  - TryHackMe
+  - Theory
 ---
 Often during phishing campaigns, a Microsoft Office document (typically Word, Excel or PowerPoint) will be included as an attachment. Office documents can contain macros; macros do have a legitimate use but can also be used to run computer commands that can cause malware to be installed onto the victim's computer or connect back to an attacker's network and allow the attacker to take control of the victim's computer.
 

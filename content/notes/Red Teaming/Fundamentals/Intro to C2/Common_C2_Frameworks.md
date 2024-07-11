@@ -1,5 +1,8 @@
 ---
 title: Common C2 Frameworks 🏕
+tags:
+  - TryHackMe
+  - Theory
 ---
 ### Common C2 Frameworks  
 

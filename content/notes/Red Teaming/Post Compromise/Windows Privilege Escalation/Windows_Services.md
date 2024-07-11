@@ -1,5 +1,8 @@
 ---
 title: 4. Windows Services 🎺
+tags:
+  - TryHackMe
+  - Theory
 ---
 ## Windows Services
 

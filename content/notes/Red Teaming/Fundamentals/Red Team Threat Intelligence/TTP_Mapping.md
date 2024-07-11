@@ -1,5 +1,8 @@
 ---
 title: TTP Mapping 🧲
+tags:
+  - TryHackMe
+  - Theory
 ---
 **TTP Mapping** is employed by the red cell to map adversaries' collected TTPs to a standard cyber kill chain. Mapping TTPs to a kill chain aids the red team in planning an engagement to emulate an adversary.
 

@@ -1,5 +1,8 @@
 ---
 title: 7. Persisting through existing services ☎️
+tags:
+  - TryHackMe
+  - Theory
 ---
 If you don't want to use Windows features to hide a backdoor, you can always profit from any existing service that can be used to run code for you. This task will look at how to plant backdoors in a typical web server setup. Still, any other application where you have some degree of control on what gets executed should be backdoorable similarly. The possibilities are endless!
 

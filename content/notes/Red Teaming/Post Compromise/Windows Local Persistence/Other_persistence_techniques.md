@@ -1,5 +1,8 @@
 ---
 title: 8. Other persistence techniques 📟
+tags:
+  - TryHackMe
+  - Theory
 ---
 - [Hexacorn - Windows Persistence](https://www.hexacorn.com/blog/category/autostart-persistence/)
 - [PayloadsAllTheThings - Windows Persistence](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Persistence.md)   

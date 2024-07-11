@@ -1,5 +1,8 @@
 ---
 title: 3. Spawning Processes Remotely 🚤
+tags:
+  - TryHackMe
+  - Theory
 ---
 This task will look at the available methods an attacker has to spawn a process remotely, allowing them to run commands on machines where they have valid credentials. Each of the techniques discussed uses slightly different ways to achieve the same purpose, and some of them might be a better fit for some specific scenarios.
 

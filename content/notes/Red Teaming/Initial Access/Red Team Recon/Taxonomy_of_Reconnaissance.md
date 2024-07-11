@@ -1,5 +1,8 @@
 ---
 title: Taxonomy of Reconnaissance 🐙
+tags:
+  - TryHackMe
+  - Theory
 ---
 Reconnaissance (recon) can be classified into two parts:
 
