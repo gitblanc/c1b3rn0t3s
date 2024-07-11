@@ -1,5 +1,8 @@
 ---
 title: Path Traversal Theory 🌵
+tags:
+  - PortSwigger
+  - Theory
 ---
 - *All the theory here was extracted from [PortSwigger Academy](https://portswigger.net/web-security/learning-paths/path-traversal/what-is-path-traversal/file-path-traversal/what-is-path-traversal)* 
 
