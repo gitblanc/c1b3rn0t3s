@@ -1,6 +1,11 @@
 ---
 title: Some Linux cheatsheet  commands 👾
 ---
+- Find all the files sizes in Gb, Mb... ordered by descending:
+
+```shell
+du -sh *
+```
 
 - Get all the info of your operating system
 
@@ -226,3 +231,11 @@ ls -la /mnt/NAME # to check
 ```
 
 ![](Pasted%20image%2020240512165418.png)
+
+- Check if your cpu is 32 or 64 bits:
+
+```shell
+$ grep -qP '^flags\s*:.*\blm\b' /proc/cpuinfo && echo 64-bit || echo 32-bit
+64-bit
+```
+
