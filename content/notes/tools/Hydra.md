@@ -1,5 +1,7 @@
 ---
 title: Hydra 🐍
+tags:
+  - Tool
 ---
 ## Brute force ftp
 

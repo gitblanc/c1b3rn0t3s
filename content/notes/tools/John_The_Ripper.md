@@ -1,5 +1,7 @@
 ---
 title: John The Ripper 🐈‍⬛
+tags:
+  - Tool
 ---
 ## Crack keepass2 passwords with:
 

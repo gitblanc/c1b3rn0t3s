@@ -1,5 +1,7 @@
 ---
 title: Exiftool 🐧
+tags:
+  - Tool
 ---
 - *Credits to [exiftool-cheat-sheet](https://www.henryleach.com/2021/06/exiftool-cheat-sheet/)*
 

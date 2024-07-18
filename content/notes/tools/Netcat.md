@@ -1,5 +1,7 @@
 ---
 title: Netcat 😼
+tags:
+  - Tool
 ---
 ## Using Netcat for file transfers
 

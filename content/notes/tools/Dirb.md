@@ -1,5 +1,7 @@
 ---
 title: Dirb 📢
+tags:
+  - Tool
 ---
 ## Basic command
 

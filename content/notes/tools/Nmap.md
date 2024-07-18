@@ -1,5 +1,7 @@
 ---
 title: Nmap 👁️‍🗨️
+tags:
+  - Tool
 ---
 ## Standard scan
 

@@ -1,5 +1,7 @@
 ---
 title: OWASP ZAP 🦈
+tags:
+  - Tool
 ---
 ## Configuration guide
 

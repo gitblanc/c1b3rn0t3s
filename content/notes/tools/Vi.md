@@ -1,5 +1,7 @@
 ---
 title: Vi 👮
+tags:
+  - Tool
 ---
 ## Vi editor and sudo vulnerability
 

@@ -1,5 +1,7 @@
 ---
 title: dirsearch 📁
+tags:
+  - Tool
 ---
 - *Alternative to [Gobuster 🐦](Gobuster.md)*
 

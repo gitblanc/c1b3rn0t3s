@@ -1,5 +1,7 @@
 ---
 title: Socat 🐱
+tags:
+  - Tool
 ---
 - Firstly, if you run `ss -tulwn` and you find rare ports open like:
 

@@ -1,5 +1,7 @@
 ---
 title: BurpSuite 📙
+tags:
+  - Tool
 ---
 ## Configuring BurpSuite
 

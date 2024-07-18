@@ -1,5 +1,7 @@
 ---
 title: FFMPeg 🚍
+tags:
+  - Tool
 ---
 - *Credits to [nixintel.info](https://nixintel.info/osint-tools/using-ffmpeg-to-grab-stills-and-audio-for-osint/)*
 

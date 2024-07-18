@@ -1,5 +1,7 @@
 ---
 title: Shodan ⭕
+tags:
+  - Tool
 ---
 - *All the info was extracted from [https://skerritt.blog/shodan/](https://skerritt.blog/shodan/)*
 - Link to [Shodan](https://account.shodan.io/login?continue=https%3A%2F%2Fwww.shodan.io%2Fdashboard)

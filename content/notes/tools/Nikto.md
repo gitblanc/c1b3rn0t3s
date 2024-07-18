@@ -1,5 +1,7 @@
 ---
 title: Nikto 🐱
+tags:
+  - Tool
 ---
 ## cgi-bin directory
 

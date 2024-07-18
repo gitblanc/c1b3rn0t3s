@@ -1,5 +1,7 @@
 ---
 title: Sqlmap 🪲
+tags:
+  - Tool
 ---
 - Useful commands
 

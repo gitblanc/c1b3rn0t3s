@@ -1,5 +1,7 @@
 ---
 title: GoSpider 🐚
+tags:
+  - Tool
 ---
 - If you didn't find anything with [Gobuster 🐦](Gobuster.md) you can just go deeper with this
 

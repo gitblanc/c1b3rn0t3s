@@ -1,5 +1,7 @@
 ---
 title: Gobuster 🐦
+tags:
+  - Tool
 ---
 *Alternative to [dirsearch 📁](dirsearch.md)*
 ## Basic commands
@@ -23,7 +25,7 @@ gobuster dir -u http://10.10.70.124/ -w /usr/share/wordlists/dirb/common.txt -x 
 ![](Pasted%20image%2020240419111932.png)
 
 - Add the option `--exclude-length LENGTH` or `-b STATUS_CODE`
-	- Check the meanings of the codes in [HTTP status codes complete list 💨](http_status_codes)
+	- Check the meanings of the codes in [HTTP status codes complete list 💨](http_status_codes.md)
 
 ```shell
 gobuster dir -u http://10.10.110.8/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 60 --exclude-length 472

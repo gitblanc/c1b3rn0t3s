@@ -1,5 +1,7 @@
 ---
 title: IDA 👠
+tags:
+  - Tool
 ---
 ## Installation
 
