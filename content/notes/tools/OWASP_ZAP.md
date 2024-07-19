@@ -285,3 +285,7 @@ As we can see, we got one hit with code `200` with the `skills` payload, mea
 
 ![payload processing](https://academy.hackthebox.com/storage/modules/110/zap_fuzzer_dir.jpg)
 
+# Zap Extensions (Marketplace)
+
+![](Pasted%20image%2020240719095309.png)
+

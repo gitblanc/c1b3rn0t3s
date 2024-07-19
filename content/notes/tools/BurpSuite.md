@@ -33,6 +33,30 @@ You will now only catch the traffic you have on your scope :D
 
 - [Content Type Converter](https://github.com/portswigger/content-type-converter) - Automatically convert the request method
 - [Hackvector](https://github.com/portswigger/hackvertor)- Hackvertor is a tag based conversion tool written in Java implemented as a Burp Suite extension. Tags are constructed as follows: <@base64><@/base64> the @ symbol is used as an identifier that it's a Hackvertor tag followed by the name of the tag in this case base64.
+- [Decoder Improved](https://github.com/portswigger/decoder-improved) - Improved decoder for Burp Suite
+- .NET beautifier	
+- J2EEScan	
+- Software Vulnerability Scanner
+- Software Version Reporter	
+- Active Scan++	
+- Additional Scanner Checks
+- AWS Security Checks	
+- Backslash Powered Scanner	
+- Wsdler
+- Java Deserialization Scanner	
+- C02	Cloud Storage Tester
+- CMS Scanner	
+- Error Message Checks	
+- Detect Dynamic JS
+- Headers Analyzer	
+- HTML5 Auditor	
+- PHP Object Injection Check
+- JavaScript Security	
+- Retire.JS	CSP Auditor
+- Random IP Address Header	
+- Autorize	
+- CSRF Scanner
+- JS Link Finder	
 
 ## Burp Intruder
 
