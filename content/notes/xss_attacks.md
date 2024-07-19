@@ -1,7 +1,6 @@
 ---
 title: XSS attacks 💀
 ---
-
 - When performing an stored XSS, we have the following useful script (python2):
 
 ```python

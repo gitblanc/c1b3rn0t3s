@@ -1,5 +1,7 @@
 ---
 title: Tools I use for Pentesting 🌀
+tags:
+  - Bug-Bounty
 ---
 ![](gitblanc.png)
 

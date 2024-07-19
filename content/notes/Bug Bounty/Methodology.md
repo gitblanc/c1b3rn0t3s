@@ -1,5 +1,7 @@
 ---
 title: Bug Bounty Methodology 🍥
+tags:
+  - Bug-Bounty
 ---
 - Credits to [gotr00t?](https://www.youtube.com/watch?v=TykKSvKYPz0) && [gotr00t?](https://www.youtube.com/watch?v=WJt8Y5UVVRo)
 

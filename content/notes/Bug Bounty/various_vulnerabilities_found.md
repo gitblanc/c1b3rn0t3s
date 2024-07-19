@@ -1,5 +1,7 @@
 ---
 title: Vulnerabilities to find 🚀
+tags:
+  - Bug-Bounty
 ---
 ## Information disclosure
 
