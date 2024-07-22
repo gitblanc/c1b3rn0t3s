@@ -52,3 +52,19 @@ gobuster vhost -u http://vulnnet.com -w /usr/share/wordlists/SecLists/Discovery/
 
 gobuster vhost -u team.thm -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt --append-domain
 ```
+
+## VHosts
+
+```shell
+gobuster vhost -u http://<target_IP_address> -w <wordlist_file> --append-domain
+```
+
+- Consider using the `-t` flag to increase the number of threads for faster scanning.
+- The `-k` flag can ignore SSL/TLS certificate errors.
+- You can use the `-o` flag to save the output to a file for later analysis.
+
+```shell
+gobuster vhost -u http://inlanefreight.htb:81 -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt --append-domain
+```
+
+

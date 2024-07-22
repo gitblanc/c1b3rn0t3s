@@ -1,8 +1,24 @@
 ---
 title: Subdomain enumeration 🌞
 ---
+ - Find all `dev` subdomains on `facebook.com` using curl and jq (using `crt.sh` API):
 
-1.  Use the tool **assetfinder**
+```shell
+curl -s "https://crt.sh/?q=facebook.com&output=json" | jq -r '.[]
+ | select(.name_value | contains("dev")) | .name_value' | sort -u
+ 
+*.dev.facebook.com
+*.newdev.facebook.com
+*.secure.dev.facebook.com
+dev.facebook.com
+devvm1958.ftw3.facebook.com
+facebook-amex-dev.facebook.com
+facebook-amex-sign-enc-dev.facebook.com
+newdev.facebook.com
+secure.dev.facebook.com
+```
+
+ - Use the tool **assetfinder**
 
 ```shell
 assetfinder --subs-only domain.com
@@ -28,3 +44,6 @@ dirsearch -u "http://domain.com" -i200 -w '/usr/share/wordlists/SecLists/Discove
 # You can also use gobuster:
 gobuster dir -u http://domain.com/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 50
 ```
+
+> Now you can perform [Fingerprinting 🫐](fingerprinting.md)
+

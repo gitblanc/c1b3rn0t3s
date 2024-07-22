@@ -13,6 +13,7 @@ tags:
 - [whois](https://docs.microsoft.com/en-us/sysinternals/downloads/whois) - Windows Whois performs the registration record for the domain name or IP address that you specify.
 - [DNSrecon-gui](https://github.com/micro-joan/DNSrecon-gui) - DNSrecon tool with GUI for Kali Linux
 - [Dnsx](https://github.com/projectdiscovery/dnsx) - dnsx is a fast and multi-purpose DNS toolkit allow to run multiple DNS queries of your choice with a list of user-supplied resolvers.
+- [WhoisFreaks](https://whoisfreaks.com/) - Perform a Whois lookup for any domain
 
 ### Subdomain
 
@@ -28,6 +29,22 @@ tags:
 - [MassDNS](https://github.com/blechschmidt/massdns) - High-performance DNS stub resolver targeting those who seek to resolve a massive amount of domain names in the order of millions or even billions.
 - [altdns](https://github.com/infosec-au/altdns) - Altdns takes in words that could be present in subdomains under a domain (such as test, dev, staging) as well as takes in a list of subdomains that you know of.
 - [dnscan](https://github.com/rbsec/dnscan) - Fast and lightweight dns bruteforcer with built-in wordlist and zone transfer checks.
+- [dnsenum](https://github.com/fwaeytens/dnsenum)- Comprehensive DNS enumeration tool that supports dictionary and brute-force attacks for discovering subdomains.
+- [fierce](https://github.com/mschwager/fierce) - User-friendly tool for recursive subdomain discovery, featuring wildcard detection and an easy-to-use interface.
+- [dnsrecon](https://github.com/darkoperator/dnsrecon) - Versatile tool that combines multiple DNS reconnaissance techniques and offers customisable output formats.
+- [amass](https://github.com/owasp-amass/amass) - Actively maintained tool focused on subdomain discovery, known for its integration with other tools and extensive data sources.
+- [assetfinder](https://github.com/tomnomnom/assetfinder) - Simple yet effective tool for finding subdomains using various techniques, ideal for quick and lightweight scans.
+- [puredns](https://github.com/d3mondev/puredns) - Powerful and flexible DNS brute-forcing tool, capable of resolving and filtering results effectively.
+- [Censys](https://search.censys.io/) - Powerful search engine for internet-connected devices, advanced filtering by domain, IP, certificate attributes.
+- [crt.sh](https://crt.sh/) - User-friendly web interface, simple search by domain, displays certificate details, SAN entries.
+
+### Fingerprinting
+
+- [Wappalyzer](https://www.wappalyzer.com/) - Browser extension and online service for website technology profiling.
+- [BuiltWith](https://builtwith.com/) - Web technology profiler that provides detailed reports on a website's technology stack.
+- [WhatWeb](https://www.whatweb.net/) - Command-line tool for website fingerprinting.
+- [Netcraft](https://www.netcraft.com/tools/) - Offers a range of web security services, including website fingerprinting and security reporting.
+- [wafw00f](https://github.com/EnableSecurity/wafw00f) - Command-line tool specifically designed for identifying Web Application Firewalls (WAFs).
 
 ### Google Hacking
 
@@ -86,6 +103,7 @@ tags:
 - [BBOT](https://github.com/blacklanternsecurity/bbot) - OSINT automation for hackers.
 - [octosuite](https://github.com/bellingcat/octosuite) - Advanced Github OSINT Framework
 - [GHunt](https://github.com/mxrch/GHunt) - Offensive Google framework.
+- [OSINT Framework](https://osintframework.com/) - A collection of various tools and resources for open-source intelligence gathering. It covers a wide range of information sources, including social media, search engines, public records, and more.
 
 ### Phishing
 

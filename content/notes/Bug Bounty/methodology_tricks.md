@@ -1,5 +1,5 @@
 ---
-title: Bug Bounty Methodology 🍥
+title: Bug Bounty Methodology tricks 🍥
 tags:
   - Bug-Bounty
 ---
