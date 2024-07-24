@@ -1,6 +1,17 @@
 ---
 title: XSS attacks 💀
 ---
+> You should check [XSS Theory 🍣](/notes/Info/xss_theory.md)
+
+## Testing Payloads
+
+- [PortSwigger Theory and examples](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet)
+- [OWASP collection](https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html)
+
+>Check my note [payloadbox XSS Payload List 🥝](/notes/Payloads/XSS/payloadbox.md)
+
+## Scripts
+
 - When performing an stored XSS, we have the following useful script (python2):
 
 ```python
@@ -67,3 +78,11 @@ if __name__ == "__main__":
 - Then we should get some session tokens like this (when someone clicks on it):
 
 ![](Pasted%20image%2020240210145953.png)
+
+## Lists of payloads (large)
+
+### a
+
+```shell
+
+```

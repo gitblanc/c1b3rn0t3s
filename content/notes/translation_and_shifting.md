@@ -1,6 +1,11 @@
 ---
 title: Translation and Shifting (Format encoding) 🥭
 ---
+## Identify the cipher
+
+- [Boxentriq](https://www.boxentriq.com/code-breaking/cipher-identifier)
+
+## CTF Formats
 
 Here are some of the most CTF common formats to encode flags with examples:
 
@@ -34,3 +39,53 @@ that means:
 
 The magic word you are looking for is ApplePie
 ```
+
+## Encoding/Decoding on your machine
+
+
+### Base64 Encode
+
+```shell
+echo https://www.hackthebox.eu/ | base64
+
+aHR0cHM6Ly93d3cuaGFja3RoZWJveC5ldS8K
+```
+
+### Base64 Decode
+
+```shell
+echo aHR0cHM6Ly93d3cuaGFja3RoZWJveC5ldS8K | base64 -d
+
+https://www.hackthebox.eu/
+```
+
+### Hex Encode
+
+```shell
+echo https://www.hackthebox.eu/ | xxd -p
+
+68747470733a2f2f7777772e6861636b746865626f782e65752f0a
+```
+
+### Hex Decode
+
+```shell
+echo 68747470733a2f2f7777772e6861636b746865626f782e65752f0a | xxd -p -r
+
+https://www.hackthebox.eu/
+```
+
+### ROT13 Encode
+
+```shell
+echo https://www.hackthebox.eu/ | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+
+uggcf://jjj.unpxgurobk.rh/
+```
+
+### ROT13 Decode
+
+```shell
+echo uggcf://jjj.unpxgurobk.rh/ | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+
+https://www.hackthebox.eu/
