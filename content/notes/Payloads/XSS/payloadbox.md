@@ -3,6 +3,7 @@ title: payloadbox XSS Payload List 🥝
 tags:
   - Payloads
   - XSS
+  - Wordlist
 ---
 > Content extracted from [https://github.com/payloadbox/xss-payload-list](https://github.com/payloadbox/xss-payload-list)
 

@@ -2,6 +2,7 @@
 title: SQLi 💉
 ---
 > You should check [SQLi Theory 🩸](/notes/Info/PortSwigger%20Academy/sql_injection.md)
+> 
 
 
 ## Entry point detection
