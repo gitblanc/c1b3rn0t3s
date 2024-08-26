@@ -1,7 +1,6 @@
 ---
 title: Python Useful Commands ⚕️
-tags:
-  - Hack4u
+tags: []
 ---
 ## Install python2 and python3 
 
