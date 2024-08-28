@@ -32,16 +32,23 @@ const PageTitle: QuartzComponent = ({ fileData, cfg, displayClass }: QuartzCompo
 // }
 // `
 
+// PageTitle.css = `
+// .page-title {
+//   font-size: 1.75rem;
+//   margin: 0;
+// }
+// .Logo {
+//   max-height: 195px;
+//   min-height: 50px;
+//   max-width: 212px;
+//   min-width: 50px;
+//   margin: 0;
+// }
+//`
+
 PageTitle.css = `
 .page-title {
   font-size: 1.75rem;
-  margin: 0;
-}
-.Logo {
-  max-height: 195px;
-  min-height: 50px;
-  max-width: 212px;
-  min-width: 50px;
   margin: 0;
 }
 `
