@@ -1,5 +1,5 @@
 ---
-title: EndeavourOS
+title: EndeavourOS 🐧
 ---
 ![](Pasted%20image%2020240826212716.png)
 
