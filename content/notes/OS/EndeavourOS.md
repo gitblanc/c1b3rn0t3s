@@ -37,6 +37,13 @@ Type=Application Categories=Development;whatever;
 ## ERRORS
 ### External monitors not working
 
+> *Credits to [https://discovery.endeavouros.com](https://discovery.endeavouros.com/hardware/optimus-manager-for-nvidia/2021/03/)*
+
+>[!Important]
+>*Nvidia drivers are not compatible with Wayland, you must use Xorg or similar*
+
+- Check the graphics car you are using: `glxinfo | grep "OpenGL renderer"`
+
 1. Check if they are even detected: `xrandr --listmonitors`
 	1. If they are just go to: [wiki.archlinux.org](https://wiki.archlinux.org/title/Multihead) and follow the steps
 2. Otherwise:
@@ -45,3 +52,11 @@ Type=Application Categories=Development;whatever;
 		- **AMD**: `sudo pacman -Syu`
 		- **Intel**: `sudo pacman -Syu`
 	2. Reboot: `sudo reboot now`
+
+`optimus-manager --switch hybrid`
+
+## Install nvidia drivers
+
+- Run: `nvidia-inst`
+
+
