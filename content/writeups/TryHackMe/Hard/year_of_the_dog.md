@@ -6,6 +6,7 @@ tags:
   - Web
   - CVE
   - TryHackMe
+  - Gitea
 ---
 ![](Pasted%20image%2020240322221324.png)
 
