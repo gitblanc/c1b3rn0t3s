@@ -422,3 +422,151 @@ Al establecer ‘**SO_REUSEADDR**‘, el sistema operativo permite reutilizar el
 
 En resumen, ‘**setsockopt**‘ con diferentes niveles y opciones, como ‘**SOL_SOCKET**‘ y ‘**SO_REUSEADDR**‘, proporciona una flexibilidad significativa en la configuración de sockets para una comunicación de red eficiente y efectiva.
 
+```python
+# sever.py
+import socket
+import threading
+#import pdb # Debugging
+
+class ClientThread(threading.Tread):
+	def __init__(self, client_sock, client_addr):
+		super().__init__()
+		self.client_sock = client_sock
+		self.client_addr = client_addr
+
+		print(f"\n[+] Nuevo cliente conectado: {client_addr}")
+
+	def run(self):
+		message = ''
+		while True:
+			data = self.client_sock.recv(1024)
+			message = data.decode()
+	
+			#pdb.set_trace() # punto de ruptura
+			
+			if message.strip() == 'bye': # se incluye un \n al final
+				break
+
+			print(f"\n[+] Mensaje enviado por el cliente: {message}")
+			# self.client_sock.sendAll() # sólo usar para mensajes MUY grandes
+			self.client_sock.send(data)
+
+		print(f"[!] Cliente {self.client_addr} desconectado")
+		self.client_sock.close()
+
+HOST = 'localhost'
+PORT = 1234
+
+with socker.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+	server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSADOR, 1)# nivel a alterar, propiedad a alterar, valor
+	server_socket.bind((HOST, PORT))
+	print(f"\n[+] En espera de conexiones entrantes...")
+
+	while True:
+		server_socket.listen() #python asigna automáticamente el número de conexiones simultáneas
+		client_sock, client_addr = server_socket.accept()
+		#new_thread = threading.Thread(target=mi_funcion, args=(client_sock, client_addr))
+		new_thread = ClientThread(client_sock, client_addr)
+		new_thread.start()
+```
+
+![](Pasted%20image%2020240904123155.png)
+
+El uso de hilos con ‘**threading**‘ en Python es crucial para gestionar múltiples clientes en aplicaciones de red que utilizan sockets, especialmente en servidores.
+
+Aquí te explico en detalle por qué es necesario:
+
+- **Concurrencia y Manejo de Múltiples Conexiones**: Los servidores de red a menudo necesitan manejar múltiples conexiones de clientes simultáneamente. Sin hilos, un servidor tendría que atender a un cliente a la vez, lo cual es ineficiente y no escalable. Con ‘**threading**‘, cada cliente puede ser manejado en un hilo separado, permitiendo al servidor atender múltiples solicitudes al mismo tiempo.
+- **Bloqueo de Operaciones de Red**: Las operaciones de red, como ‘**recv**‘ y ‘**accept**‘, suelen ser bloqueantes. Esto significa que el servidor se detendrá en estas operaciones hasta que se reciba algo de la red. Si un cliente se demora en enviar datos, esto puede bloquear todo el servidor, impidiendo que atienda a otros clientes. Con hilos, cada cliente tiene su propio hilo de ejecución, por lo que la lentitud o el bloqueo de uno no afecta a los demás.
+- **Escalabilidad**: Los hilos permiten a los desarrolladores crear servidores que escalan bien con el número de clientes. Al asignar un hilo a cada cliente, el servidor puede manejar muchos clientes a la vez, ya que cada hilo ocupa relativamente pocos recursos del sistema.
+- **Simplicidad en el Diseño de la Aplicación**: Aunque existen modelos alternativos para manejar la concurrencia (como la programación asíncrona), el uso de hilos puede simplificar el diseño y la lógica de la aplicación. Cada hilo puede ser diseñado como si estuviera manejando solo un cliente, lo que facilita la programación y el mantenimiento del código.
+- **Uso Eficiente de Recursos de CPU en Sistemas Multi-Core**: Los hilos pueden ejecutarse en paralelo en diferentes núcleos de un procesador multi-core, lo que permite a un servidor aprovechar mejor el hardware moderno y manejar más eficientemente varias conexiones al mismo tiempo.
+- **Independencia y Aislamiento de Clientes**: Cada hilo opera de manera independiente, lo que significa que un problema en un hilo (como un error o una excepción) no necesariamente afectará a los demás. Esto proporciona un aislamiento efectivo entre las conexiones de los clientes, mejorando la robustez del servidor.
+
+En resumen, el uso de ‘**threading**‘ para manejar múltiples clientes en aplicaciones basadas en sockets es esencial para lograr una alta concurrencia, escalabilidad y un diseño eficiente que aproveche al máximo los recursos del sistema y proporcione un servicio fluido y estable a múltiples clientes simultáneamente.
+
+```python
+# client.py
+import socket
+
+def start_client():
+	host = 'localhost'
+	port = 1234
+
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+		s.connect((host, port))
+
+		while True:
+			message = input("\n[+] Introduce tu mensaje: ")
+			s.sendall(message.encode())
+
+			if message == 'bye'
+				break
+
+			data = s.recv(1024)
+
+			print(f"\n[+] Mensaje de respuesta del servidor: {data.decode()}")
+
+start_client()
+```
+
+![](Pasted%20image%2020240904125112.png)
+
+- Crearemos ahora un chat **cliente-servidor**:
+
+```python
+# server.py
+import socket
+
+def start_chat_server()
+	host = 'localhost'
+	port = 1234
+
+	server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # TIME_WAIT, para cuando se hace Ctrl+C no se siga ocupando el puerto
+	server_socket.bind((host, port))
+	server_socket.listen(1)
+	
+	print(f"\n[+] Servidor listo para aceptar una conexión")
+	connection, client_addr = server_socket.accept()
+	print(f"\n[+] Se ha conectado el cliente: {client_addr}")
+
+	while True:
+		client_message = connection.recv(1024).strip().decode()
+		print(f"\n[+] Mensaje del cliente: {client_message}")
+
+		if clien_message == 'bye':
+			break
+
+		server_message = input(f"\n[+] Mensaje para enviar el cliente: ")
+		connection.send(server_message.encode())
+	connection.close()
+
+start_chat_server()
+```
+
+```python
+# client.py
+import socket
+
+def start_chat_client():
+	host = 'localhost'
+	port = 1234
+
+	client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	client_socket.connect((host, port))
+
+	while True:
+		client_message = input(f"\n[+] Mensaje para enviar al servidor: ")
+		client_socket.send(client_message.encode())
+
+		if client_message == 'bye':
+			break
+
+		server_message = client_socket.recv(1024).strip().decode()
+		print(f"\n[+] Mensaje del servidor: {server_message}")
+
+	client_socket.close()
+
+start_chat_client()
+```
