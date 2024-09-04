@@ -121,3 +121,26 @@ Exploraremos las funciones y métodos incorporados para la manipulación de cade
 También veremos cómo trabajar con cadenas Unicode en Python, lo que es esencial para aplicaciones modernas que necesitan soportar múltiples idiomas y caracteres especiales.
 
 Al final de esta clase, tendrás una comprensión completa de cómo dar formato a las cadenas para la salida de datos y cómo realizar operaciones comunes de manipulación de texto. Estas habilidades son fundamentales para la creación de aplicaciones que necesitan una interfaz de usuario sofisticada y para el procesamiento de datos en aplicaciones de backend.
+
+```python
+print("Hola, me llamo {} y tengo {} años".format(nombre, edad))
+print("Hola, me llamo {1} y tengo {0} años".format(edad, nombre))
+print("Hola, me llamo {nombre} y tengo {edad} años")
+
+cadena.strip() # elimina los espacios, tabulaciones y saltos de línea
+
+cadena.replace('o', 'X') # para cambiar una letra por otra
+
+cadena.split() # crea una lista con el delimitador espacio
+cadena.split(':') # crea una lista con el delimitador :
+
+s.find("hola") # devuelve la posición en la que empieza la cadena, lanza -1 si no existe
+s.index("No existo") # devuelve la posición en la que empieza la cadena, lanza excepción si no existe
+
+s = "Hola soy Marcelo y no me gusta la playa"
+
+tabla = str.maketrans('aei', 'zpo')
+nueva_cadena = s.translate(table)
+```
+
+> *Continúa con [Biblioteca estándar y herramientas adicionales 🐝](biblioteca_estandar_y_herramientas_adicionales.md)*
