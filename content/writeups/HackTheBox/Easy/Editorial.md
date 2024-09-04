@@ -5,12 +5,14 @@ tags:
   - Fuzzing
   - Python-Scripting
   - Git
+  - HackTheBox
+  - Easy
 ---
 ![](Pasted%20image%2020240901150640.png)
 
 ## Reconnaissance
 
-First, I added the new hosts to my known ones:
+First, I added the new host to my known ones:
 
 ```shell
 sudo echo "10.10.11.20 editorial.htb" | sudo tee -a /etc/hosts

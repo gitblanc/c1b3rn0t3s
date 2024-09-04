@@ -8,6 +8,7 @@ tags:
   - SQLi
   - Brute-Forcing
   - TryHackMe
+  - Medium
 ---
 ![](Pasted%20image%2020240527120906.png)
 

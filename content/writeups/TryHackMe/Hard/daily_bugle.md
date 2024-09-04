@@ -7,6 +7,7 @@ tags:
   - Brute-Forcing
   - Web
   - TryHackMe
+  - Hard
 ---
 ![](Pasted%20image%2020240530215716.png)
 

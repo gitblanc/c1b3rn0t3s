@@ -5,6 +5,8 @@ tags:
   - Gitea
   - Image-altering
   - pluck
+  - HackTheBox
+  - Easy
 ---
 ![](Pasted%20image%2020240831134445.png)
 

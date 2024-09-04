@@ -8,6 +8,7 @@ tags:
   - Brute-Forcing
   - Jenkins
   - TryHackMe
+  - Hard
 ---
 ![](Pasted%20image%2020240531151047.png)
 

@@ -5,6 +5,7 @@ tags:
   - CVE
   - Wildcard
   - HackTheBox
+  - Easy
 ---
 ![](Pasted%20image%2020240501234511.png)
 

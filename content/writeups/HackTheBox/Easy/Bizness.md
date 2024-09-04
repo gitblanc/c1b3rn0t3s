@@ -5,6 +5,7 @@ tags:
   - Apache
   - Brute-Forcing
   - HackTheBox
+  - Easy
 ---
 ![](Pasted%20image%2020240501195939.png)
 

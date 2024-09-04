@@ -6,6 +6,8 @@ tags:
   - Brute-Forcing
   - Tunnelling
   - Command-Injection
+  - HackTheBox
+  - Easy
 ---
 ![](Pasted%20image%2020240901173921.png)
 

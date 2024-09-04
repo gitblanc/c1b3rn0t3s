@@ -7,6 +7,7 @@ tags:
   - Stego
   - CVE
   - TryHackMe
+  - Hard
 ---
 ![](Pasted%20image%2020240531223618.png)
 

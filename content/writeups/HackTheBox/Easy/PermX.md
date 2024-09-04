@@ -5,6 +5,8 @@ tags:
   - Chamilo
   - CVE
   - Symlinks
+  - HackTheBox
+  - Easy
 ---
 ![](Pasted%20image%2020240901125933.png)
 

@@ -5,11 +5,13 @@ tags:
   - CRM
   - Enumeration
   - SUID
+  - HackTheBox
+  - Easy
 ---
 ![](Pasted%20image%2020240831201755.png)
 ## Reconnaissance
 
-First, I added the new hosts to my known ones:
+First, I added the new host to my known ones:
 
 ```shell
 sudo echo "10.10.11.11 board.htb" | sudo tee -a /etc/hosts
