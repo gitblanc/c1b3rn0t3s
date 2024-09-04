@@ -1,5 +1,7 @@
 ---
 title: nodejsshell
+tags:
+  - Script
 ---
 - Create a shell for Node JS using CVE-2017-5941
 - Credits to [ajinabraham](https://github.com/ajinabraham/Node.Js-Security-Course/blob/master/nodejsshell.py)

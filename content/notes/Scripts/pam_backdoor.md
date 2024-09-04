@@ -1,5 +1,7 @@
 ---
 title: Linux pam Backdoor
+tags:
+  - Script
 ---
 - *Credits to [zephrax](https://github.com/zephrax/linux-pam-backdoor)*
 

@@ -1,5 +1,7 @@
 ---
 title: md5 number generator
+tags:
+  - Script
 ---
 ```python
 import hashlib

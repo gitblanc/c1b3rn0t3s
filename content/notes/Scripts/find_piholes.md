@@ -1,5 +1,7 @@
 ---
 title: Find piHoles
+tags:
+  - Script
 ---
 - More info here [bee-san](https://github.com/bee-san/How-I-Hacked-Your-Pi-Hole/blob/master/README.md)
 

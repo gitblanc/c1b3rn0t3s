@@ -1,5 +1,7 @@
 ---
 title: Mnemonic
+tags:
+  - Script
 ---
 - Originally created by **MustafaTanguner** in [Mnemonic](https://github.com/MustafaTanguner/Mnemonic/)
 
