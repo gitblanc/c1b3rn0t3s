@@ -38,8 +38,8 @@ PageTitle.css = `
   margin: 0;
 }
 .Logo {
-  height: 70%;
-  width: 70%;
+  height: 80%;
+  width: 80%;
   margin: 0;
 }
 `

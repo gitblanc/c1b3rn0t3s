@@ -570,3 +570,6 @@ def start_chat_client():
 
 start_chat_client()
 ```
+
+> *Continúa en [Manejo de librerías comunes 🦤](librerias_comunes.md)*
+
