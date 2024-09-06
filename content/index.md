@@ -11,30 +11,10 @@ I'll also upload some writeups of machines that I consider brainfuck for me.
 Give me an ⭐️ in the Github repository if you like the content.
 
 <script src="https://tryhackme.com/badge/943872"></script>  
+<a href="https://www.hackthebox.eu/home/users/profile/1842544"><img src="https://www.hackthebox.eu/badge/image/1842544" alt="Hack The Box"></a>
 
 <script data-goatcounter="https://gitblanc.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
 
 ![banner](img/banner.jpg)
-
-Here are some of my personal projects:
-
-<div class="card" style="max-width: 640px;">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img src="/img/keyhunter.png" class="img-fluid rounded-start">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title">KeyHunter</h5>
-        <p class="card-text">
-          KeyHunter is a powerful command-line tool designed to efficiently and stylishly search for passwords in wordlist files. Perfect for security researchers, password auditors, and anyone interested in scanning large datasets for specific terms.
-        </p>
-        <p class="card-text">
-          <small class="text-muted">gitblanc</small>
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
