@@ -163,3 +163,38 @@ else:
 
 En resumen, requests no solo es una biblioteca de alto nivel para solicitudes HTTP en Python, sino que también es un ejemplo brillante de diseño de software y colaboración comunitaria. Su facilidad de uso, junto con su potente funcionalidad, la convierte en una herramienta indispensable para cualquier desarrollador que trabaje con Python en el ámbito de la web.
 
+- Autenticación:
+
+```python
+import requests
+from requests.auth import HTTPBasicAuth
+
+# Hay dos formas
+#response = requests.get('https://httpbin/basic-auth/foo/bar', auth=HTTPBasicAuth('foo', 'foo'))
+response = requests.get('https://httpbin/basic-auth/foo/bar', auth=('foo', 'foo')) # más cómoda esta
+print(response.status_code)
+```
+
+- Cookies:
+
+```python
+import requests
+
+cookies = dict(cookies_are='working')
+
+response = requests.get('https://httpbin/basic-auth/cookies', cookies=cookies)
+
+print(response)
+```
+
+- Enviar archivos:
+
+```python
+import requests
+
+my_file = {'archivo': open('example.txt', 'r')}
+
+response = requests.post('https://httpbin/basic-auth/post', files=my_file)
+
+print(response)
+```
