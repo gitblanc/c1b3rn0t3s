@@ -11,6 +11,8 @@ export const sharedPageComponents: SharedLayout = {
       LinkedIn:
         "https://www.linkedin.com/in/eduardo-blanco-bielsa-408908233/?trk=public-profile-join-page",
       Twitter: "https://twitter.com/gitblanc",
+      TryHackMe: "https://tryhackme.com/p/gitblanc",
+      HackTheBox: "https://app.hackthebox.com/profile/1842544",
     },
   }),
 }

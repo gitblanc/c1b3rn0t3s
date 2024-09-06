@@ -11,7 +11,6 @@ I'll also upload some writeups of machines that I consider brainfuck for me.
 Give me an ⭐️ in the Github repository if you like the content.
 
 <script src="https://tryhackme.com/badge/943872"></script>  
-<a href="https://www.hackthebox.eu/home/users/profile/1842544"><img src="https://www.hackthebox.eu/badge/image/1842544" alt="Hack The Box"></a>
 
 <script data-goatcounter="https://gitblanc.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
