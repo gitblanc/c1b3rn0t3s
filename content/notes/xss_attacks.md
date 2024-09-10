@@ -78,11 +78,3 @@ if __name__ == "__main__":
 - Then we should get some session tokens like this (when someone clicks on it):
 
 ![](Pasted%20image%2020240210145953.png)
-
-## Lists of payloads (large)
-
-### a
-
-```shell
-
-```
