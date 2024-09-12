@@ -40,6 +40,12 @@ curl -I https://website.com
 curl https://website.com -A 'Mozilla/5.0'
 ```
 
+- Execute a command to a web shell url-encoding the command (and watching errors):
+
+```shell
+curl -s -X GET 'http://localhost/index.php' -G --data-urlencode "cmd=ip a 2>&1"
+```
+
 - Access with username and password:
 
 ```shell

