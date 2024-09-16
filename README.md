@@ -7,4 +7,4 @@ Give me an ⭐️ if you like the content.
 <img src="https://tryhackme-badges.s3.amazonaws.com/gitblanc.png" alt="TryHackMe">
 
 
-![banner](/content/banner.jpg)
+![banner](/content/img/banner.jpg)
