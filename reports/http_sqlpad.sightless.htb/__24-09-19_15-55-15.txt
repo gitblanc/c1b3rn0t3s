@@ -1,0 +1,6 @@
+# Dirsearch started Thu Sep 19 15:56:52 2024 as: /usr/lib/python3/dist-packages/dirsearch/dirsearch.py -u http://sqlpad.sightless.htb/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+
+301   179B   http://sqlpad.sightless.htb/assets    -> REDIRECTS TO: /assets/
+404    21B   http://sqlpad.sightless.htb/api
+404    21B   http://sqlpad.sightless.htb/API
+301   189B   http://sqlpad.sightless.htb/javascripts    -> REDIRECTS TO: /javascripts/
