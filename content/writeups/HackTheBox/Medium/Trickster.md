@@ -40,7 +40,7 @@ I took a look at the source code of the website, and found the subdomain `shop.t
 
 ![](Pasted%20image%2020240923200750.png)
 
-It seems that the web uses Prestashop e-commenrce solution:
+It seems that the web uses Prestashop e-commerce solution:
 
 ![](Pasted%20image%2020240923205501.png)
 
