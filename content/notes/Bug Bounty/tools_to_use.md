@@ -243,6 +243,7 @@ tags:
 - [Ollydbg](http://www.ollydbg.de/) - OllyDbg is a 32-bit assembler level analysing debugger for Microsoft Windows
 - [IDA](https://hex-rays.com/ida-free/) - The free binary code analysis tool to kickstart your reverse engineering experience.
 - [Ghidra](https://ghidra-sre.org/) - A software reverse engineering (SRE) suite of tools developed by NSA's Research Directorate in support of the Cybersecurity mission
+- [Shell Storm](https://shell-storm.org/) - A website that contains such interesting articles about reversing
 
 ## Exploitation Tools
 
