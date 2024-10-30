@@ -437,3 +437,5 @@ make all
 > We are now root, and got the root flag:
 
 ![](Pasted%20image%2020241029225843.png)
+
+==Machine pwned!==
