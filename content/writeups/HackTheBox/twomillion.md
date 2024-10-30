@@ -5,6 +5,7 @@ tags:
   - Easy
   - Linux
   - Command-Injection
+  - Kernel_Exploit
 ---
 ![](Pasted%20image%2020241029174018.png)
 
