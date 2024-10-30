@@ -10,7 +10,7 @@ I'll also upload some writeups of machines that I consider brainfuck for me.
 
 Give me an ⭐️ in the Github repository if you like the content.
 
-<iframe src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=943872" style='border:none;'></iframe>
+<script src="https://app.hackthebox.com/profile/1842544"></script>
 
 <script data-goatcounter="https://gitblanc.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
