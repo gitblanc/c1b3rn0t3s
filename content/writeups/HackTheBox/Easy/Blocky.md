@@ -6,7 +6,7 @@ tags:
   - Linux
   - jar
   - Wordpress
-  - sudo
+  - Sudo-Vulnerability
 ---
 ![](Pasted%20image%2020241031204018.png)
 

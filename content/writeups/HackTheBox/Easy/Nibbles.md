@@ -5,6 +5,7 @@ tags:
   - Easy
   - Linux
   - Web
+  - Sudo-Vulnerability
 ---
 ![](Pasted%20image%2020241104161017.png)
 

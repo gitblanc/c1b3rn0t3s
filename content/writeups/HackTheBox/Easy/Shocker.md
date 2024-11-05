@@ -4,6 +4,8 @@ tags:
   - HackTheBox
   - Easy
   - Linux
+  - ShellShock
+  - Sudo-Vulnerability
 ---
 ![](Pasted%20image%2020241102105019.png)
 
