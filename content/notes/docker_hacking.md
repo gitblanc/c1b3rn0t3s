@@ -32,6 +32,7 @@ docker run -v /:/mnt --rm -it alpine chroot /mnt sh
 
 - Once we are root by exploiting a capability vulnerability as example, we have to pivot to the host of the container as follows:
 
+- Check environment variables for misconfigurations with `printenv`
 - Run `ifconfig` to see if we are connected to the eth0
 - Run `arp -a` to discover other hosts on the network
 
