@@ -1,0 +1,16 @@
+---
+title: Useful Web Browser Extensions 🍪
+tags:
+  - Bug-Bounty
+---
+
+| Image                                    | Link                                                                                                                                       | Description                                                                                                                          |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| ![](Pasted%20image%2020241107170413.png) | [I don't care about cookies](https://chromewebstore.google.com/detail/i-dont-care-about-cookies/fihnjjcciajhdojfnbdddfaoknhalnja?hl=en-US) | Remove cookie warnings from almost all websites!                                                                                     |
+| ![](Pasted%20image%2020241107170505.png) | [Dark Reader](https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh?hl=en-US)                              | Dark mode for every website.                                                                                                         |
+| ![](Pasted%20image%2020241107170540.png) | [FoxyProxy](https://chromewebstore.google.com/detail/foxyproxy/gcknhkkoolaabfmlnjonogaaifnjlfnp?hl=en-US)                                  | Easy to use advanced Proxy Management tool for everyone                                                                              |
+| ![](Pasted%20image%2020241107170611.png) | [Wappalyzer](https://chromewebstore.google.com/detail/wappalyzer-technology-pro/gppongmhjkpfnbhagpmjfkannfbllamg?hl=en-US)                 | Identify web technologies                                                                                                            |
+| ![](Pasted%20image%2020241107170645.png) | [Reverse Image Search](https://chromewebstore.google.com/detail/reveye-reverse-image-sear/keaaclcjhehbbapnphnmpiklalfhelgf?hl=en-US)       | Perform a search by image. Choose between the image search engines Google, Bing, Yandex, TinEye, or user-defined engines.            |
+| ![](Pasted%20image%2020241107170728.png) | [AdBlock](https://chromewebstore.google.com/detail/adblock-%E2%80%94-block-ads-acros/gighmmpiobklfepjocnamgkkbiglidom?hl=en-US)            | Block ads on YouTube and your favorite sites for free                                                                                |
+| ![](Pasted%20image%2020241107170828.png) | [HackTools](https://chromewebstore.google.com/detail/hack-tools/cmbndhnoonmghfofefkcccljbkdpamhi?hl=en-US)                                 | The all in one Red team extension for web pentester<br><br>[SOURCE CODE](https://github.com/LasCC/Hack-Tools)                        |
+| ![](Pasted%20image%2020241107170944.png) | [NoScript](https://chromewebstore.google.com/detail/noscript/doojmbjmlfjjnbmnoijecmcbfeoakpjm?hl=en-US)                                    | Maximum protection for your browser: NoScript allows active content only for trusted domains of your choice to prevent exploitation. |
