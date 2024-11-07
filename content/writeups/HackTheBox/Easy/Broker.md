@@ -24,6 +24,24 @@ Then, I performed a Nmap scan:
 nmap -sC -T4 -p- broker.htb > sC.txt
 
 [redacted]
+PORT      STATE SERVICE
+22/tcp    open  ssh
+| ssh-hostkey: 
+|   256 3e:ea:45:4b:c5:d1:6d:6f:e2:d4:d1:3b:0a:3d:a9:4f (ECDSA)
+|_  256 64:cc:75:de:4a:e6:a5:b4:73:eb:3f:1b:cf:b4:e3:94 (ED25519)
+80/tcp    open  http
+| http-auth: 
+| HTTP/1.1 401 Unauthorized\x0D
+|_  basic realm=ActiveMQRealm
+|_http-title: Error 401 Unauthorized
+1883/tcp  open  mqtt
+5672/tcp  open  amqp
+|_amqp-info: ERROR: AQMP:handshake expected header (1) frame, but was 65
+8161/tcp  open  patrol-snmp
+36379/tcp open  unknown
+61613/tcp open  unknown
+61614/tcp open  unknown
+61616/tcp open  unknown
 ```
 
 So I checked the website and got asked for some credentials:
