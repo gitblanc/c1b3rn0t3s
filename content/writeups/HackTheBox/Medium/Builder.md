@@ -48,6 +48,8 @@ There are two users connected: `anonymous` (which I suppose is me) and `jennifer
 
 I searched for "*Jenkins 2.441 cve*" in google and found [Jankins Security Advisory 2024-01-24](https://www.jenkins.io/security/advisory/2024-01-24/).
 
+## Exploitation
+
 Jenkins has a built-in [command line interface (CLI)](https://www.jenkins.io/doc/book/managing/cli/) to access Jenkins from a script or shell environment. We can download this cli from `http://builder.htb:8080/jnlpJars/jenkins-cli.jar`:
 
 ```shell
