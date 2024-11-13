@@ -30,5 +30,5 @@ wfuzz -z range,0-10 --hl 97 http://testphp.vulnweb.com/listproducts.php?cat=FUZZ
 ## Vhost enumeration
 
 ```shell
-wfuzz -w wordlist/general/common.txt --hc 404 http://testphp.vulnweb.com/FUZZ
+wfuzz -H "Host: FUZZ.vulnweb.web" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt --hh 30587 https://vulnweb.web
 ```

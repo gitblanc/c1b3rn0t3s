@@ -26,7 +26,25 @@ Then, I performed a Nmap scan:
 nmap -sC -T4 -p- nunchucks.htb > sC.txt
 
 [redacted]
-
+PORT    STATE SERVICE
+22/tcp  open  ssh
+| ssh-hostkey: 
+|   3072 6c:14:6d:bb:74:59:c3:78:2e:48:f5:11:d8:5b:47:21 (RSA)
+|   256 a2:f4:2c:42:74:65:a3:7c:26:dd:49:72:23:82:72:71 (ECDSA)
+|_  256 e1:8d:44:e7:21:6d:7c:13:2f:ea:3b:83:58:aa:02:b3 (ED25519)
+80/tcp  open  http
+|_http-title: Did not follow redirect to https://nunchucks.htb/
+443/tcp open  https
+|_http-title: Nunchucks - Landing Page
+| ssl-cert: Subject: commonName=nunchucks.htb/organizationName=Nunchucks-Certificates/stateOrProvinceName=Dorset/countryName=UK
+| Subject Alternative Name: DNS:localhost, DNS:nunchucks.htb
+| Not valid before: 2021-08-30T15:42:24
+|_Not valid after:  2031-08-28T15:42:24
+| tls-nextprotoneg: 
+|_  http/1.1
+|_ssl-date: TLS randomness does not represent time
+| tls-alpn: 
+|_  http/1.1
 ```
 
 So I took a look at the webpage:
@@ -56,9 +74,9 @@ So I added the new vhost and visited it:
 
 Checking Wappalyzer, it seems that the server is using Node.js.
 
-### SSTI
+### Exploitation
 
-If we check [Hacktricks](https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection#detect), we can find a NUNJUCKS ssti:
+If we check [Hacktricks](https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection#detect), we can find a NUNJUCKS SSTI:
 - More detailed in [disse.cting](https://disse.cting.org/2016/08/02/2016-08-02-sandbox-break-out-nunjucks-template-engine)
 
 ```shell

