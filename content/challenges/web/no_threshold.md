@@ -4,6 +4,9 @@ tags:
   - HackTheBox
   - Challenge
   - Web
+  - 403_Bypass
+  - SQLi
+  - Python-Scripting
 ---
 ![](Pasted%20image%2020241122112333.png)
 
