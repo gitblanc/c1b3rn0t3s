@@ -68,3 +68,8 @@ Give to the SSH private key the necessary permissions and use the argument `-L` 
 chmod 400 USERNAME
 ssh -L PORT:127.0.0.1:PORT -i USERNAME USERNAME@IP_ATTACK
 ```
+
+## Using Chisel
+
+- Check the note [Chisel 🦦](/notes/tools/Chisel.md)
+
