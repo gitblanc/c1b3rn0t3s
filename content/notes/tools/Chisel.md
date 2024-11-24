@@ -1,5 +1,7 @@
 ---
 title: Chisel 🦦
+tags:
+  - Tool
 ---
 ## Download
 
