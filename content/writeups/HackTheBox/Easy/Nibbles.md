@@ -6,6 +6,7 @@ tags:
   - Linux
   - Web
   - Sudo-Vulnerability
+date: 2024-11-04T00:00:00Z
 ---
 ![](Pasted%20image%2020241104161017.png)
 
