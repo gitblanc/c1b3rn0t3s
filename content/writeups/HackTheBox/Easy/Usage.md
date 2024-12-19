@@ -6,6 +6,7 @@ tags:
   - Wildcard
   - HackTheBox
   - Easy
+date: 2024-05-01T00:00:00Z
 ---
 ![](Pasted%20image%2020240501234511.png)
 

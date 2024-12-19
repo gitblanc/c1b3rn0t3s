@@ -5,6 +5,7 @@ tags:
   - Easy
   - Linux
   - IDOR
+date: 2024-08-30T00:00:00Z
 ---
 ![](Pasted%20image%2020241030093859.png)
 

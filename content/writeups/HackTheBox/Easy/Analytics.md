@@ -7,6 +7,7 @@ tags:
   - Metabase
   - Ubuntu
   - GameOverlay
+date: 2024-09-05T00:00:00Z
 ---
 ![](Pasted%20image%2020241105225943.png)
 

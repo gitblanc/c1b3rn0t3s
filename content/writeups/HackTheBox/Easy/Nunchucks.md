@@ -9,6 +9,7 @@ tags:
   - Capabilities
   - AppArmor
   - Perl
+date: 2024-09-13T00:00:00Z
 ---
 ![](Pasted%20image%2020241113095057.png)
 

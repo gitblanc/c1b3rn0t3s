@@ -7,6 +7,7 @@ tags:
   - SUID
   - HackTheBox
   - Easy
+date: 2024-06-31T00:00:00Z
 ---
 ![](Pasted%20image%2020240831201755.png)
 ## Reconnaissance

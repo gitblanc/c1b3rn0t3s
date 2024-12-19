@@ -8,6 +8,7 @@ tags:
   - Command-Injection
   - HackTheBox
   - Easy
+date: 2024-07-01T00:00:00Z
 ---
 ![](Pasted%20image%2020240901173921.png)
 

@@ -7,6 +7,7 @@ tags:
   - pluck
   - HackTheBox
   - Easy
+date: 2024-06-31T00:00:00Z
 ---
 ![](Pasted%20image%2020240831134445.png)
 

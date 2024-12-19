@@ -6,6 +6,7 @@ tags:
   - Linux
   - Command-Injection
   - Kernel_Exploit
+date: 2024-08-29T00:00:00Z
 ---
 ![](Pasted%20image%2020241029174018.png)
 

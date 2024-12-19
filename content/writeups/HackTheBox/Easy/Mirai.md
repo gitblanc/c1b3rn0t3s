@@ -6,6 +6,7 @@ tags:
   - Linux
   - Pi-Hole
   - Forensics
+date: 2024-09-18T00:00:00Z
 ---
 ![](Pasted%20image%2020241118155004.png)
 

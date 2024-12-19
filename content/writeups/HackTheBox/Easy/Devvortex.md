@@ -9,6 +9,7 @@ tags:
   - Brute-Forcing
   - Sudo-Vulnerability
   - Apport-cli
+date: 2024-09-19T00:00:00Z
 ---
 ![](Pasted%20image%2020241119153117.png)
 

@@ -7,6 +7,7 @@ tags:
   - jar
   - Wordpress
   - Sudo-Vulnerability
+date: 2024-08-31T00:00:00Z
 ---
 ![](Pasted%20image%2020241031204018.png)
 

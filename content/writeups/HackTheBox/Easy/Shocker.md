@@ -6,6 +6,7 @@ tags:
   - Linux
   - ShellShock
   - Sudo-Vulnerability
+date: 2024-09-02T00:00:00Z
 ---
 ![](Pasted%20image%2020241102105019.png)
 

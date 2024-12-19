@@ -8,6 +8,7 @@ tags:
   - Blind_XSS
   - Stored_XSS
   - Command-Injection
+date: 2024-09-13T00:00:00Z
 ---
 ![](Pasted%20image%2020241113190319.png)
 
