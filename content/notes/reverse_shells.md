@@ -3,6 +3,11 @@ title: Reverse shells 👾
 ---
 - Credits to Pentest Monkey
 - Credits to [swisskeyrepo](https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#lua)
+
+## Generate Reverse shells
+
+[https://www.revshells.com/](https://www.revshells.com/)
+
 ## Python
 
 ```python
