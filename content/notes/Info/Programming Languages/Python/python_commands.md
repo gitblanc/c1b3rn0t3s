@@ -2,6 +2,18 @@
 title: Python Useful Commands ⚕️
 tags: []
 ---
+## Create python virtual environment
+
+```shell
+python3 -m venv /path/to/your_venv
+```
+
+## Activate python virtual environment
+
+```shell
+source /path/to/your_env/bin/activate
+```
+
 ## Install python2 and python3 
 
 ```shell
