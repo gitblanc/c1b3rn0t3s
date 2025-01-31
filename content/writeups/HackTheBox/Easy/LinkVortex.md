@@ -30,6 +30,15 @@ nmap -sC -T4 -p- linkvortex.htb > sC.txt
 
 [redacted]
 PORT   STATE SERVICE
+22/tcp open  ssh
+| ssh-hostkey: 
+|   256 3e:f8:b9:68:c8:eb:57:0f:cb:0b:47:b9:86:50:83:eb (ECDSA)
+|_  256 a2:ea:6e:e1:b6:d7:e7:c5:86:69:ce:ba:05:9e:38:13 (ED25519)
+80/tcp open  http
+|_http-generator: Ghost 5.58
+|_http-title: BitByBit Hardware
+| http-robots.txt: 4 disallowed entries 
+|_/ghost/ /p/ /email/ /r/
 ```
 
 So I checked its website:
