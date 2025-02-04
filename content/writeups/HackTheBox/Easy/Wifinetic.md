@@ -6,6 +6,8 @@ tags:
   - Linux
   - FTP
   - SSH
+  - Network_Hacking
+  - Reaver
 date: 2025-02-04T00:00:00Z
 ---
 ![](Pasted%20image%2020250204182044.png)
