@@ -1,5 +1,7 @@
 ---
 title: Mysql 💟
+tags:
+  - Database
 ---
 ## Where to find credentials
 
