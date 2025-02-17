@@ -12,6 +12,13 @@ Give me an ⭐️ in the Github repository if you like the content.
 
 <img src="https://www.hackthebox.eu/badge/image/1842544" alt="HackTheBox">
 
+| Content                     | Link                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------ |
+| HTB Easy Machine Writeups   | [Easy Machines](https://gitblanc.github.io/c1b3rn0t3s/writeups/HackTheBox/Easy/)     |
+| HTB Medium Machine Writeups | [Medium Machines](https://gitblanc.github.io/c1b3rn0t3s/writeups/HackTheBox/Medium/) |
+| HTB Web Challenge Writeups  | [Web Challenges](https://gitblanc.github.io/c1b3rn0t3s/challenges/web/)              |
+
+
 <script data-goatcounter="https://gitblanc.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
