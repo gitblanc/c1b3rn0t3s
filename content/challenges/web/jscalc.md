@@ -6,6 +6,7 @@ tags:
   - Web
   - Nodejs
   - LFI
+  - Easy
 date: 2025-02-17T00:00:00Z
 ---
 ![](Pasted%20image%2020250217130021.png)

@@ -7,6 +7,7 @@ tags:
   - 403_Bypass
   - SQLi
   - Python-Scripting
+  - Easy
 date: 2024-09-22T00:00:00Z
 ---
 ![](Pasted%20image%2020241122112333.png)
