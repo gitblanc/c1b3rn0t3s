@@ -2,6 +2,7 @@
 title: Ffuf 🐳
 tags:
   - Tool
+  - CBBH
 ---
 ![](Pasted%20image%2020240723081453.png)
 ## Basic Fuzzing

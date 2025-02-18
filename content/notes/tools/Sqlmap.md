@@ -2,7 +2,16 @@
 title: Sqlmap 🪲
 tags:
   - Tool
+  - CBBH
 ---
+```sql
+       __H__                          
+ ___ ___[,]_____ ___ ___                              
+|_ -| . [,]     | .'| . |                                                   
+|___|_  [)]_|_|_|__,|  _|                                     
+      |_|V...       |_|   https://sqlmap.org  
+```
+
 ## Suported SQLi types
 
 The technique characters `BEUSTQ` refers to the following:

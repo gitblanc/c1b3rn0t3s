@@ -1,5 +1,7 @@
 ---
 title: JavaScript Deobfuscation 🎸
+tags:
+  - CBBH
 ---
 > This info was extracted from [HTB Academy](https://academy.hackthebox.com/module/41/section/441)
 

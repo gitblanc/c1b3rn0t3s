@@ -2,6 +2,7 @@
 title: XSS Theory 🍣
 tags:
   - Theory
+  - CBBH
 ---
 > This content was extracted from [HTB Academy](https://academy.hackthebox.com/module/103/section/965)
 
