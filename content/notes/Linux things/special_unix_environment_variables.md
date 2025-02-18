@@ -1,6 +1,12 @@
 ---
 title: Unix Environment Variables 🌋
 ---
+Print all environment variables of a system by using:
+
+```shell
+printenv
+```
+
 ## `${IFS}`
 
 Stands for **Internal Field Separator** in shell scripting. It's a special environment variable used in Bash (and similar shells) to define which characters are used to split a string into fields. By default, the characters used as separators are **space, tab, and newline**.
@@ -36,6 +42,10 @@ Defines the primary command prompt (the symbol you see in the terminal).
 ## `${RANDOM}`
 
 Generates a random number between 0 and 32767 each time it is accessed.
+
+## `${LSCOLORS}`
+
+Used to customize the color output of the `ls` command.
 
 ## `${#variable}`
 
