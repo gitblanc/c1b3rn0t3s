@@ -18,9 +18,9 @@ Give me an ⭐️ in the Github repository if you like the content.
 | HTB Medium Machines | [Medium Machines](https://gitblanc.github.io/c1b3rn0t3s/writeups/HackTheBox/Medium/) |
 | HTB Web Challenges  | [Web Challenges](https://gitblanc.github.io/c1b3rn0t3s/challenges/web/)              |
 
-| CERTS Preparation paths          | Links                                           |
-| -------------------------------- | ----------------------------------------------- |
-| HTB Certfified bug Bounty Hacker | https://gitblanc.github.io/c1b3rn0t3s/tags/CBBH |
+| CERTS Preparation paths          | Links                                                   |
+| -------------------------------- | ------------------------------------------------------- |
+| HTB Certfified bug Bounty Hacker | [CBBH](https://gitblanc.github.io/c1b3rn0t3s/tags/CBBH) |
 
 <script data-goatcounter="https://gitblanc.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
