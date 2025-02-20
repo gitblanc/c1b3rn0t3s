@@ -822,7 +822,7 @@ Some commonly used libraries may have public exploits for such vulnerabilities, 
 
 There are many other advanced file upload vulnerabilities that we did not discuss in this module. Try to read some bug bounty reports to explore more advanced file upload vulnerabilities.
 
-## Skills Assesment
+# Skills Assesment
 
 ![](Pasted%20image%2020250220105645.png)
 
@@ -967,7 +967,7 @@ done
 
 ![](Pasted%20image%2020250220143845.png)
 
-## HTB Cheatsheet
+# HTB Cheatsheet
 
 ## Web Shells
 
