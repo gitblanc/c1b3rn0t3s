@@ -797,7 +797,7 @@ test_flag
 
 For more on advanced obfuscation methods, you may refer to the [Secure Coding 101: JavaScript](https://academy.hackthebox.com/course/preview/secure-coding-101-javascript) module, which covers advanced obfuscations methods that can be utilized in various attacks, including the ones we covered in this module.
 
-## Skills Assesment
+# Skills Assesment
 
 ![](Pasted%20image%2020250218193311.png)
 
