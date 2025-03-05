@@ -3,12 +3,14 @@ title: Hacking Forums 🐦‍🔥
 ---
 ## Websites
 
+- [Breachforums](https://breachforums.st)
+- [Exploit.in](https://exploit.in/)
+- [Xss.is](https://xss.is/)
 - [https://www.nodo313.net/](https://www.nodo313.net/)
-- [https://onniforums.com/](https://onniforums.com/) (BEST ONE FOR ME)
+- [https://onniforums.com/](https://onniforums.com/) 
 - [https://cyberarsenal.org/](https://cyberarsenal.org/)
 - [https://leakzone.net/](https://leakzone.net/)
 - [https://in4.bz/](https://in4.bz/)
-- [https://exploit.in](https://exploit.in)
 
 ## Telegrams
 
