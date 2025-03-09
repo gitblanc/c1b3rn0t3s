@@ -53,7 +53,7 @@ One of our colleagues sent us this message. He mentioned that he hit his head wh
 Searching around the internet I discovered this is Templars Cipher. I decoded it from [dcode](https://www.dcode.fr/templars-cipher)
 
 ```shell
-FLAG{EASYP EASY CRYPT}
+FLAG{EASY PEASY CRYPT}
 ```
 
 ## I'm a Stegosaurus

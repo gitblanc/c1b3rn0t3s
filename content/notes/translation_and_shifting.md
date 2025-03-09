@@ -15,11 +15,18 @@ Here are some of the most CTF common formats to encode flags with examples:
 - **Base91**: [dcode](https://www.dcode.fr/base-91-encoding)
 - **Hexadecimal**: `68 65 78 61 64 65 63 69 6d 61 6c 20 6f 72 20 62 61 73 65 31 36 3f` -> `hexadecimal or base16?`
 - **ROT13**: `Ebgngr zr 13 cynprf!` -> `Rotate me 13 places!`
+	- Remember to **Brute Force**
 - **ROT47**: `*@F DA:? >6 C:89E C@F?5 323J C:89E C@F?5 Wcf E:>6DX` -> `you spin me right round baby right round (47 times)`
+	- Remember to **Brute Force**
+- **XOR**:`ndiosp8zWp8zWp8zW{gzzqu` -> `flag{x0r_x0r_x0r_sorry}`
 - **Morse**: `- . .-.. . -.-. --- -- -- ..- -. .. -.-. .- - .. --- -.. -. -.-. --- -.. .. -. --.` -> `TELECOMMUNICATION  ENCODING `
 - **Decimal**: `85 110 112 97 99 107 32 116 104 105 115 32 66 67 68` -> `Unpack this BCD`
 - **Vigenere Cipher**: [decoder1](https://www.dcode.fr/vigenere-cipher), [decoder2](https://cryptii.com/pipes/vigenere-cipher), [decoder3](https://www.guballa.de/vigenere-solver)
 	- Beaufort Variant: `Tizmg_nv_zxxvhh_gl_gsv_nzk_kovzhv`
+- **Templars Cipher**:
+
+![](Pasted%20image%2020250307165713.png)
+
 - **More Cipher** (rare Caesar): [quipqiup](https://quipqiup.com/) (Like `Lwuv oguukpi ctqwpf.`)
 - If you see something like: `581695969015253365094191591547859387620042736036246486373595515576333693`, try the following script:
 
@@ -38,6 +45,17 @@ print(bytearray.fromhex(h).decode())
 that means:
 
 The magic word you are looking for is ApplePie
+```
+
+- **Removing Blur from Images**: if you find something like this, try to use [Depixelation PoC](https://github.com/spipm/Depixelization_poc):
+
+![](flag_pixelada.png)
+
+```shell
+python3 depix.py \
+    -p /home/gitblanc/CTFS/RootedCON2025/vargroup/medium/flag_pixelada.png \
+    -s images/searchimages/debruinseq_notepad_Windows10_closeAndSpaced.png \
+    -o /home/gitblanc/CTFS/RootedCON2025/vargroup/medium/flag_despixelada.png
 ```
 
 ## Encoding/Decoding on your machine
