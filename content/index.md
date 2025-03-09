@@ -22,9 +22,9 @@ Give me an ⭐️ in the Github repository if you like the content.
 | -------------------------------- | ------------------------------------------------------- |
 | HTB Certfified bug Bounty Hacker | [CBBH](https://gitblanc.github.io/c1b3rn0t3s/tags/CBBH) |
 
-| Conferences knowledge | Links                                                             |
-| --------------------- | ----------------------------------------------------------------- |
-| RootedCON 2025        | [RootedCON](https://gitblanc.github.io/c1b3rn0t3s/tags/RootedCON) |
+| Conferences knowledge                | Links                                                             |
+| ------------------------------------ | ----------------------------------------------------------------- |
+| ![[Pasted image 20250309224059.png]] | [RootedCON](https://gitblanc.github.io/c1b3rn0t3s/tags/RootedCON) |
 
 
 <script data-goatcounter="https://gitblanc.goatcounter.com/count"
