@@ -3,6 +3,11 @@ title: VarGroup CTF
 tags:
   - RootedCON
   - CTF
+  - Networking
+  - Crypto
+  - Web
+  - Stego
+  - OSINT
 date: 2025-03-08T00:00:00Z
 ---
 # Easy

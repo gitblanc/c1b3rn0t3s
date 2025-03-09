@@ -3,6 +3,9 @@ title: Accenture CTF
 tags:
   - RootedCON
   - CTF
+  - Web
+  - Crypto
+  - Forensics
 date: 2025-03-06T00:00:00Z
 ---
 ![](Pasted%20image%2020250306213500.png)
