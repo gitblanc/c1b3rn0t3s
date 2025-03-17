@@ -12,11 +12,15 @@ Give me an ⭐️ in the Github repository if you like the content.
 
 <img src="https://www.hackthebox.eu/badge/image/1842544" alt="HackTheBox">
 
-| Writeups            | Links                                                                                |
+| Machines Writeups   | Links                                                                                |
 | ------------------- | ------------------------------------------------------------------------------------ |
 | HTB Easy Machines   | [Easy Machines](https://gitblanc.github.io/c1b3rn0t3s/writeups/HackTheBox/Easy/)     |
 | HTB Medium Machines | [Medium Machines](https://gitblanc.github.io/c1b3rn0t3s/writeups/HackTheBox/Medium/) |
-| HTB Web Challenges  | [Web Challenges](https://gitblanc.github.io/c1b3rn0t3s/challenges/web/)              |
+
+| Challenges Writeups | Links                                                                         |
+| ------------------- | ----------------------------------------------------------------------------- |
+| HTB Web             | [Web Challenges](https://gitblanc.github.io/c1b3rn0t3s/challenges/web/)       |
+| HTB Crypto          | [Crypto Challenges](https://gitblanc.github.io/c1b3rn0t3s/challenges/crypto/) |
 
 | CERTS Preparation paths          | Links                                                   |
 | -------------------------------- | ------------------------------------------------------- |
