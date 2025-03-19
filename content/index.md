@@ -1,6 +1,7 @@
 ---
 title: Welcome to c1b3r n0t3s!
 ---
+![GitHub repo size](https://img.shields.io/github/repo-size/gitblanc/c1b3rn0t3s?style=for-the-badge&color=red)
 
 This is [gitblanc's](https://github.com/gitblanc/) personal cybersecurity notes documentation webpage. Take into account that all the information contained here is for cyber-education and non-profit too. Thus, I'm not responsible for what is done with this information.
 
