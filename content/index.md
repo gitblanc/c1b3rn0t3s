@@ -33,6 +33,12 @@ Give me an ⭐️ in the Github repository if you like the content.
 | -------------------------------- | ------------------------------------------------------- |
 | HTB Certfified bug Bounty Hacker | [CBBH](https://gitblanc.github.io/c1b3rn0t3s/tags/CBBH) |
 
+## CTFs
+
+| CTF                                      | Link                                                                              |
+| ---------------------------------------- | --------------------------------------------------------------------------------- |
+| ![](Pasted%20image%2020250322232828.png) | [CyberApocalypse2025](https://gitblanc.github.io/c1b3rn0t3s/tags/CyberApocalypse) |
+
 ## Conferences knowledge
 
 | Conferences knowledge                    | Links                                                             |
