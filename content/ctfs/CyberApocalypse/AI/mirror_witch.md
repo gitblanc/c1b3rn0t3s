@@ -11,4 +11,10 @@ To gather the elements of Eldoria, the elven mage Eloween sought the council of 
 
 ![](Pasted%20image%2020250322141427.png)
 
-HTB{Gleamwood Glen, Starlight Glade, Emberkeep Outpost, Cat Caverns, Fae Meadows}
+![](Pasted%20image%2020250324180740.png)
+
+![](Pasted%20image%2020250324180753.png)
+
+![](Pasted%20image%2020250324180828.png)
+
+HTB{Flame Peaks, Crystal Caverns, Floating Isles, Abyssal Depths}
