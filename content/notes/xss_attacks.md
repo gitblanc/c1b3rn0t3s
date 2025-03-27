@@ -1,7 +1,7 @@
 ---
 title: XSS attacks 💀
 ---
-> You should check [XSS Theory 🍣](/notes/Info/xss_theory.md)
+> You should check [XSS Theory 🍣](xss_theory.md)
 
 ## Testing Payloads
 
