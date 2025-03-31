@@ -3,6 +3,8 @@ title: Broken Authentication Theory 🐛
 tags:
   - Theory
   - CBBH
+  - HTB_Academy
+date: 2025-03-31T00:00:11Z
 ---
 > *Credits to [HTB Academy](https://academy.hackthebox.com/module/80/section/767)*
 

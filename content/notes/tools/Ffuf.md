@@ -3,6 +3,8 @@ title: Ffuf 🐳
 tags:
   - Tool
   - CBBH
+  - HTB_Academy
+date: 2025-03-31T00:00:01Z
 ---
 ![](Pasted%20image%2020240723081453.png)
 ## Basic Fuzzing

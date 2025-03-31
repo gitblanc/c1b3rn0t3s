@@ -3,6 +3,8 @@ title: Bug Bounty Hunting Process 🐐
 tags:
   - Theory
   - CBBH
+  - HTB_Academy
+date: 2025-03-31T00:00:16Z
 ---
 # Bug Bounty Programs
 

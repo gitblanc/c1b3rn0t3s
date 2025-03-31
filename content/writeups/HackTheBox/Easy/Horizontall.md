@@ -51,7 +51,7 @@ So I loaded `app.c68eb462.js` which was obfuscated:
 
 ![](Pasted%20image%2020241219100338.png)
 
-So it was time to apply some [JavaScript Deobfuscation 🎸](/notes/javascript_deobfuscation.md):
+So it was time to apply some [JavaScript Deobfuscation 🎸](javascript_deobfuscation.md):
 
 ![](Pasted%20image%2020241219101306.png)
 

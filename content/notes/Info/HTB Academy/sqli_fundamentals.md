@@ -3,6 +3,8 @@ title: SQLi Fundamentals 🐢
 tags:
   - Theory
   - CBBH
+  - HTB_Academy
+date: 2025-03-31T00:00:05Z
 ---
 > This content was extracted from [HTB Academy](https://academy.hackthebox.com/module/33/section/177)
 

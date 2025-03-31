@@ -3,6 +3,8 @@ title: Session Security Theory 🦤
 tags:
   - Theory
   - CBBH
+  - HTB_Academy
+date: 2025-03-31T00:00:14Z
 ---
 >*Credits to [HTB Academy](https://academy.hackthebox.com/module/153/section/1389)*
 

@@ -3,6 +3,8 @@ title: File Upload Attacks Theory 💣
 tags:
   - Theory
   - CBBH
+  - HTB_Academy
+date: 2025-03-31T00:00:07Z
 ---
 > *This content was extracted from [HTB Academy](https://academy.hackthebox.com/module/136/section/1259)*
 # Intro to File Upload Attacks

@@ -3,6 +3,8 @@ title: Login Brute Forcing 🦏
 tags:
   - Theory
   - CBBH
+  - HTB_Academy
+date: 2025-03-31T00:00:10Z
 ---
 > *This content was extracted from [HTB Academy](https://academy.hackthebox.com/module/57/section/506)*
 

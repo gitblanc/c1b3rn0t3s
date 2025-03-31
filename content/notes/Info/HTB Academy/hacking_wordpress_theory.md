@@ -3,6 +3,8 @@ title: Hacking Wordpress Theory 🍅
 tags:
   - Theory
   - CBBH
+  - HTB_Academy
+date: 2025-03-31T00:00:15Z
 ---
 >*Credits to [HTB Academy](https://academy.hackthebox.com/module/17/section/40)*
 
