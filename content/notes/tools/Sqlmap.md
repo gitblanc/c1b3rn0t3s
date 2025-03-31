@@ -578,7 +578,7 @@ URI: http://www.example.com:80/?id=1
 ...SNIP...
 ```
 
-## ## Verbose Output
+#### Verbose Output
 
 Another useful flag is the `-v` option, which raises the verbosity level of the console output:
 
