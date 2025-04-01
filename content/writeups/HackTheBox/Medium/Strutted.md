@@ -297,7 +297,7 @@ sudo tcpdump -ln -i lo -w /dev/null -W 1 -G 1 -z $TF -Z root
 
 ![](Pasted%20image%2020250401113405.png)
 
-==Machine pwned==
+==Machine pwned!==
 
 
 
