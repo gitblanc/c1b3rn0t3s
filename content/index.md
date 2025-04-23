@@ -29,9 +29,10 @@ Give me an ⭐️ in the Github repository if you like the content.
 
 ## Certifications paths
 
-| CERTS Preparation paths                  | Links                                                                               |
-| ---------------------------------------- | ----------------------------------------------------------------------------------- |
-| ![](Pasted%20image%2020250322234824.png) | [HTB Certfified Bug Bounty Hacker](https://gitblanc.github.io/c1b3rn0t3s/tags/CBBH) |
+| CERTS Preparation paths                  | Links                                                                                          |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ![](Pasted%20image%2020250322234824.png) | [HTB Certfified Bug Bounty Hacker](https://gitblanc.github.io/c1b3rn0t3s/tags/CBBH)            |
+| ![](Pasted%20image%2020250423083049.png) | [HTB Certified Penetration Tester Specialist](https://gitblanc.github.io/c1b3rn0t3s/tags/CPTS) |
 
 ## CTFs
 

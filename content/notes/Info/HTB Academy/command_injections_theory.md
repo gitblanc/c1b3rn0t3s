@@ -4,6 +4,7 @@ tags:
   - Theory
   - CBBH
   - HTB_Academy
+  - CPTS
 date: 2025-03-31T00:00:09Z
 ---
 > *This content was extracted from [HTB Academy](https://academy.hackthebox.com/module/109/section/1031)*

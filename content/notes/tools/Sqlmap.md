@@ -4,6 +4,7 @@ tags:
   - Tool
   - CBBH
   - HTB_Academy
+  - CPTS
 date: 2025-03-31T00:00:06Z
 ---
 ```sql
