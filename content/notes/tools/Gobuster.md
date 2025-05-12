@@ -48,9 +48,7 @@ gobuster dir -u http://vulnnet.thm/ -w /usr/share/wordlists/dirbuster/director
 ## Subdomains
 
 ```shell
-gobuster vhost -u http://vulnnet.com -w /usr/share/wordlists/SecLists/Discovery/DNS/subdomains-top1million-20000.txt -t 60 -q
-
-gobuster vhost -u team.thm -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt --append-domain
+gobuster dns -d planning.htb -w /usr/share/wordlists/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt
 ```
 
 ## VHosts
