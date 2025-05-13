@@ -211,10 +211,12 @@ If we run `sudo -l`:
 sudo -l
 
 [redacted]
+env_keep+="ENV BASH_ENV"
+[redacted]
 (ALL) /usr/bin/systeminfo
 ```
 
-So I checked the content of the binary:
+As `sudo`  enables to keep the variable `ENV BASH_ENV` I can use this if the binary is non-interactive. So I checked the content of the binary:
 
 ```bash
 #!/bin/bash
@@ -237,7 +239,7 @@ echo -e "\n### Checking disk usage for all filesystems ###"
 df -h
 ```
 
-As it is a non-interactive binary I can create a bash environment variable that point to an executable to execute it at the beginning of the binary:
+As it is a non-interactive binary I can create a bash environment variable that points to an executable to execute it at the beginning of the binary:
 
 ```shell
 echo 'bash -p' > /tmp/example.sh
