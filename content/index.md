@@ -46,6 +46,8 @@ Give me an ⭐️ in the Github repository if you like the content.
 | ---------------------------------------- | ----------------------------------------------------------------- |
 | ![](Pasted%20image%2020250309224059.png) | [RootedCON](https://gitblanc.github.io/c1b3rn0t3s/tags/RootedCON) |
 
+> *The moment we stop learning, we stop growing.*
+
 
 <script data-goatcounter="https://gitblanc.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>

