@@ -113,6 +113,21 @@ script /dev/null -c bash
 SHELL=/bin/bash script -q /dev/null
 ```
 
+- Now to get the terminal's full features, we need to set up the `TERM` variable in order to our machine preferences. To do so:
+
+```shell
+# First, in another terminal of our machine
+echo $TERM # Example output: xterm-256color
+stty size # Example output: 67 318
+```
+
+- Then back in the reverse shell put the following according to your output:
+
+```shell
+export TERM=xterm-256color
+stty rows 67 columns 318
+```
+
 ### Windows
 
 - First generate a shell with `msfvenom`:
