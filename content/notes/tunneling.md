@@ -36,7 +36,7 @@ If we run `ss -tulpn` it will tell us what socket connections are running
 To expose a service running on a blocked port by a firewall rule to the outside, we can expose the port to us (locally). Run the following on your machine:
 
 ```shell
-ssh -L <port>:localhost:<port> <username>@<ip>
+ssh -L YOUR_MACHINE_PORT:localhost:VICTIMS_MACHINE_PORT USERNAME@IP_ATTACK
 ```
 
 ## Performing a reverse SSH tunneling
@@ -66,7 +66,7 @@ Give to the SSH private key the necessary permissions and use the argument `-L` 
 
 ```shell
 chmod 400 USERNAME
-ssh -L PORT:127.0.0.1:PORT -i USERNAME USERNAME@IP_ATTACK
+ssh -L YOUR_MACHINE_PORT:localhost:VICTIMS_MACHINE_PORT -i USERNAME USERNAME@IP_ATTACK
 ```
 
 ## Using Chisel

