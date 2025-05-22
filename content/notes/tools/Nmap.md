@@ -3,10 +3,19 @@ title: Nmap 👁️‍🗨️
 tags:
   - Tool
 ---
-## Standard scan
+## Standard scans
+
+- Most common and basic:
 
 ```shell
 nmap -sC -T4 -p- HOST > sC.txt
+```
+
+- Alternative:
+
+```shell
+ports=$(nmap -p- --min-rate=1000 -T4 10.10.10.10 | grep '^[0-9]' | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//) 
+nmap -p$ports -sC -sV 10.10.10.138
 ```
 
 ## ICMP
@@ -70,6 +79,14 @@ nmap -sV -PS -sC -T4 -p- HOST > scan.txt
 |`-oN filename`|Stores the results in normal format with the name "filename".|
 |`-oG filename`|Stores the results in "grepable" format with the name of "filename".|
 |`-oX filename`|Stores the results in XML format with the name of "filename".|
+
+If we save it in `.xml` then we can create an html rom it like:
+
+```shell
+xsltproc scan.xml -o scan.html
+```
+
+![](Pasted%20image%2020250522104029.png)
 
 ## Performance Options
 
