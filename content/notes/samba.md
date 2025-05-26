@@ -3,7 +3,7 @@ title: Samba shares 🗂️
 ---
 ![](Pasted%20image%2020240512162510.png)
 
-You must see the content of [SMB🐿](/notes/Protocols/smb.md)
+You must see the content of [SMB🐿](SMB_CIFS.md)
 ## What is SAMBA
 
 Samba is the standard Windows interoperability suite of programs for Linux and Unix. It allows end users to access and use files, printers and other commonly shared resources on a companies intranet or internet. Its often referred to as a network file system.
