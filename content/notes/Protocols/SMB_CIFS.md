@@ -6,6 +6,8 @@ tags:
 > [!Note]
 > *It typically runs on ports `137`, `138`, `139` (SMB) or `445` (CIFS).*
 
+## Nmap scan
+
 To check for SAMBA version run this Nmap scan:
 
 ```shell
@@ -68,5 +70,5 @@ nmap -sCV -T4 10.129.199.212 -p139,445
 | ------------------------------------- | --------------- |
 | `./enum4linux-ng.py 10.129.14.128 -A` | Basic command.  |
 
-- You should check [Footprinting Theory 🌚](/notes/Info/HTB%20Academy/footprinting_theory.md) to get further knowledge.
-- You must see the contents of [SAMBA shares 🗂️](/notes/samba.md)
+>- You should check [Footprinting Theory 🌚](/notes/Info/HTB%20Academy/footprinting_theory.md) to get further knowledge.
+>- You must see the contents of [SAMBA shares 🗂️](/notes/samba.md)

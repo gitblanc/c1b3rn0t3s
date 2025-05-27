@@ -18,4 +18,4 @@ tags:
 | `ls -R`                                                                                                                                                                                                    | List all content recursively.                                           |
 | `get whatever.example`                                                                                                                                                                                     | Download a file.                                                        |
 
-- You should check [Footprinting Theory 🌚](/notes/Info/HTB%20Academy/footprinting_theory.md) to get further knowledge.
+> You should check [Footprinting Theory 🌚](/notes/Info/HTB%20Academy/footprinting_theory.md) to get further knowledge.
