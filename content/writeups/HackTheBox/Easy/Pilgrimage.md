@@ -6,6 +6,7 @@ tags:
   - Linux
   - Git
   - ImageMagick
+  - CVE
 date: 2025-05-28T00:00:01Z
 ---
 ![](Pasted%20image%2020250528213016.png)
