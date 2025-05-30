@@ -27,3 +27,5 @@ tags:
 |`EXPN`|The client also checks if a mailbox is available for messaging with this command.|
 |`NOOP`|The client requests a response from the server to prevent disconnection due to time-out.|
 |`QUIT`|The client terminates the session.|
+
+You should check [Footprinting Theory 🌚](/notes/Info/HTB%20Academy/footprinting_theory.md) to get further knowledge.

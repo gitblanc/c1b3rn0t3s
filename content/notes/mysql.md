@@ -3,6 +3,29 @@ title: Mysql 💟
 tags:
   - Database
 ---
+>[!Note]
+>*It typically runs on port `3306`*
+
+## Nmap scan
+
+```shell
+nmap 10.129.14.128 -sV -sC -p3306 --script mysql*
+```
+
+# HTB Cheatsheet
+
+| **Command**                                          | **Description**                                                                                       |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `mysql -u <user> -p<password> -h <IP address>`       | Connect to the MySQL server. There should **not** be a space between the '-p' flag, and the password. |
+| `show databases;`                                    | Show all databases.                                                                                   |
+| `use <database>;`                                    | Select one of the existing databases.                                                                 |
+| `show tables;`                                       | Show all available tables in the selected database.                                                   |
+| `show columns from <table>;`                         | Show all columns in the selected table.                                                               |
+| `select * from <table>;`                             | Show everything in the desired table.                                                                 |
+| `select * from <table> where <column> = "<string>";` | Search for needed `string` in the desired table.                                                      |
+
+You should check [Footprinting Theory 🌚](/notes/Info/HTB%20Academy/footprinting_theory.md) to get further knowledge.
+
 ## Where to find credentials
 
 - Most of the times **root creds** will be stored under the `/var/www` directory, maybe in a `.php` file or something like that. Always deeply check all the files inside
@@ -30,4 +53,6 @@ mysql -h db -u root -proot database -e 'show tables;'
 - In web browser, if you find a cookie, try adding a the end of its value a `'` like:
 
 ![](Pasted%20image%2020240322155742.png)
+
 - If so, you can try some sql injections with sqlmap or by yourself
+

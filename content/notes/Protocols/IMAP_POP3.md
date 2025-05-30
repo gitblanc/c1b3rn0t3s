@@ -53,3 +53,5 @@ nmap 10.129.14.128 -sV -p110,143,993,995 -sC
 |`CAPA`|Requests the server to display the server capabilities.|
 |`RSET`|Requests the server to reset the transmitted information.|
 |`QUIT`|Closes the connection with the POP3 server.|
+
+You should check [Footprinting Theory 🌚](/notes/Info/HTB%20Academy/footprinting_theory.md) to get further knowledge.
