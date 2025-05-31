@@ -1,6 +1,21 @@
 ---
 title: SSH 🔓
+tags:
+  - Protocol
 ---
+>[!Note]
+>*It typically runs on port `22`.*
+
+# HTB Cheatsheet
+
+| **Command**                                                 | **Description**                                       |
+| ----------------------------------------------------------- | ----------------------------------------------------- |
+| `ssh-audit.py <FQDN/IP>`                                    | Remote security audit against the target SSH service. |
+| `ssh <user>@<FQDN/IP>`                                      | Log in to the SSH server using the SSH client.        |
+| `ssh -i private.key <user>@<FQDN/IP>`                       | Log in to the SSH server using private key.           |
+| `ssh <user>@<FQDN/IP> -o PreferredAuthentications=password` | Enforce password-based authentication.                |
+
+> You should check [Footprinting Theory 🌚](/notes/Info/HTB%20Academy/footprinting_theory.md) to get further knowledge.
 
 ## Crack SSH keys
 
