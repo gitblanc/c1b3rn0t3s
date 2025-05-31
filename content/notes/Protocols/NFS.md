@@ -12,7 +12,7 @@ tags:
 # Just to get a footprint
 nmap 10.129.14.128 -p111,2049 -sV -sC
 # To get all the info
-nmap --script nfs* 10.129.14.128 -sV -p111,2049
+nmap --script "nfs*" 10.129.14.128 -sV -p111,2049
 	[redacted]
 	nfs-ls: Volume /mnt/nfs
 	nfs-showmount:

@@ -4886,3 +4886,245 @@ ILF-SQL-01
 
 Again, it is necessary to mention that the knowledge gained from installing these services and playing around with the configurations on our own Windows Server VM for gaining experience and developing the functional principle and the administrator's point of view cannot be replaced by reading manuals. Therefore, we strongly recommend setting up your own Windows Server, experimenting with the settings, and scanning these services repeatedly to see the differences in the results.
 
+# Footprinting Lab - Easy
+
+We were commissioned by the company `Inlanefreight Ltd` to test three different servers in their internal network. The company uses many different services, and the IT security department felt that a penetration test was necessary to gain insight into their overall security posture.
+
+The first server is an internal DNS server that needs to be investigated. In particular, our client wants to know what information we can get out of these services and how this information could be used against its infrastructure. Our goal is to gather as much information as possible about the server and find ways to use that information against the company. However, our client has made it clear that it is forbidden to attack the services aggressively using exploits, as these services are in production.
+
+Additionally, our teammates have found the following credentials "ceil:qwer1234", and they pointed out that some of the company's employees were talking about SSH keys on a forum.
+
+The administrators have stored a `flag.txt` file on this server to track our progress and measure success. Fully enumerate the target and submit the contents of this file as proof.
+
+> Initial credentials: `ceil:qwer1234`
+
+First I performed a basic nmap scan to check for open ports:
+
+```shell
+ports=$(nmap -p- --min-rate=1000 -T4 10.129.184.226 | grep '^[0-9]' | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//) 
+nmap -p$ports -sV 10.129.184.226
+
+[redacted]
+PORT     STATE SERVICE REASON         VERSION
+21/tcp   open  ftp?    syn-ack ttl 63
+22/tcp   open  ssh     syn-ack ttl 63 OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0)
+53/tcp   open  domain  syn-ack ttl 63 ISC BIND 9.16.1 (Ubuntu Linux)
+2121/tcp open  ftp     syn-ack ttl 63
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port21-TCP:V=7.95%I=7%D=5/31%Time=683B022C%P=x86_64-pc-linux-gnu%r(Gene
+SF:ricLines,9D,"220\x20ProFTPD\x20Server\x20\(ftp\.int\.inlanefreight\.htb
+SF:\)\x20\[10\.129\.184\.226\]\r\n500\x20Invalid\x20command:\x20try\x20bei
+SF:ng\x20more\x20creative\r\n500\x20Invalid\x20command:\x20try\x20being\x2
+SF:0more\x20creative\r\n");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port2121-TCP:V=7.95%I=7%D=5/31%Time=683B022C%P=x86_64-pc-linux-gnu%r(Ge
+SF:nericLines,8E,"220\x20ProFTPD\x20Server\x20\(Ceil's\x20FTP\)\x20\[10\.1
+SF:29\.184\.226\]\r\n500\x20Invalid\x20command:\x20try\x20being\x20more\x2
+SF:0creative\r\n500\x20Invalid\x20command:\x20try\x20being\x20more\x20crea
+SF:tive\r\n");
+	Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+```
+
+I connected to the ftp server in port `2121` and enumerated:
+
+```shell
+ftp ceil@10.129.184.226 -p 2121
+
+ftp> ls -la
+229 Entering Extended Passive Mode (|||11159|)
+150 Opening ASCII mode data connection for file list
+drwxr-xr-x   4 ceil     ceil         4096 Nov 10  2021 .
+drwxr-xr-x   4 ceil     ceil         4096 Nov 10  2021 ..
+-rw-------   1 ceil     ceil          294 Nov 10  2021 .bash_history
+-rw-r--r--   1 ceil     ceil          220 Nov 10  2021 .bash_logout
+-rw-r--r--   1 ceil     ceil         3771 Nov 10  2021 .bashrc
+drwx------   2 ceil     ceil         4096 Nov 10  2021 .cache
+-rw-r--r--   1 ceil     ceil          807 Nov 10  2021 .profile
+drwx------   2 ceil     ceil         4096 Nov 10  2021 .ssh
+-rw-------   1 ceil     ceil          759 Nov 10  2021 .viminfo
+```
+
+I'll check inside `.ssh` for ssh keys:
+
+```shell
+ftp> ls .ssh
+229 Entering Extended Passive Mode (|||15194|)
+150 Opening ASCII mode data connection for file list
+-rw-rw-r--   1 ceil     ceil          738 Nov 10  2021 authorized_keys
+-rw-------   1 ceil     ceil         3381 Nov 10  2021 id_rsa
+-rw-r--r--   1 ceil     ceil          738 Nov 10  2021 id_rsa.pub
+```
+
+Got it! So I'll download it and connect to the machine via SSH:
+
+```shell
+chmod 400 id_rsa
+ssh -i id_rsa ceil@10.129.184.226
+cat /home/flag/flag.txt 
+HTB{xxx}
+```
+
+# Footprinting Lab - Medium
+
+This second server is a server that everyone on the internal network has access to. In our discussion with our client, we pointed out that these servers are often one of the main targets for attackers and that this server should be added to the scope.
+
+Our customer agreed to this and added this server to our scope. Here, too, the goal remains the same. We need to find out as much information as possible about this server and find ways to use it against the server itself. For the proof and protection of customer data, a user named `HTB` has been created. Accordingly, we need to obtain the credentials of this user as proof.
+HTB
+> Username `HTB` exists, but we don't have credentials
+
+So first I performed a basic nmap scan to check for open ports:
+
+```shell
+ports=$(nmap -p- --min-rate=1000 -T4 10.129.202.41 | grep '^[0-9]' | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//) 
+nmap -p$ports -sV 10.129.202.41
+
+[redacted]
+PORT     STATE SERVICE REASON         VERSION
+111/tcp   open  rpcbind       syn-ack ttl 127 2-4 (RPC #100000)
+135/tcp   open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+139/tcp   open  netbios-ssn   syn-ack ttl 127 Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds? syn-ack ttl 127
+2049/tcp  open  nlockmgr      syn-ack ttl 127 1-4 (RPC #100021)
+3389/tcp  open  ms-wbt-server syn-ack ttl 127 Microsoft Terminal Services
+5985/tcp  open  http          syn-ack ttl 127 Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+47001/tcp open  http          syn-ack ttl 127 Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+49664/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+49665/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+49666/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+49667/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+49668/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+49679/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+49680/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+49681/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+```
+
+RDP is enabled on the server, so I'll run a more specific scan to port `3389`:
+
+```shell
+nmap -sV -sC -T4 10.129.202.41 -p3389 --script rdp*
+
+[redacted]
+3389/tcp open  ms-wbt-server syn-ack ttl 127 Microsoft Terminal Services
+| rdp-enum-encryption: 
+|   Security layer
+|     CredSSP (NLA): SUCCESS
+|     CredSSP with Early User Auth: SUCCESS
+|_    RDSTLS: SUCCESS
+| rdp-ntlm-info: 
+|   Target_Name: WINMEDIUM
+|   NetBIOS_Domain_Name: WINMEDIUM
+|   NetBIOS_Computer_Name: WINMEDIUM
+|   DNS_Domain_Name: WINMEDIUM
+|   DNS_Computer_Name: WINMEDIUM
+|   Product_Version: 10.0.17763
+|_  System_Time: 2025-05-31T13:50:26+00:00
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+```
+
+I'll execute [RDP-Security-Check](https://github.com/CiscoCXSecurity/rdp-sec-check):
+
+```shell
+sudo cpan Encoding::BER
+./rdp.pl 10.129.202.41
+```
+
+Nothing cool to see, so I inspected the ports `111` and `2049` which might be an NFS share:
+
+```shell
+nmap --script "nfs*" 10.129.202.41 -sV -p111,2049
+
+[redacted]
+111/tcp  open  rpcbind? syn-ack ttl 127
+| nfs-ls: Volume /TechSupport
+|   access: Read Lookup NoModify NoExtend NoDelete NoExecute
+| PERMISSION  UID         GID         SIZE   TIME                 FILENAME
+| rwx------   4294967294  4294967294  65536  2021-11-11T00:09:49  .
+| ??????????  ?           ?           ?      ?                    ..
+| rwx------   4294967294  4294967294  0      2021-11-10T15:19:28  ticket4238791283649.txt
+| rwx------   4294967294  4294967294  0      2021-11-10T15:19:28  ticket4238791283650.txt
+| rwx------   4294967294  4294967294  0      2021-11-10T15:19:28  ticket4238791283651.txt
+| rwx------   4294967294  4294967294  0      2021-11-10T15:19:28  ticket4238791283652.txt
+| rwx------   4294967294  4294967294  0      2021-11-10T15:19:28  ticket4238791283653.txt
+| rwx------   4294967294  4294967294  0      2021-11-10T15:19:28  ticket4238791283654.txt
+| rwx------   4294967294  4294967294  0      2021-11-10T15:19:29  ticket4238791283655.txt
+| rwx------   4294967294  4294967294  0      2021-11-10T15:19:29  ticket4238791283656.txt
+|_
+| rpcinfo: 
+|   program version    port/proto  service
+|   100003  2,3         2049/udp   nfs
+|   100003  2,3         2049/udp6  nfs
+|   100003  2,3,4       2049/tcp   nfs
+|   100003  2,3,4       2049/tcp6  nfs
+|   100005  1,2,3       2049/tcp   mountd
+|   100005  1,2,3       2049/tcp6  mountd
+|   100005  1,2,3       2049/udp   mountd
+|_  100005  1,2,3       2049/udp6  mountd
+| nfs-statfs: 
+|   Filesystem    1K-blocks   Used        Available   Use%  Maxfilesize  Maxlink
+|_  /TechSupport  25468924.0  15096120.0  10372804.0  60%   16.0T        1023
+| nfs-showmount: 
+|_  /TechSupport 
+2049/tcp open  mountd   syn-ack ttl 127 1-3 (RPC #100005)
+| nfs-showmount: 
+|_  /TechSupport
+```
+
+So I'll mount the NFS share `/TechSupport`:
+- I'll confirm the share with `showmount`:
+
+```shell
+showmount -e 10.129.202.41
+
+Export list for 10.129.202.41:
+/TechSupport (everyone)
+```
+
+```shell
+mkdir ./TechSupport
+sudo mount -t nfs 10.129.202.41:/TechSupport ./TechSupport/ -o nolock
+```
+
+Now I'll inspect its content. There are a lot of tickets but just one has content:
+
+![](Pasted%20image%2020250531160652.png)
+
+Inside of it there are some credentials for SMTP, which could be in reuse in RDP:
+
+![](Pasted%20image%2020250531160742.png)
+
+> Credentials for SMTP: `alex:lol123!mD`
+
+I'll try to test for reused credentials in RDP:
+- NOTE: I used Remmina because xfreerdp doesn't work to me.
+
+```shell
+xfreerdp3 /u:Alex /p:'lol123!mD' /v:10.129.202.41 /f /clipboard
+```
+
+![](Pasted%20image%2020250531161937.png)
+
+There is a folder called `devshare`:
+
+![](Pasted%20image%2020250531162554.png)
+
+So I'll inspect it:
+
+![](Pasted%20image%2020250531162630.png)
+
+> Credentials: `sa:87N1ns@slls83`
+
+I found some credentials, which can be for Administrator, so I'll try to open the SQL Server and search for the `HTB` user:
+
+![](Pasted%20image%2020250531162833.png)
+
+So I ran it as Administrator and got access to it:
+
+![](Pasted%20image%2020250531163406.png)
+
+Then I inspected the databases and their tables and found `accounts.dbo.devsacc` and used the following sql query:
+
+```sql
+select * from accounts.dbo.devsacc where name = 'HTB'
+```
+
+![](Pasted%20image%2020250531163652.png)
